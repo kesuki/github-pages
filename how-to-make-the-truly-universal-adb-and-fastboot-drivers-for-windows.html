@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans,default">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="转载，英文原文链接 网上很多人宣称可以给windows系统提供一个通用adb驱动，但他们通常只是重新打包一下Google提供给亲儿子Nexus设备的USB驱动包，通过修改android_winusb_inf文件，添加大量USB的Vendor ID和Product ID进去。为什么这样还做不到真正的通用呢？因为如果你设备的ID信息没有添加进去，这样的驱动并不能驱动你的设备。 然而微软的系统提供一种实">
+<meta name="keywords" content="android,USB驱动,通用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何制作一个windows下真正通用的adb驱动">
+<meta property="og:url" content="http://www.mak-blog.com/how-to-make-the-truly-universal-adb-and-fastboot-drivers-for-windows.html">
+<meta property="og:site_name" content="Songtao Mai">
+<meta property="og:description" content="转载，英文原文链接 网上很多人宣称可以给windows系统提供一个通用adb驱动，但他们通常只是重新打包一下Google提供给亲儿子Nexus设备的USB驱动包，通过修改android_winusb_inf文件，添加大量USB的Vendor ID和Product ID进去。为什么这样还做不到真正的通用呢？因为如果你设备的ID信息没有添加进去，这样的驱动并不能驱动你的设备。 然而微软的系统提供一种实">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-07T09:56:37.027Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何制作一个windows下真正通用的adb驱动">
+<meta name="twitter:description" content="转载，英文原文链接 网上很多人宣称可以给windows系统提供一个通用adb驱动，但他们通常只是重新打包一下Google提供给亲儿子Nexus设备的USB驱动包，通过修改android_winusb_inf文件，添加大量USB的Vendor ID和Product ID进去。为什么这样还做不到真正的通用呢？因为如果你设备的ID信息没有添加进去，这样的驱动并不能驱动你的设备。 然而微软的系统提供一种实">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://www.mak-blog.com/how-to-make-the-truly-universal-adb-and-fastboot-drivers-for-windows">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>如何制作一个windows下真正通用的adb驱动 | Songtao Mai</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Songtao Mai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.mak-blog.com/how-to-make-the-truly-universal-adb-and-fastboot-drivers-for-windows.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Songtao Mai">
+      <meta itemprop="description" content="记录，分享，交流的空间">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Songtao Mai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何制作一个windows下真正通用的adb驱动
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2015-06-17 21:54:46" itemprop="dateCreated datePublished" datetime="2015-06-17T21:54:46+08:00">2015-06-17</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-05-07 17:56:37" itemprop="dateModified" datetime="2019-05-07T17:56:37+08:00">2019-05-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>转载，英文原文<a href="http://ktnr74.blogspot.com/2014/11/how-to-make-truly-universal-adb-and.html" title="How to make the truly universal adb and fastboot drivers for Windows" target="_blank" rel="noopener">链接</a> 网上很多人宣称可以给windows系统提供一个通用adb驱动，但他们通常只是重新打包一下Google提供给亲儿子Nexus设备的USB驱动包，通过修改android_winusb_inf文件，添加大量USB的Vendor ID和Product ID进去。为什么这样还做不到真正的通用呢？因为如果你设备的ID信息没有添加进去，这样的驱动并不能驱动你的设备。 然而微软的系统提供一种实现通用的驱动的方法。给一个设备寻找相应驱动的时候，windows系统可以通过硬件ID（例如：USB的Vendor ID和Product ID），也可以通过兼容ID(例如：InterfaceClassClassID，InterfaceSubClassID和InterfaceProtocolID)。幸运的是，所有安卓adb驱动的接口ID都是一样的。 在几年前，我曾经做了一个这样的adb驱动，并已经在很多不同的安卓设备上试验成功，如下面步骤所述，你也可以自己制作一个安卓的adb驱动： 1.通过官网下载最新的<a href="https://dl-ssl.google.com/android/repository/latest_usb_driver_windows.zip" target="_blank" rel="noopener">Google USB driver</a>。 2.解压到usb_driver文件夹 3.使用文档编辑器（例如Notepad++）打开usb_driver\android_winusb.inf文件 4.把[Google.Ntx86]和[Google.NTamd64]的内容修改成如下所示：</p>
+<p>[Google.NTx86]<br>%SingleAdbInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_01<br>%SingleBootLoaderInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_03</p>
+<p>[Google.NTamd64]<br>%SingleAdbInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_01<br>%SingleBootLoaderInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_03</p>
+<p>5.保存文件，这样你就有了一个真正的通用adb驱动。 如果需要的话，不要忘了更新文件.android\adb_usb.ini。 在安装完这个驱动的时候，可以通过一下命令测试驱动是否在运行，可以顺便测试一下是否加载到之前的驱动。</p>
+<p>powershell “gwmi Win32_USBControllerDevice | %{[wmi]($_.Dependent)} |<br>?{$_.CompatibleID -like \“USB\Class_ff^&amp;SubClass_42^&amp;Prot_0?\“} | fl Name,DeviceID,Service” </p>
+<p>修改后的inf文件如下所示：</p>
+<p>;<br>; Android WinUsb driver installation.<br>;<br>[Version]<br>Signature           = “$Windows NT$”<br>Class               = AndroidUsbDeviceClass<br>ClassGuid           = {3F966BD9-FA04-4ec5-991C-D326973B5128}<br>Provider            = %ProviderName%<br>DriverVer           = 08/28/2014,11.0.0000.00000<br>CatalogFile.NTx86   = androidwinusb86.cat<br>CatalogFile.NTamd64 = androidwinusba64.cat</p>
+<p>[ClassInstall32]<br>Addreg = AndroidWinUsbClassReg</p>
+<p>[AndroidWinUsbClassReg]<br>HKR,,,0,%ClassName%<br>HKR,,Icon,,-1</p>
+<p>[Manufacturer]<br>%ProviderName% = Google, NTx86, NTamd64</p>
+<p>[Google.NTx86]<br>%SingleAdbInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_01<br>%SingleBootLoaderInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_03</p>
+<p>[Google.NTamd64]<br>%SingleAdbInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_01<br>%SingleBootLoaderInterface% = USB_Install, USB\Class_ff&amp;SubClass_42&amp;Prot_03</p>
+<p>[USB_Install]<br>Include = winusb.inf<br>Needs   = WINUSB.NT</p>
+<p>[USB_Install.Services]<br>Include     = winusb.inf<br>AddService  = WinUSB,0x00000002,WinUSB_ServiceInstall</p>
+<p>[WinUSB_ServiceInstall]<br>DisplayName     = %WinUSB_SvcDesc%<br>ServiceType     = 1<br>StartType       = 3<br>ErrorControl    = 1<br>ServiceBinary   = %12%\WinUSB.sys</p>
+<p>[USB_Install.Wdf]<br>KmdfService = WINUSB, WinUSB_Install</p>
+<p>[WinUSB_Install]<br>KmdfLibraryVersion  = 1.9</p>
+<p>[USB_Install.HW]<br>AddReg  = Dev_AddReg</p>
+<p>[Dev_AddReg]<br>HKR,,DeviceInterfaceGUIDs,0x10000,”{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}”</p>
+<p>[USB_Install.CoInstallers]<br>AddReg    = CoInstallers_AddReg<br>CopyFiles = CoInstallers_CopyFiles</p>
+<p>[CoInstallers_AddReg]<br>HKR,,CoInstallers32,0x00010000,”WdfCoInstaller01009.dll,WdfCoInstaller”,”WinUSBCoInstaller2.dll”</p>
+<p>[CoInstallers_CopyFiles]<br>WinUSBCoInstaller2.dll<br>WdfCoInstaller01009.dll</p>
+<p>[DestinationDirs]<br>CoInstallers_CopyFiles=11</p>
+<p>[SourceDisksNames]<br>1 = %DISK_NAME%,,,\i386<br>2 = %DISK_NAME%,,,\amd64</p>
+<p>[SourceDisksFiles.x86]<br>WinUSBCoInstaller2.dll  = 1<br>WdfCoInstaller01009.dll = 1</p>
+<p>[SourceDisksFiles.amd64]<br>WinUSBCoInstaller2.dll  = 2<br>WdfCoInstaller01009.dll = 2</p>
+<p>[Strings]<br>ProviderName                = “Google, Inc.”<br>SingleAdbInterface          = “Android ADB Interface”<br>CompositeAdbInterface       = “Android Composite ADB Interface”<br>SingleBootLoaderInterface   = “Android Bootloader Interface”<br>WinUSB_SvcDesc              = “Android USB Driver”<br>DISK_NAME                   = “Android WinUsb installation disk”<br>ClassName                   = “Android Device”</p>
+<p>---------------------------------------------------- 全文已经翻译完了，后面是彩蛋。 经过初步验证，大部分机型的确都是能够进行adb shell来连接，但是好像某些机型还是不行的，但是查看设备管理器可以看出加载了android adb driver。但是adb连接时就显示error: device not found，初步推断应该不关驱动的事，看了原文前几几篇博客，发现原文把这类问题叫做ADB connection trouble-shooting，解决的关键是修改adb_usb.ini，把设备的USB Vendor ID添加到adb_usb.ini中。 然后问题来了，adb_usb.ini在哪里呢，原文说默认路径是%USERPROFILE%\.android\adb_usb.ini，是在用户目录下的。但是如果设置了ANDROID_SDK_HOME，路径应该是在%ANDROID_SDK_HOME%\.android\adb_usb.ini下，然后我就保险起见，全部都添加了Vendor ID，但是还是不行。 在网上看到一个说法，是要在Android SDK的目录下，tools文件夹里运行一句命令：</p>
+<p>Android update adb</p>
+<p>这样自动生成adb_usb.ini，生成的adb_usb.ini有如下内容</p>
+<p># ANDROID 3RD PARTY USB VENDOR ID LIST – DO NOT EDIT.<br># USE ‘android update adb’ TO GENERATE.<br># 1 USB VENDOR ID PER LINE.</p>
+<p>然后就在里面添加Vendor ID，如0xFFFF。有时候.android自动生成在用户目录，有时候生成在SDK的目录下。 然后问题来了，为什么某些手机厂商在adb连接时要手动添加Vendor ID呢？看了<a href="http://developer.android.com/tools/device.html" title="Using Hardware Devices" target="_blank" rel="noopener">Using Hardware Devices</a>这个页面就知道了，很多大厂商都向Google申请一个Vendor ID，然后这些厂商的ID就集成到adb驱动中，不用再手动添加到adb_usb.ini中。例如某些手机厂家，如魅族，TCL，并没有像Google申请一个ID号，所以就算驱动能够识别，adb都连接不上这些Vendor ID的手机，除非在adb_usb.ini中添加上ID号。以上是个人猜测，因为试了很多手机，发现魅族连接不上，而且Google官网没有其Vendor ID，要在adb_usb.ini中添加Vendor ID号才能够连接。 如果需要写脚本自动获取设备的Vendor ID到adb_usb.ini中，原文提供了一个powershell命令，在cmd中执行以下就行了。</p>
+<p>powershell “gwmi Win32_USBControllerDevice | %{[wmi]($_.Dependent)} |<br>?{$_.CompatibleID -like \“USB\Class_ff^&amp;SubClass_42^&amp;Prot_0?\“} |<br>%{write \“0x$([regex]::match($<em>.deviceid.tolower(), ‘vid</em>(\w+)’).groups[1].value)\“} |<br>sort -u” &gt;&gt; %ANDROID_SDK_HOME%\.android\adb_usb.ini </p>
+<p>记得设相应的环境变量，如果powershell命令找不到的可以输入：</p>
+<p>%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe</p>
+<p>搞定收工。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/USB驱动/" rel="tag"># USB驱动</a>
+          
+            <a href="/tags/通用/" rel="tag"># 通用</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/android-dynamic-debug-so.html" rel="next" title="Android动态调试so之dump内存数据">
+                <i class="fa fa-chevron-left"></i> Android动态调试so之dump内存数据
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/tencent-shell-crack.html" rel="prev" title="腾讯应用加固的脱壳分析和修复">
+                腾讯应用加固的脱壳分析和修复 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Songtao Mai</p>
+              <div class="site-description motion-element" itemprop="description">记录，分享，交流的空间</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">176</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2008 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Songtao Mai</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

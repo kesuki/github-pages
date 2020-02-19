@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans,default">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="之前想弄一个shadowsocks的插件，发现网上要不是frankwei98开发的这种需要架设API的，就是soft-wiki这种功能极其简陋，UI不友好的。然后就又在网上找了一些传说中shadowsocks 3.x版本的安装，发现里面的代码被改得乱七八糟的，明显是不想给人用的，然后自己能看懂一点代码，就这几天把这些代码改好，然后放出来共享一下。 1.效果图 shadowsocks插件其实关键的文">
+<meta name="keywords" content="shadowsocks,whmcs,免费">
+<meta property="og:type" content="article">
+<meta property="og:title" content="whmcs模块的shadowsocks插件">
+<meta property="og:url" content="http://www.mak-blog.com/whmcs-shadowsocks-plugin.html">
+<meta property="og:site_name" content="Songtao Mai">
+<meta property="og:description" content="之前想弄一个shadowsocks的插件，发现网上要不是frankwei98开发的这种需要架设API的，就是soft-wiki这种功能极其简陋，UI不友好的。然后就又在网上找了一些传说中shadowsocks 3.x版本的安装，发现里面的代码被改得乱七八糟的，明显是不想给人用的，然后自己能看懂一点代码，就这几天把这些代码改好，然后放出来共享一下。 1.效果图 shadowsocks插件其实关键的文">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin1.jpg">
+<meta property="og:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin2.jpg">
+<meta property="og:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin3.jpg">
+<meta property="og:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin4.jpg">
+<meta property="og:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin5.jpg">
+<meta property="og:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin6.jpg">
+<meta property="og:updated_time" content="2019-05-13T03:10:20.201Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="whmcs模块的shadowsocks插件">
+<meta name="twitter:description" content="之前想弄一个shadowsocks的插件，发现网上要不是frankwei98开发的这种需要架设API的，就是soft-wiki这种功能极其简陋，UI不友好的。然后就又在网上找了一些传说中shadowsocks 3.x版本的安装，发现里面的代码被改得乱七八糟的，明显是不想给人用的，然后自己能看懂一点代码，就这几天把这些代码改好，然后放出来共享一下。 1.效果图 shadowsocks插件其实关键的文">
+<meta name="twitter:image" content="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin1.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://www.mak-blog.com/whmcs-shadowsocks-plugin">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>whmcs模块的shadowsocks插件 | Songtao Mai</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Songtao Mai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.mak-blog.com/whmcs-shadowsocks-plugin.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Songtao Mai">
+      <meta itemprop="description" content="记录，分享，交流的空间">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Songtao Mai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">whmcs模块的shadowsocks插件
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-01-18 21:14:04" itemprop="dateCreated datePublished" datetime="2017-01-18T21:14:04+08:00">2017-01-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-05-13 11:10:20" itemprop="dateModified" datetime="2019-05-13T11:10:20+08:00">2019-05-13</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/折腾/" itemprop="url" rel="index"><span itemprop="name">折腾</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前想弄一个shadowsocks的插件，发现网上要不是<a href="https://github.com/frankwei98/WHMCS-Shadowsocks" target="_blank" rel="noopener">frankwei98</a>开发的这种需要架设API的，就是<a href="https://github.com/soft-wiki/whmcs-shadowsocks" target="_blank" rel="noopener">soft-wiki</a>这种功能极其简陋，UI不友好的。然后就又在网上找了一些传说中shadowsocks 3.x版本的安装，发现里面的代码被改得乱七八糟的，明显是不想给人用的，然后自己能看懂一点代码，就这几天把这些代码改好，然后放出来共享一下。</p>
+<h3 id="1-效果图"><a href="#1-效果图" class="headerlink" title="1.效果图"></a>1.效果图</h3><p><a href="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin1.jpg"><img src="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin1.jpg" alt="image0"></a> shadowsocks插件其实关键的文件就是shadowsocks.php和templates/details.tpl两个文件，其实php文件是负责处理后台逻辑，tpl文件是负责前端显示。而其他css、js等文件就是UI显示锦上添花而已。</p>
+<h3 id="2-shadowsocks-php解析"><a href="#2-shadowsocks-php解析" class="headerlink" title="2.shadowsocks.php解析"></a>2.shadowsocks.php解析</h3><p>function shadowsocks_TestConnection(array $params)<br>{<br>    try {<br>        $dbhost = $params[‘serverip’];<br>        $dbuser = $params[‘serverusername’];<br>        $dbpass = $params[‘serverpassword’];<br>        $db = new PDO(‘mysql:host=’ . $dbhost, $dbuser, $dbpass);<br>        $success = true;<br>        $errorMsg = ‘’;<br>    }<br>    catch (Exception $e) {<br>        logModuleCall(‘shadowsocks’, ‘shadowsocks_TestConnection’, $params, $e-&gt;getMessage(), $e-&gt;getTraceAsString());<br>        $success = false;<br>        $errorMsg = $e-&gt;getMessage();<br>    }<br>    return array(‘success’ =&gt; $success, ‘error’ =&gt; $errorMsg);<br>}</p>
+<p>上面这是一个测试数据库服务器通断的函数，这里需要在whmcs后台配置Setup-&gt;Products/Services-&gt;Servers-&gt;Add New Server页面，其中页面中的IP Address其实就是通过$params[‘serverip’]来传递数据库IP的参数，Server Details中选中Shadowsocks for whmcs，再填写下面的Username和Password，分别设置和数据库服务器的登录名和密码，在代码中可以看出是通过$params[‘serverusername’]和$params[‘serverpassword’]传递。然后通过PDO来跟数据库服务器建立连接，如果连接成功没有触发异常就显示成功，触发异常就显示false。</p>
+<p>function initialize(array $params)<br>{<br>    $query[‘RECYCLE’] = ‘SELECT `port` FROM `recycle_bin` ORDER BY `created_at` DESC LIMIT 1’;<br>    $query[‘DELETE_RECYCLE’] = ‘DELETE FROM `recycle_bin` WHERE `port` = :port’;<br>    $query[‘ADD_RECYCLE’] = ‘INSERT INTO `recycle_bin`(`port`,`created_at`) VALUES (:port,UNIX_TIMESTAMP())’;<br>    $query[‘LATEST_USER’] = ‘SELECT `port` FROM `user` ORDER BY `port` DESC LIMIT 1’;<br>    $query[‘CREATE_ACCOUNT’] = ‘INSERT INTO `user`(`passwd`,`transfer_enable`,`port`,`created_at`,`need_reset`,`sid`) VALUES (:passwd,:transfer_enable,:port,UNIX_TIMESTAMP(),:need_reset,:sid)’;<br>    $query[‘ALREADY_EXISTS’] = ‘SELECT `port` FROM `user` WHERE `sid` = :sid’;<br>    $query[‘ENABLE’] = ‘UPDATE `user` SET `enable` = :enable WHERE `sid` = :sid’;<br>    $query[‘DELETE_ACCOUNT’] = ‘DELETE FROM `user` WHERE `sid` = :sid’;<br>    $query[‘CHANGE_PASSWORD’] = ‘UPDATE `user` SET passwd = :passwd WHERE `sid` = :sid’;<br>    $query[‘USERINFO’] = ‘SELECT `id`,`passwd`,`port`,`t`,`u`,`d`,`transfer_enable`,`enable`,`created_at`,`updated_at`,`need_reset`,`sid` FROM `user` WHERE `sid` = :sid’;<br>    $query[‘RESET’] = ‘UPDATE `user` SET `u`=0,`d`=0 WHERE `sid` = :sid’;<br>    $query[‘CHANGE_PACKAGE’] = ‘UPDATE `user` SET `transfer_enable` = :transfer_enable WHERE `sid` = :sid’;<br>    return $query;<br>}</p>
+<p>上面这个初始化函数就是生成一大串数据库检索要用到的函数，就是各种插入，更新的函数。还有，这个shadowsocks数据库中有两个表，一个recycle_bin，一个是user，其中recycle_bin就是为了回收端口，user表中删除的端口先放到recycle_bin中，然后新增用户优先从recycle_bin中检索，recycle_bin空了才用新端口。</p>
+<p>function shadowsocks_ConfigOptions()<br>{<br>    return array(<br>    ‘数据库名’ => array(‘Type’ =&gt; ‘text’, ‘Size’ =&gt; ‘25’),<br>    ‘重置流量’ => array(<br>        ‘Type’        =&gt; ‘dropdown’,<br>        ‘Options’     =&gt; array(‘1’ =&gt; ‘需要重置’, ‘0’ =&gt; ‘不需要重置’),<br>        ‘Description’ =&gt; ‘是否需要重置流量’<br>        ),<br>    ‘流量限制’ => array(‘Type’ =&gt; ‘text’, ‘Size’ =&gt; ‘25’, ‘Description’ =&gt; ‘单位MB’),<br>    ‘授权密钥’ => array(‘Type’ =&gt; ‘text’, ‘Size’ =&gt; ‘32’, ‘Description’ =&gt; ‘请输入您从购买者手中获取的密钥’),<br>    ‘起始端口’ => array(‘Type’ =&gt; ‘text’, ‘Size’ =&gt; ‘25’, ‘Description’ =&gt; ‘如果数据库有记录此项无效’),<br>    ‘线路列表’ => array(‘Type’ =&gt; ‘textarea’, ‘Rows’ =&gt; ‘3’, ‘Cols’ =&gt; ‘50’, ‘Description’ =&gt; ‘格式 xxx|服务器地址|加密方式|协议|混淆| 一行一个’)<br>    );<br>}</p>
+<p>上面的代码是shadowsocks插件的配置页面代码，就是Setup-&gt;Products/Services-&gt;Products/Services-&gt;Create a New Product-&gt;Module Settings配置的信息，这里自定义了6个参数，到时候就是按顺序$params[‘configoption1’]到$params[‘configoption6’]这样来定位，其中第一个参数就是shadowsocks数据库名，第二个参数是重置流量，就是在数据库中多了一个reset参数需要配置，其实到时候就看你的重置逻辑怎么写而已，第三个是最大流量，第四个是授权密钥，感觉这个插件之前是收费的，在initialize函数中有一个认证密钥的过程，那认证过程已经删掉，留空不填就可以了，第五个是起始端口，就是shadowsocks的端口从哪个开始分配，第六个是线路列表，格式就是“xxx|服务器地址|加密方式|协议|混淆”，这个参数的读取代码写得有点问题，添加多个服务器时，混淆后面要加|，最后一行才不用加|，因为我是用|来分割字符串，然后5个参数读一下这样写的。</p>
+<p>function shadowsocks_CreateAccount(array $params)<br>{<br>    $query = initialize($params);<br>    try {<br>        $dbhost = $params[‘serverip’];<br>        $dbname = $params[‘configoption1’];<br>        $dbuser = $params[‘serverusername’];<br>        $dbpass = $params[‘serverpassword’];<br>        $db = new PDO(‘mysql:host=’ . $dbhost . ‘;dbname=’ . $dbname, $dbuser, $dbpass);<br>        $already = $db-&gt;prepare($query[‘ALREADY_EXISTS’]);<br>        $already-&gt;bindValue(‘:sid’, $params[‘serviceid’]);<br>        $already-&gt;execute();<br>        if ($already-&gt;fetchColumn()) {<br>            return ‘User already exists.’;<br>        }<br>        $bandwidth = (!empty($params[‘configoption3’]) ? convert($params[‘configoption3’], ‘mb’, ‘bytes’) : (!empty($params[‘configoptions’][‘traffic’]) ? convert($params[‘configoptions’][‘traffic’], ‘gb’, ‘bytes’) : ‘1099511627776’));</p>
+<pre><code>    $recycle = $db-&gt;prepare($query\[&apos;RECYCLE&apos;\]);
+    $recycle-&gt;execute();
+    $recycle = $recycle-&gt;fetch();
+    if ($recycle) {
+        $port = $recycle\[&apos;port&apos;\];
+        define(&apos;RECYCLE&apos;, true);
+    }
+    else {
+        $port = $db-&gt;prepare($query\[&apos;LATEST_USER&apos;\]);
+        $port-&gt;execute();
+        $port = $port-&gt;fetch();
+        if ($port) {
+            $port = $port\[&apos;port&apos;\] + 1;
+        }
+        else {
+            $port = (!empty($params\[&apos;configoption5&apos;\]) ? $params\[&apos;configoption5&apos;\] : &apos;10000&apos;);
+        }
+    }
+    $create = $db-&gt;prepare($query\[&apos;CREATE_ACCOUNT&apos;\]);
+    $create-&gt;bindValue(&apos;:passwd&apos;, $params\[&apos;customfields&apos;\]\[&apos;password&apos;\]);
+    $create-&gt;bindValue(&apos;:transfer_enable&apos;, $bandwidth);
+    $create-&gt;bindValue(&apos;:port&apos;, $port);
+    $create-&gt;bindValue(&apos;:need_reset&apos;, $params\[&apos;configoption2&apos;\]);
+    $create-&gt;bindValue(&apos;:sid&apos;, $params\[&apos;serviceid&apos;\]);
+    $create = $create-&gt;execute();
+
+    if ($create) {
+        if (defined(&apos;RECYCLE&apos;) &amp;&amp; RECYCLE) {
+            $recycle = $db-&gt;prepare($query\[&apos;DELETE_RECYCLE&apos;\]);
+            $recycle-&gt;bindParam(&apos;:port&apos;, $port);
+            $recycle-&gt;execute();
+        }
+        return &apos;success&apos;;
+    }
+    else {
+        $error = $db-&gt;errorInfo();
+        return $error;
+    }
+}
+catch (Exception $e) {
+    logModuleCall(&apos;shadowsocks&apos;, &apos;shadowsocks_CreateAccount&apos;, $params, $e-&gt;getMessage(), $e-&gt;getTraceAsString());
+    return $e-&gt;getMessage();
+}
+</code></pre><p>}</p>
+<p>上面就是开通账号的函数，逻辑如下：拿到serverip、数据库名、serverusername和serverpassword后，就开始连接数据库，由于whmcs在开通每个服务时会分配一个serviceid，就先用数据库查找是否存在相同的serviceid，这一部分使用ALREADY_EXISTS来检索。如果没有，就继续执行。然后再读取params[‘configoption3’]为设定的最大带宽。然后就开始在回收站表中看是否有回收的port，优先使用，没有就检索user表，在现有port的值上再加1，如果user表为空，就设定params[‘configoption5’]的端口为初始端口。然后就使用CREATE_ACCOUNT来插入一个user表。成功创建后，还要回头看看是否用了回收站表的端口，用了的话就要从回收站中删除相应的port。</p>
+<p>function shadowsocks_ClientArea(array $params)<br>{<br>    $query = initialize($params);<br>    try {<br>        $dbhost = $params[‘serverip’];<br>        $dbname = $params[‘configoption1’];<br>        $dbuser = $params[‘serverusername’];<br>        $dbpass = $params[‘serverpassword’];<br>        $db = new PDO(‘mysql:host=’ . $dbhost . ‘;dbname=’ . $dbname, $dbuser, $dbpass);<br>        $usage = $db-&gt;prepare($query[‘USERINFO’]);<br>        $usage-&gt;bindValue(‘:sid’, $params[‘serviceid’]);<br>        $usage-&gt;execute();<br>        $usage = $usage-&gt;fetch();<br>        $nodes = $params[‘configoption6’];<br>        $results = array();<br>        $node = explode(‘|’, $nodes);<br>        $x=0;$count=count($node)-1;<br>        while($x &lt;= $count){<br>            $results[$x/5][$x%5] = $node[$x];<br>            $x++;<br>        }<br>        $user = array(‘passwd’ =&gt; $usage[‘passwd’], ‘port’ =&gt; $usage[‘port’], ‘u’ =&gt; $usage[‘u’], ‘d’ =&gt; $usage[‘d’], ‘t’ =&gt; $usage[‘t’], ‘sum’ =&gt; $usage[‘u’] + $usage[‘d’], ‘transfer_enable’ =&gt; $usage[‘transfer_enable’], ‘created_at’ =&gt; $usage[‘created_at’], ‘updated_at’ =&gt; $usage[‘updated_at’]);<br>        if ($usage &amp;&amp; $usage[‘enable’]) {<br>            return array(<br>    ‘tabOverviewReplacementTemplate’ =&gt; ‘details.tpl’,<br>    ‘templateVariables’              =&gt; array(‘usage’ =&gt; $user, ‘params’ =&gt; $params, ‘nodes’ =&gt; $results)<br>    );<br>        }<br>        return array(<br>    ‘tabOverviewReplacementTemplate’ =&gt; ‘error.tpl’,<br>    ‘templateVariables’              =&gt; array(‘usefulErrorHelper’ =&gt; ‘出现了一些问题，可能您的服务还未开通，请稍后再来试试。’)<br>    );<br>    }<br>    catch (Exception $e) {<br>        logModuleCall(‘shadowsocks’, ‘shadowsocks_ClientArea’, $params, $e-&gt;getMessage(), $e-&gt;getTraceAsString());<br>        return array(<br>    ‘tabOverviewReplacementTemplate’ =&gt; ‘error.tpl’,<br>    ‘templateVariables’              =&gt; array(‘usefulErrorHelper’ =&gt; $e-&gt;getMessage())<br>    );<br>    }<br>}</p>
+<p>shadowsocks_ClientArea函数就是用户登录后，点击shadowsocks服务会触发的一个请求，这个函数会从数据库中检索出数据，然后传递给details.tpl来做前端显示，这里可以看出传递了两个关键的结构体，usage和nodes结构体。 然后还有其他shadowsocks_ResetBandwidth重置流量、shadowsocks_ChangePassword修改密码、shadowsocks_ChangePackage修改套餐、shadowsocks_TerminateAccount删除账号、shadowsocks_SuspendAccount停用账号等，都是一些对数据库表的操作，大同小异。</p>
+<h3 id="3-details-tpl解析"><a href="#3-details-tpl解析" class="headerlink" title="3.details.tpl解析"></a>3.details.tpl解析</h3><p>这个前端显示的文件就更简单了，就是大部分是html、css、js代码，中间夹杂着几个数据，就是shadowsocks_ClientArea函数传递过来的usage和nodes结构体。</p>
+<h3 id="4-shadowsocks安装"><a href="#4-shadowsocks安装" class="headerlink" title="4.shadowsocks安装"></a>4.shadowsocks安装</h3><p>默认是使用breakwa11的shadowsocks-rss，<a href="https://github.com/breakwa11/shadowsocks-rss/wiki/Server-Setup(manyuser-with-mysql" target="_blank" rel="noopener">详细配置说明在此</a>)，其实由于rss的混淆和协议均能选择兼容版本，所以能一次提供shadowsocks原版和shadowsocks-rss两种服务，如果实在只想用原版，就是线路配置的地方“xxx|服务器地址|加密方式|协议|混淆”变成“xxx|服务器地址|加密方式||”即可。 这里就简单说一下自己遇到的坑： 1.服务器的防火墙一定要看是否关闭，要不死活连不上； 2.协议插件可以设为：auth_sha1_v4_compatible，混淆插件可以设为tls1.2_ticket_auth_compatible，有compatible字样就能兼容原版。</p>
+<h3 id="5-shadowsocks插件的使用说明"><a href="#5-shadowsocks插件的使用说明" class="headerlink" title="5.shadowsocks插件的使用说明"></a>5.shadowsocks插件的使用说明</h3><p>插件放到Modules/servers/shadowsocks目录下 1.服务器配置 <a href="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin2.jpg"><img src="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin2.jpg" alt="image0"></a> 新建服务器 <a href="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin3.jpg"><img src="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin3.jpg" alt="image0"></a> IP Address此处填写服务器的IP地址，Username和Password处填写服务器的MySQL用户密码（要求有远程连接权限，并且至少拥有Shadowsocks表认证表的增删该查权限） 2.配置产品 <a href="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin4.jpg"><img src="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin4.jpg" alt="image0"></a> 新建产品 <a href="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin5.jpg"><img src="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin5.jpg" alt="image0"></a> 选择Module Settings，填写配置信息 <a href="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin6.jpg"><img src="http://www.mak-blog.com/album/2017/01/whmcs-shadowsocks-plugin6.jpg" alt="image0"></a> 在Custom Fields添加自定义密码，如图一字不差的填写。 大功告成，收工，shadowsocks插件代码<a href="https://github.com/kesuki/whmcs-shadowsocks-plugin" target="_blank" rel="noopener">https://github.com/kesuki/whmcs-shadowsocks-plugin/</a> 以下分割线为更新内容，2017年4月18日更新 ————————————————————–</p>
+<h3 id="重置流量"><a href="#重置流量" class="headerlink" title="重置流量"></a>重置流量</h3><p>已更新github代码，新增cron.php重置流量脚本，重置流量的代码使用php语言编写，可以直接放在搭建whmcs服务的vps上，建议不要放在web站点目录上，建议修改cron.php文件权限为644。 在vps上新建计划任务</p>
+<p>crontab -e</p>
+<p>每月1日使用php运行该脚本</p>
+<p>0 0 1 <em> </em> /usr/bin/php -f 目录路径/cron.php &amp;&gt; /dev/null</p>
+<p>以下分割线为更新内容，2017年12月20日更新 ————————————————————– 本博客已不再维护Github上的项目，而且该项目也进行了多次的版本迭代，如有疑问，请在Github上提交Issues。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shadowsocks/" rel="tag"># shadowsocks</a>
+          
+            <a href="/tags/whmcs/" rel="tag"># whmcs</a>
+          
+            <a href="/tags/免费/" rel="tag"># 免费</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/configuring-ps4-to-use-my-own-proxy-server.html" rel="next" title="架设ps4专用的HTTP**服务器">
+                <i class="fa fa-chevron-left"></i> 架设ps4专用的HTTP**服务器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Songtao Mai</p>
+              <div class="site-description motion-element" itemprop="description">记录，分享，交流的空间</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">176</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-效果图"><span class="nav-number">1.</span> <span class="nav-text">1.效果图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-shadowsocks-php解析"><span class="nav-number">2.</span> <span class="nav-text">2.shadowsocks.php解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-details-tpl解析"><span class="nav-number">3.</span> <span class="nav-text">3.details.tpl解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-shadowsocks安装"><span class="nav-number">4.</span> <span class="nav-text">4.shadowsocks安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-shadowsocks插件的使用说明"><span class="nav-number">5.</span> <span class="nav-text">5.shadowsocks插件的使用说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重置流量"><span class="nav-number">6.</span> <span class="nav-text">重置流量</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2008 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Songtao Mai</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

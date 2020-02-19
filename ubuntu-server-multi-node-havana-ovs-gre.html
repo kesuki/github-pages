@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans,default">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192">
+<meta name="keywords" content="openstack,havana,ubuntu server">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu server多节点部署havana的OVS-GRE模式">
+<meta property="og:url" content="http://www.mak-blog.com/ubuntu-server-multi-node-havana-ovs-gre.html">
+<meta property="og:site_name" content="Songtao Mai">
+<meta property="og:description" content="控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-07T09:56:37.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ubuntu server多节点部署havana的OVS-GRE模式">
+<meta name="twitter:description" content="控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://www.mak-blog.com/ubuntu-server-multi-node-havana-ovs-gre">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>ubuntu server多节点部署havana的OVS-GRE模式 | Songtao Mai</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Songtao Mai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.mak-blog.com/ubuntu-server-multi-node-havana-ovs-gre.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Songtao Mai">
+      <meta itemprop="description" content="记录，分享，交流的空间">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Songtao Mai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ubuntu server多节点部署havana的OVS-GRE模式
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2014-04-10 16:27:23" itemprop="dateCreated datePublished" datetime="2014-04-10T16:27:23+08:00">2014-04-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-05-07 17:56:37" itemprop="dateModified" datetime="2019-05-07T17:56:37+08:00">2019-05-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192.168.200.xx网段，内部网络不用配置网关。10是controller，11是compute1，12是compute2，如此类推。注意区分eth是千兆口还是万兆口。 vi /etc/network/interfaces</p>
+<pre><code>#For Exposing OpenStack API over the internet
+auto eth0
+iface eth0 inet static
+address 192.168.1.10
+netmask 255.255.255.0
+gateway 192.168.1.1
+
+#Not internet connected(used for OpenStack management)
+auto eth1
+iface eth1 inet static
+    address 192.168.100.10
+    netmask 255.255.255.0
+
+#DATA_INTERFACE
+auto eth3
+iface eth3 inet static
+    address 192.168.200.10
+    netmask 255.255.255.0
+</code></pre><p>service networking restart 1.2.配置本机的hostname hostname controller #更改hosts文件 vi /etc/hosts</p>
+<pre><code>127.0.0.1 localhost
+192.168.100.10 controller
+192.168.100.11 compute1
+192.168.100.12 compute2
+192.168.100.13 compute3
+192.168.1.12 controller_ext
+</code></pre><p>1.3.更新教育网的源 vi /etc/apt/sources.list</p>
+<pre><code>deb http://mirror.bjtu.edu.cn/ubuntu/ precise main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ precise-backports main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ precise-proposed main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ precise-security main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ precise-updates main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-backports main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-proposed main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-security main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-updates main multiverse restricted universe
+</code></pre><p>#更新源 apt-get update #添加openstack的源 apt-get install python-software-properties add-apt-repository cloud-archive:havana #更新源，以及更新软件 apt-get update -y apt-get upgrade -y apt-get dist-upgrade -y reboot 1.4. 安装NTP服务器来让计算节点节点同步时间 apt-get install ntp apt-get install rsplib-tools vi /etc/ntp.conf</p>
+<pre><code>server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+</code></pre><p>service ntp restart 1.5. 安装MySQL server apt-get install python-mysqldb mysql-server sed -i ‘s/127.0.0.1/0.0.0.0/g’ /etc/mysql/my.cnf /etc/init.d/mysql restart 1.6. 开启IP转发 sed -i -r ‘s/^\s<em>#(net\.ipv4\.ip_forward=1.</em>)/\1/‘ /etc/sysctl.conf echo 1 &gt; /proc/sys/net/ipv4/ip_forward sysctl -p 1.7. 安装其他服务 apt-get install -y vlan bridge-utils 2.1.安装rabbitmq，是控制器统筹各个部件的软件，并修改用户guest的密码为password apt-get install rabbitmq-server rabbitmqctl change_password guest password #为每一个部件都建立数据库 mysql -u root -p</p>
+<pre><code>CREATE DATABASE keystone;
+G RANT ALL PRIVILEGES ON keystone.* TO &apos;keystone&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON keystone.* TO &apos;keystone&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON keystone.* TO &apos;keystone&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
+
+CREATE DATABASE glance;
+G RANT ALL PRIVILEGES ON glance.* TO &apos;glance&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON glance.* TO &apos;glance&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON glance.* TO &apos;glance&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
+
+CREATE DATABASE nova;
+G RANT ALL PRIVILEGES ON nova.* TO &apos;nova&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON nova.* TO &apos;nova&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON nova.* TO &apos;nova&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
+
+CREATE DATABASE neutron;
+G RANT ALL PRIVILEGES ON neutron.* TO &apos;neutron&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON neutron.* TO &apos;neutron&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON neutron.* TO &apos;neutron&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
+
+CREATE DATABASE cinder;
+G RANT ALL PRIVILEGES ON cinder.* TO &apos;cinder&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON cinder.* TO &apos;cinder&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
+G RANT ALL PRIVILEGES ON cinder.* TO &apos;cinder&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
+</code></pre><p>quit;</p>
+<p>2.2. Keystone的安装，是openstack的验证模块 apt-get install keystone #修改对应的数据库连接 vi /etc/keystone/keystone.conf</p>
+<pre><code>connection = mysql://keystone:password@controller/keystone
+</code></pre><p>#删除原始的本地数据库，以免错误调用 rm /var/lib/keystone/keystone.db service keystone restart #同步数据库 keystone-manage db_sync #为各个部件在keystone中添加用户，服务，和后端 vi keystone.sh chmod +x keystone.sh ./keystone.sh #验证keystone unset OS_SERVICE_TOKEN OS_SERVICE_ENDPOINT keystone –os-username=admin –os-password=password –os-auth-url=<a href="http://controller:35357/v2.0" target="_blank" rel="noopener">http://controller:35357/v2.0</a> token-get keystone –os-username=admin –os-password=password –os-tenant-name=admin –os-auth-url=<a href="http://controller:35357/v2.0" target="_blank" rel="noopener">http://controller:35357/v2.0</a> token-get #导入本地变量 vi keystonerc</p>
+<pre><code>export OS\_TENANT\_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=password
+export OS\_AUTH\_URL=http://controller_ext:35357/v2.0
+</code></pre><p>source keystonerc keystone token-get keystone user-list 2.3. Glance的安装，用于存储镜像 apt-get install glance #修改数据库连接，rabbit的密码，keystone的验证 vi /etc/glance/glance-api.conf</p>
+<pre><code>sql_connection = mysql://glance:password@controller/glance
+
+#rabbit_password = guest
+rabbit_password = password
+
+\[keystone_authtoken\]
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin\_tenant\_name = service
+admin_user = glance
+admin_password = password
+
+\[paste_deploy\]
+flavor = keystone
+</code></pre><p>vi /etc/glance/glance-registry.conf</p>
+<pre><code>sql_connection = mysql://glance:password@controller/glance
+
+\[keystone_authtoken\]
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin\_tenant\_name = service
+admin_user = glance
+admin_password = password
+
+\[paste_deploy\]
+flavor = keystone
+</code></pre><p>#删除原来的本地数据库，以免错误调用 rm /var/lib/glance/glance.sqlite #修改API调用时的keystone验证信息 vi /etc/glance/glance-api-paste.ini</p>
+<pre><code>\[filter:authtoken\]
+paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
+delay\_auth\_decision = true
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin\_tenant\_name = service
+admin_user = glance
+admin_password = password
+</code></pre><p>vi /etc/glance/glance-registry-paste.ini</p>
+<pre><code>\[filter:authtoken\]
+paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin\_tenant\_name = service
+admin_user = glance
+admin_password = password
+</code></pre><p>#重启服务 service glance-registry restart service glance-api restart #导入数据库 glance-manage db_sync #验证glance服务 mkdir images cd images/ wget <a href="http://cdn.download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86\_64-disk.img" target="_blank" rel="noopener">http://cdn.download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86\_64-disk.img</a> #导入镜像 glance image-create –name=”CirrOS 0.3.1” –disk-format=qcow2 –container-format=bare –is-public=true &lt; cirros-0.3.1-x86_64-disk.img glance image-list 2.4. 安装Neutron #安装Neutron的主体 apt-get install neutron-server #配置rabbit，keystone和数据库的验证 vi /etc/neutron/neutron.conf</p>
+<pre><code>\[default\]
+auth_strategy = keystone
+
+rpc\_backend = neutron.openstack.common.rpc.impl\_kombu
+rabbit_host = controller
+rabbit_port = 5672
+rabbit_password = password
+
+\[keystone_authtoken\]
+auth_host = controller
+admin\_tenant\_name = service
+admin_user = neutron
+admin_password = password
+#auth_url = http://controller:35357/v2.0
+
+\[database\]
+connection = mysql://neutron:password@controller/neutron
+</code></pre><p>#配置API调用是的验证 vi /etc/neutron/api-paste.ini</p>
+<pre><code>\[filter:authtoken\]
+paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
+admin\_tenant\_name = service
+admin_user = neutron
+admin_password = password
+</code></pre><p>#配置nova部分，之前要先安装nova-api，nova不设置防火墙，只调用neutron的防火墙 vi /etc/nova/nova.conf</p>
+<pre><code>network\_api\_class=nova.network.neutronv2.api.API
+neutron_url=http://controller:9696
+neutron\_auth\_strategy=keystone
+neutron\_admin\_tenant_name=service
+neutron\_admin\_username=neutron
+neutron\_admin\_password=password
+neutron\_admin\_auth_url=http://controller:35357/v2.0
+linuxnet\_interface\_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+#firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
+firewall_driver=nova.virt.firewall.NoopFirewallDriver
+security\_group\_api=neutron
+</code></pre><p>#安装neutron的插件openvswitch apt-get install neutron-plugin-openvswitch-agent #配置neutron插件，配置GRE模式 vi /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini</p>
+<pre><code>\[DATABASE\]
+#sql_connection = mysql://neutron:password@controller/neutron
+connection = mysql://neutron:password@controller/neutron
+\[OVS\]
+tenant\_network\_type = gre
+tunnel\_id\_ranges = 1:1000
+enable_tunneling = True
+
+\[SECURITYGROUP\]
+firewall\_driver = neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirewallDriver
+</code></pre><p>2.5. 安装Nova apt-get install nova-novncproxy novnc nova-api nova-ajax-console-proxy nova-cert nova-conductor nova-consoleauth nova-doc nova-scheduler python-novaclient #配置rabbit，keystone，metadata，vncserver和数据库的验证 vi /etc/nova/nova.conf</p>
+<pre><code>\[DEFAULT\]
+rpc\_backend = nova.rpc.impl\_kombu
+rabbit_host = controller
+rabbit_userid = guest
+rabbit_password = password           
+
+vncserver\_proxyclient\_address=#management ip
+vncserver_listen=0.0.0.0
+
+auth_strategy=keystone
+
+glance_host=controller
+
+# Network settings
+network\_api\_class=nova.network.neutronv2.api.API
+neutron_url=http://controller:9696
+neutron\_auth\_strategy=keystone
+neutron\_admin\_tenant_name=service
+neutron\_admin\_username=neutron
+neutron\_admin\_password=password
+neutron\_admin\_auth_url=http://controller:35357/v2.0
+linuxnet\_interface\_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+firewall_driver=nova.virt.firewall.NoopFirewallDriver
+security\_group\_api=neutron
+
+#Metadata
+service\_neutron\_metadata_proxy = True
+neutron\_metadata\_proxy\_shared\_secret = password
+metadata_host = controller
+metadata_listen = 0.0.0.0
+metadata\_listen\_port = 8775
+
+# Auth
+#use\_deprecated\_auth=false
+
+\[database\]
+connection = mysql://nova:password@controller/nova
+\[keystone_authtoken\]
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin\_tenant\_name = service
+admin_user = nova
+admin_password = password
+</code></pre><p>#配置提供API的keystone验证 vi /etc/nova/api-paste.ini</p>
+<pre><code>\[filter:authtoken\]
+paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+auth_uri = http://controller:5000/v2.0
+admin\_tenant\_name = service
+admin_user = nova
+admin_password = password
+</code></pre><p>#同步数据库 nova-manage db sync service nova-api restart service nova-cert restart service nova-consoleauth restart service nova-scheduler restart service nova-conductor restart service nova-novncproxy restart #查看服务运行的状态 nova-manage service list #修改默认的quota vi /etc/nova/nova.conf</p>
+<pre><code>quota_instances=100
+quota_cores=1000
+quota_ram=1048576
+</code></pre><p>service nova-api restart service nova-cert restart service nova-consoleauth restart service nova-scheduler restart service nova-conductor restart service nova-novncproxy restart nova-manage db sync nova-manage project quota admin 2.6. 安装horizon界面 apt-get install memcached libapache2-mod-wsgi openstack-dashboard #去掉Ubuntu相关的Openstack主题，bug apt-get remove –purge openstack-dashboard-ubuntu-theme vi /etc/apache2/httpd.conf ServerName controller_ext service apache2 restart service memcached restart 2.7. 安装cinder，用于提供虚拟存储 apt-get install cinder-api cinder-scheduler #配置cinder数据库 vi /etc/cinder/cinder.conf</p>
+<pre><code>\[database\]
+...
+# The SQLAlchemy connection string used to connect to the
+# database (string value)
+connection = mysql://cinder:password@controller/cinder
+</code></pre><p>cinder-manage db sync #配置keystone的验证 vi /etc/cinder/api-paste.ini</p>
+<pre><code>\[filter:authtoken\]
+paste.filter\_factory=keystoneclient.middleware.auth\_token:filter_factory
+auth_host=controller
+auth_port = 35357
+auth_protocol = http
+auth_uri = http://controller:5000/v2.0
+admin\_tenant\_name=service
+admin_user=cinder
+admin_password=password
+#auth_version = v2.0
+</code></pre><p>vi /etc/cinder/cinder.conf</p>
+<pre><code>\[DEFAULT\]
+rpc\_backend = cinder.openstack.common.rpc.impl\_kombu
+rabbit_host = controller
+rabbit_port = 5672
+rabbit_userid = guest
+rabbit_password = password
+
+glance_host=controller
+glance_port=9292
+glance\_api\_servers=controller:9292
+</code></pre><p>service cinder-scheduler restart service cinder-api restart 网络节点： #由于网络节点配置在控制节点上，所以第一部的准备工作就可以去掉 #开启转发 vi /etc/sysctl.conf</p>
+<pre><code>net.ipv4.ip_forward=1
+#小心配错
+net.ipv4.conf.all.rp_filter=0
+net.ipv4.conf.default.rp_filter=0
+</code></pre><p>sysctl -p service networking restart 2.1. 安装neutron的各种网络服务 apt-get install neutron-server neutron-dhcp-agent neutron-plugin-openvswitch-agent neutron-l3-agent #配置验证信息 vi /etc/neutron/neutron.conf</p>
+<pre><code>\[default\]
+auth_strategy = keystone
+
+rpc\_backend = neutron.openstack.common.rpc.impl\_kombu
+rabbit_host = controller
+rabbit_port = 5672
+rabbit_userid = guest
+rabbit_password = password
+
+\[keystone_authtoken\]
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin\_tenant\_name = service
+admin_user = neutron
+admin_password = password
+
+\[database\]
+connection = mysql://neutron:password@controller/neutron
+</code></pre><p>#配置提供API的验证信息 vi /etc/neutron/api-paste.ini</p>
+<pre><code>\[filter:authtoken\]
+paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
+auth_host=controller
+auth_port = 35357
+auth_protocol = http
+auth_uri = http://controller:5000/v2.0
+admin\_tenant\_name = service
+admin_user = neutron
+admin_password = password
+#page 73
+</code></pre><p>#指定提供dhcp的驱动服务 vi /etc/neutron/dhcp_agent.ini</p>
+<pre><code>dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
+</code></pre><p>vi /etc/nova/nova.conf</p>
+<pre><code>\[DEFAULT\]
+service\_neutron\_metadata_proxy = true
+neutron\_metadata\_proxy\_shared\_secret = password
+metadata_host = controller
+metadata_listen = 0.0.0.0
+metadata\_listen\_port = 8775
+</code></pre><p>service nova-api restart #配置meta的验证服务 vi /etc/neutron/metadata_agent.ini</p>
+<pre><code>\[DEFAULT\]
+auth_url = http://controller:5000/v2.0
+auth_region = RegionOne
+admin\_tenant\_name = service
+admin_user = neutron
+admin_password = password
+nova\_metadata\_ip = controller
+metadata\_proxy\_shared_secret = password
+</code></pre><p>service neutron-server restart service neutron-dhcp-agent restart service neutron-l3-agent restart service neutron-metadata-agent restart service neutron-plugin-openvswitch-agent restart #安装neutron的插件openvswtich apt-get install neutron-plugin-openvswitch-agent openvswitch-switch service openvswitch-switch restart ovs-vsctl add-br br-int ovs-vsctl add-br br-ex #把提供外部API的网口桥接到br-ex上 ovs-vsctl add-port br-ex eth0 #修改网卡配置，把eth0改成混杂模式，把br-ex改成eth0的ip配置 vi /etc/network/interfaces</p>
+<pre><code>#For Exposing OpenStack API over the internet
+auto eth0
+iface eth0 inet manual
+up ifconfig eth0 0.0.0.0 up
+up ip link set eth0 promisc on
+down ip link set eth0 promisc off
+down ifconfig eth0 down
+
+auto br-ex
+iface br-ex inet static
+address 192.168.1.10
+netmask 255.255.255.0
+gateway 192.168.1.1
+</code></pre><p>/etc/init.d/networking restart #配置l3_agent和dhcp_agent vi /etc/neutron/l3_agent.ini</p>
+<pre><code>interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+use_namespaces = True
+</code></pre><p>vi /etc/neutron/dhcp_agent.ini</p>
+<pre><code>interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+use_namespaces = True
+</code></pre><p>#配置neutron的插件为openvswitch vi /etc/neutron/neutron.conf</p>
+<pre><code>core\_plugin = neutron.plugins.openvswitch.ovs\_neutron_plugin.OVSNeutronPluginV2
+</code></pre><p>service neutron-plugin-openvswitch-agent restart #配置插件为GRE模式 vi /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini</p>
+<pre><code>\[OVS\]
+tenant\_network\_type = gre
+tunnel\_id\_ranges = 1:1000
+enable_tunneling = True
+integration_bridge = br-int
+tunnel_bridge = br-tun
+local_ip = #tunnel ip
+
+\[securitygroup\]
+# Firewall driver for realizing neutron security group function.
+firewall\_driver = neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirewallDriver
+</code></pre><p>service neutron-plugin-openvswitch-agent restart</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openstack/" rel="tag"># openstack</a>
+          
+            <a href="/tags/havana/" rel="tag"># havana</a>
+          
+            <a href="/tags/ubuntu-server/" rel="tag"># ubuntu server</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/sfbuy-adidas-shoe.html" rel="next" title="SFBuy顺风海淘adidas休闲鞋">
+                <i class="fa fa-chevron-left"></i> SFBuy顺风海淘adidas休闲鞋
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/baidu-interview-rd.html" rel="prev" title="百度实习面经-研发岗">
+                百度实习面经-研发岗 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Songtao Mai</p>
+              <div class="site-description motion-element" itemprop="description">记录，分享，交流的空间</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">176</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2008 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Songtao Mai</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans,default">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文主要参考博客： Android APK加壳技术方案【2】 APK加壳【1】初步方案实现详解 由于之前没有接触过安卓编程，所以即便有两篇这么详细的教程，但是还是走了不少弯路，都折腾了大概一个星期左右。而且两个博主都没有放出demo，所以就想回顾一下这个学习的过程，并给出一个Demo。 1.配置环境本文的编译环境如下： Android Studio 1.2.1.1 JDK 1.7.0_79 SDK">
+<meta name="keywords" content="android,加壳">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android APK加壳技术的研究">
+<meta property="og:url" content="http://www.mak-blog.com/android-apk-shell-part1.html">
+<meta property="og:site_name" content="Songtao Mai">
+<meta property="og:description" content="本文主要参考博客： Android APK加壳技术方案【2】 APK加壳【1】初步方案实现详解 由于之前没有接触过安卓编程，所以即便有两篇这么详细的教程，但是还是走了不少弯路，都折腾了大概一个星期左右。而且两个博主都没有放出demo，所以就想回顾一下这个学习的过程，并给出一个Demo。 1.配置环境本文的编译环境如下： Android Studio 1.2.1.1 JDK 1.7.0_79 SDK">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-07T09:56:37.027Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android APK加壳技术的研究">
+<meta name="twitter:description" content="本文主要参考博客： Android APK加壳技术方案【2】 APK加壳【1】初步方案实现详解 由于之前没有接触过安卓编程，所以即便有两篇这么详细的教程，但是还是走了不少弯路，都折腾了大概一个星期左右。而且两个博主都没有放出demo，所以就想回顾一下这个学习的过程，并给出一个Demo。 1.配置环境本文的编译环境如下： Android Studio 1.2.1.1 JDK 1.7.0_79 SDK">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://www.mak-blog.com/android-apk-shell-part1">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Android APK加壳技术的研究 | Songtao Mai</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Songtao Mai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.mak-blog.com/android-apk-shell-part1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Songtao Mai">
+      <meta itemprop="description" content="记录，分享，交流的空间">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Songtao Mai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android APK加壳技术的研究
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2015-06-06 20:58:30" itemprop="dateCreated datePublished" datetime="2015-06-06T20:58:30+08:00">2015-06-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-05-07 17:56:37" itemprop="dateModified" datetime="2019-05-07T17:56:37+08:00">2019-05-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要参考博客： <a href="http://blog.csdn.net/androidsecurity/article/details/8809542" target="_blank" rel="noopener">Android APK加壳技术方案【2】</a> <a href="http://taoyuanxiaoqi.com/2015/01/12/apkshell1/" target="_blank" rel="noopener">APK加壳【1】初步方案实现详解</a> 由于之前没有接触过安卓编程，所以即便有两篇这么详细的教程，但是还是走了不少弯路，都折腾了大概一个星期左右。而且两个博主都没有放出demo，所以就想回顾一下这个学习的过程，并给出一个Demo。</p>
+<h3 id="1-配置环境"><a href="#1-配置环境" class="headerlink" title="1.配置环境"></a>1.配置环境</h3><p>本文的编译环境如下： Android Studio 1.2.1.1 JDK 1.7.0_79 SDK NDK Android Studio都出了这么久了，应该都没有什么bug了；JDK网上的人都说不要选择java8，用java7就够了；然后SDK是必须的，NDK是用来编译底层c/c++的共享库的。 建议大家把上面两个博主的前后几篇文章都看一下，因为原理和实现都已经描述的很清楚了。 现在说一下自己的程序，文中有两个应用，一个是com.droider.crackme0201程序，是作为被加壳的应用。还有一个是com.droider.dexunshell程序，是作为动态解壳的应用。原理是运行时先加载dexunshell程序，然后通过dexunshell程序动态加载crackme0201程序，通过建立一系列的反射，使crackme0201正常运行。 先说一下自己走过的坑，这里两个程序编译的build-tool要一致，就是app文件夹里的build.gradle（project里面有两个build.gradle，一个在app文件夹里面，一个在app文件夹的那一层目录下。）。确保compile编译工具一致，我是第一个程序crackme0201建立后，还升级了SDK，导致建立dexunshell程序时的编译工具变了，自己给自己挖坑。</p>
+<h3 id="2-应用加壳"><a href="#2-应用加壳" class="headerlink" title="2.应用加壳"></a>2.应用加壳</h3><p>先说一下加壳的程序，假如两个程序都编译完成后，要把crackme0201的apk放到dexunshell应用的dex程序里面，由于修改dex文件，也要修改dex_header的checksum、signature等信息。这个加壳程序可以用其他语言编写，文章的示例是用java写的。 建立一个DexShellTool.java的文件，填入一下代码。</p>
+<p>import java.io.ByteArrayOutputStream;<br>import java.io.File;<br>import java.io.FileInputStream;<br>import java.io.FileOutputStream;<br>import java.io.IOException;<br>import java.security.MessageDigest;<br>import java.security.NoSuchAlgorithmException;<br>import java.util.zip.Adler32;</p>
+<p>public class DexShellTool {<br>    /**<br>     * @param args<br>     */<br>    public static void main(String[] args) {<br>        // TODO Auto-generated method stub<br>        try {<br>            File payloadSrcFile = new File(“I:/payload.apk”);<br>            File unShellDexFile = new File(“I:/unshell.dex”);<br>            byte[] payloadArray = encrpt(readFileBytes(payloadSrcFile));<br>            byte[] unShellDexArray = readFileBytes(unShellDexFile);<br>            int payloadLen = payloadArray.length;<br>            int unShellDexLen = unShellDexArray.length;<br>            int totalLen = payloadLen + unShellDexLen +4;<br>            byte[] newdex = new byte[totalLen];<br>            //添加解壳代码<br>            System.arraycopy(unShellDexArray, 0, newdex, 0, unShellDexLen);<br>            //添加加密后的解壳数据<br>            System.arraycopy(payloadArray, 0, newdex, unShellDexLen,<br>                    payloadLen);<br>            //添加解壳数据长度<br>            System.arraycopy(intToByte(payloadLen), 0, newdex, totalLen-4, 4);<br>            //修改DEX file size文件头<br>            fixFileSizeHeader(newdex);<br>            //修改DEX SHA1 文件头<br>            fixSHA1Header(newdex);<br>            //修改DEX CheckSum文件头<br>            fixCheckSumHeader(newdex);<br>            String str = “I:/classes.dex”;<br>            File file = new File(str);<br>            if (!file.exists()) {<br>                file.createNewFile();<br>            }<br>            FileOutputStream localFileOutputStream = new FileOutputStream(str);<br>            localFileOutputStream.write(newdex);<br>            localFileOutputStream.flush();<br>            localFileOutputStream.close();<br>        } catch (Exception e) {<br>            // TODO Auto-generated catch block<br>            e.printStackTrace();<br>        }<br>    }</p>
+<pre><code>//直接返回数据，读者可以添加自己加密方法
+private static byte\[\] encrpt(byte\[\] srcdata){
+    return srcdata;
+}
+
+private static void fixCheckSumHeader(byte\[\] dexBytes) {
+    Adler32 adler = new Adler32();
+    adler.update(dexBytes, 12, dexBytes.length - 12);
+    long value = adler.getValue();
+    int va = (int) value;
+    byte\[\] newcs = intToByte(va);
+    byte\[\] recs = new byte\[4\];
+    for (int i = 0; i &lt; 4; i++) {
+        recs\[i\] = newcs\[newcs.length - 1 - i\];
+        System.out.println(Integer.toHexString(newcs\[i\]));
+    }
+    System.arraycopy(recs, 0, dexBytes, 8, 4);
+    System.out.println(Long.toHexString(value));
+    System.out.println();
+}
+
+public static byte\[\] intToByte(int number) {
+    byte\[\] b = new byte\[4\];
+    for (int i = 3; i &gt;= 0; i--) {
+        b\[i\] = (byte) (number % 256);
+        number &gt;&gt;= 8;
+    }
+    return b;
+}
+
+private static void fixSHA1Header(byte\[\] dexBytes)
+        throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance(&quot;SHA-1&quot;);
+    md.update(dexBytes, 32, dexBytes.length - 32);
+    byte\[\] newdt = md.digest();
+    System.arraycopy(newdt, 0, dexBytes, 12, 20);
+    String hexstr = &quot;&quot;;
+    for (int i = 0; i &lt; newdt.length; i++) {
+        hexstr += Integer.toString((newdt\[i\] &amp; 0xff) + 0x100, 16)
+                .substring(1);
+    }
+    System.out.println(hexstr);
+}
+
+private static void fixFileSizeHeader(byte\[\] dexBytes) {
+    byte\[\] newfs = intToByte(dexBytes.length);
+    System.out.println(Integer.toHexString(dexBytes.length));
+    byte\[\] refs = new byte\[4\];
+    for (int i = 0; i &lt; 4; i++) {
+        refs\[i\] = newfs\[newfs.length - 1 - i\];
+        System.out.println(Integer.toHexString(newfs\[i\]));
+    }
+    System.arraycopy(refs, 0, dexBytes, 32, 4);
+}
+
+private static byte\[\] readFileBytes(File file) throws IOException {
+    byte\[\] arrayOfByte = new byte\[1024\];
+    ByteArrayOutputStream localByteArrayOutputStream = new ByteArrayOutputStream();
+    FileInputStream fis = new FileInputStream(file);
+    while (true) {
+        int i = fis.read(arrayOfByte);
+        if (i != -1) {
+            localByteArrayOutputStream.write(arrayOfByte, 0, i);
+        } else {
+            return localByteArrayOutputStream.toByteArray();
+        }
+    }
+}
+</code></pre><p>}</p>
+<p>通过javac DexshellTool.java命令编译，通过java DexshellTool运行。代码中的payload.apk为crackme0201改程序的apk，unshell.dex为dexunshell程序的DEX文件，生成的classes.dex为拼接后的DEX文件。</p>
+<h3 id="2-被加壳应用"><a href="#2-被加壳应用" class="headerlink" title="2.被加壳应用"></a>2.被加壳应用</h3><p>本文给出的Demo只是project里app文件夹的压缩包，由于使用了ndk编译共享库，为了编译成功，需要在local.properties里加入ndk.dir的路径。 crackme0201的manifests如下</p>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.droider.crackme0201"><br>    <application android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme"><br>        <activity android:name=".MainActivity" android:label="@string/title\_activity\_main"><br>            <intent-filter><br>                <action android:name="android.intent.action.MAIN"><br>                <category android:name="android.intent.category.LAUNCHER"><br>            </category></action></intent-filter><br>        </activity><br>    </application><br></manifest>
+
+<p>crackme0201的build.gradle如下，其实build.gradle指明了编译的sdk版本，编译的buildtool版本，还有支持的最低sdk版本，其实csdn的博主的编译环境是2.3，如果用4.0以上的sdk版本编译会出现一些小问题，说某些结构体不存在，用Build.VERSION.SDK_INT判断一下就好了。</p>
+<p>apply plugin: ‘com.android.application’</p>
+<p>android {<br>    compileSdkVersion 22<br>    buildToolsVersion “22.0.1”</p>
+<pre><code>defaultConfig {
+    applicationId &quot;com.droider.crackme0201&quot;
+    minSdkVersion 9
+    targetSdkVersion 22
+    versionCode 1
+    versionName &quot;1.0&quot;
+
+    ndk {
+        moduleName &quot;helloNDK&quot;
+        abiFilters &quot;armeabi-v7a&quot;
+    }
+}
+buildTypes {
+    release {
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;
+    }
+}
+</code></pre><p>}</p>
+<p>dependencies {<br>    compile fileTree(dir: ‘libs’, include: [‘*.jar’])<br>    compile ‘com.android.support:appcompat-v7:22.1.1’<br>}</p>
+<p>crackme0201程序app文件夹的代码包<a href="http://www.mak-blog.com/download/android/crackme0201.zip" title="crackme0201.zip">链接</a>。</p>
+<h3 id="4-解壳应用"><a href="#4-解壳应用" class="headerlink" title="4.解壳应用"></a>4.解壳应用</h3><p>其实参考的csdn的博主已经说得挺清楚的，就是加一个APPLICATION_CLASS_NAME，然后后面value就是payload应用的application的classname。但是我之前不太理解替换的流程，而且我的crackme0201程序没有继承application。导致manifests的正确写法折腾了很久，后来发现如果没有classname就写默认的android.app.Application。然后后面要添加一个activity，因为没有activity就不能打开程序。正确的写法如下： 而且还有一点就是，dexunshell程序的res文件要跟crackme0201的保持一致，要不编译出来后，dexunshell替换成crackme0201程序后，crackme0201会提示找不到资源。</p>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.droider.crackme0201"><br>    <application android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme" android:name="com.droider.dexunshell.ProxyApplication"><br>        <meta-data android:name="APPLICATION\_CLASS\_NAME" android:value="android.app.Application"><br>        <activity android:name=".MainActivity" android:label="@string/app_name"><br>            <intent-filter><br>                <action android:name="android.intent.action.MAIN"><br>                <category android:name="android.intent.category.LAUNCHER"><br>            </category></action></intent-filter><br>        </activity><br>    </meta-data></application><br></manifest>
+
+<p>其他文件的编写可以参考csdn的博主的，这里就不重复了。有两个地方使用KITKAT版本的SDK是编译不过的，需要加下如下判断：</p>
+<pre><code>@TargetApi(Build.VERSION_CODES.KITKAT)
+protected void attachBaseContext(Context base) {
+……
+        if(Build.VERSION.SDK\_INT &gt;= Build.VERSION\_CODES.KITKAT){
+            // 使用KITKAT的API
+            ArrayMap mPackages = (ArrayMap) RefInvoke.getFieldOjbect(
+                    &quot;android.app.ActivityThread&quot;, currentActivityThread,
+                    &quot;mPackages&quot;);
+            wr = (WeakReference) mPackages.get(packageName);
+        } else {
+            // 使用低版本的API
+            HashMap mPackages = (HashMap) RefInvoke.getFieldOjbect(
+                    &quot;android.app.ActivityThread&quot;, currentActivityThread,
+                    &quot;mPackages&quot;);
+            wr = (WeakReference) mPackages.get(packageName);
+        }
+</code></pre><p>dexunshell程序app文件夹的代码包<a href="http://www.mak-blog.com/download/android/dexunshell.zip" title="dexunshell.zip">链接</a>。 当编译的时候，会提示Default Activity not found，这是完全正常的，因为当前的程序并没有activity，被加壳的程序才有，所以可以忽视这个error去编译。完成dexunshell编译后，编译好的apk是无法运行的，需要把里面的dex抽取出来，使用DexShellTool把payload.apk加载到DEX文件后面，然后把生成的DEX文件放回apk中，并重新生成签名，最后安装调试。</p>
+<h3 id="5-最后"><a href="#5-最后" class="headerlink" title="5.最后"></a>5.最后</h3><p>我这个编写的加壳程序，在装有百度卫士的手机上，会被识别为恶意应用，毕竟有一个加壳的过程，这个也正常。在电脑上也会被一些例如ESET NOD32的杀毒原件查杀，如果发现刚打包好，就被杀毒软件删除，可以试一下暂时关闭杀毒软件。 可能有人留意到解壳应用的manifest文件中package为com.droider.crackme0201，其实也可以写成com.droider.dexunshell，不过如果写成后者，activity的name就要写成com.droider.crackme0201.MainActivity。因为如果写成.MainActivity，默认会加载package名字的.MainActivity，这样就会导致出错。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/加壳/" rel="tag"># 加壳</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/football-at-scut.html" rel="next" title="足球记忆">
+                <i class="fa fa-chevron-left"></i> 足球记忆
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/android-apk-shell-part2.html" rel="prev" title="Android APK加壳技术的研究-内存动态加载">
+                Android APK加壳技术的研究-内存动态加载 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Songtao Mai</p>
+              <div class="site-description motion-element" itemprop="description">记录，分享，交流的空间</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">176</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-配置环境"><span class="nav-number">1.</span> <span class="nav-text">1.配置环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-应用加壳"><span class="nav-number">2.</span> <span class="nav-text">2.应用加壳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-被加壳应用"><span class="nav-number">3.</span> <span class="nav-text">2.被加壳应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-解壳应用"><span class="nav-number">4.</span> <span class="nav-text">4.解壳应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-最后"><span class="nav-number">5.</span> <span class="nav-text">5.最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2008 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Songtao Mai</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans,default">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了 0.准备环境0.1 设置用户名 我这里设成master 0.2 配置hosts文档 vi /etc/hosts 10.211.50.">
+<meta name="keywords" content="spark,YARN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark on YARN部署文档">
+<meta property="og:url" content="http://www.mak-blog.com/spark-on-yarn-setup.html">
+<meta property="og:site_name" content="Songtao Mai">
+<meta property="og:description" content="环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了 0.准备环境0.1 设置用户名 我这里设成master 0.2 配置hosts文档 vi /etc/hosts 10.211.50.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-07T09:56:37.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark on YARN部署文档">
+<meta name="twitter:description" content="环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了 0.准备环境0.1 设置用户名 我这里设成master 0.2 配置hosts文档 vi /etc/hosts 10.211.50.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://www.mak-blog.com/spark-on-yarn-setup">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spark on YARN部署文档 | Songtao Mai</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Songtao Mai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.mak-blog.com/spark-on-yarn-setup.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Songtao Mai">
+      <meta itemprop="description" content="记录，分享，交流的空间">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Songtao Mai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spark on YARN部署文档
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2014-09-11 00:37:27" itemprop="dateCreated datePublished" datetime="2014-09-11T00:37:27+08:00">2014-09-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-05-07 17:56:37" itemprop="dateModified" datetime="2019-05-07T17:56:37+08:00">2019-05-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/科研/" itemprop="url" rel="index"><span itemprop="name">科研</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了</p>
+<h3 id="0-准备环境"><a href="#0-准备环境" class="headerlink" title="0.准备环境"></a>0.准备环境</h3><p>0.1 设置用户名 我这里设成master 0.2 配置hosts文档 vi /etc/hosts</p>
+<p>10.211.50.44 master</p>
+<p>配置之后ping一下用户名看是否生效</p>
+<p>ping master</p>
+<p>0.3 关闭防火墙</p>
+<p>sudo ufw disable</p>
+<p>0.4 安装JAVA 提示：最好建一个目录，把需要用到的东西都装在这一个目录里面，这样比较方便，我用的是/usr/java，从官网下载最新版JAVA就可以，Spark官方说明JAVA只要是6以上的版本都可以，我下的是jdk-7u67-linux-x64.gz 在/usr/java这目录下直接解压</p>
+<p>tar xvzf jdk-7u67-linux-x64.gz</p>
+<p>修改环境变量 vi /etc/profile</p>
+<p>export JAVA_HOME=/usr/java/jdk1.7.0_67<br>export JRE_HOME=/usr/java/jdk1.7.0_67/jre<br>export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH<br>export CLASSPATH=$CLASSPATH:.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib</p>
+<p>使环境变量生效</p>
+<p>source /etc/profile</p>
+<p>验证一下JAVA是否成功安装</p>
+<p>java -version</p>
+<p>如果打印出版本信息，说明安装成功 0.5 安装配置Scala Spark官方说明Scala要求为2.10.x版本，注意不要下错版本，我这里下了2.10.3 同样放在/usr/java目录下然后解压</p>
+<p>tar xvzf scala-2.10.3.tgz</p>
+<p>修改环境变量 vi /etc/profile 添加下列内容：</p>
+<p>export SCALA_HOME=/usr/java/scala-2.10.3<br>export PATH=$PATH:$SCALA_HOME/bin</p>
+<p>使环境变量生效</p>
+<p>source /etc/profile</p>
+<p>验证Scala是否安装成功</p>
+<p>scala -version</p>
+<p>如果打印出来版本信息，说明安装成功 0.6 配置SSH无密码通信 安装Openssh server</p>
+<p>apt-get install openssh-server<br>ssh-keygen -t rsa （然后一直按回车）</p>
+<p>注意提示的密钥所在的目录，然后切换到那个目录里面</p>
+<p>cat .ssh/id_rsa.pub &gt;&gt; .ssh/authorized_keys</p>
+<p>验证SSH无密码通信</p>
+<p>ssh localhost</p>
+<h3 id="1-hadoop-YARN安装"><a href="#1-hadoop-YARN安装" class="headerlink" title="1.hadoop YARN安装"></a>1.hadoop YARN安装</h3><p>1.1 安装hadoop 从官网下载hadoop2.2.0版本 解压</p>
+<p>tar xvzf hadoop-2.2.0.tar.gz</p>
+<p>解压之后会在/usr/java目录下看到hadoop的文档：hadoop-2.2.0 1.2 配置hadoop 在hadoop-2.2.0/etc/hadoop/hadoop-env.sh中，添加JAVA安装目录</p>
+<p>export JAVA_HOME=/usr/java/jdk1.7.0_67</p>
+<p>在hadoop-2.2.0/etc/hadoop下，将mapred-site.xml.templat重命名成mapred-site.xml，并添加以下内容：</p>
+<configuration><br><property><br><name>mapreduce.framework.name</name><br><value>yarn</value><br></property><br></configuration>
+
+<p>在hadoop-2.2.0/etc/hadoop/中，修改core-site.xml</p>
+<configuration><br><property><br><name>fs.default.name</name><br><value>hdfs://master:8020</value><br><final>true</final><br></property><br></configuration>
+
+<p>在hadoop-2.2.0/etc/hadoop/中，修改yarn-site.xml：</p>
+<configuration><br><property><br><name>yarn.nodemanager.aux-services</name><br><value>mapreduce_shuffle</value><br></property><br><property><br><name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name><br><value>org.apache.hadoop.mapred.ShuffleHandler</value><br></property><br></configuration>
+
+<p>注：之前从网上看到的配置文档都是mapreduce.shuffle，然后起yarn的时候yarn就一直没起起来，运行jps命令，可以看到yarn起起来，而且有进程号，但是其实已经挂了，去看log文档发现有错，具体错误忘记截图留念了 修改hdfs-site.xml</p>
+<configuration><br><property><br><name>dfs.namenode.name.dir</name><br><value>/mnt/disk1/yarn/dfs/name</value><br></property><br><property><br><name>dfs.datanode.data.dir</name><br><value>/mnt/disk1/yarn/dfs/data</value><br></property><br><property><br><name>dfs.replication</name><br><value>1</value><br></property><br><property><br><name>dfs.permissions</name><br><value>false</value><br></property><br></configuration>
+
+<p>在slaves文件中添加你的节点ip或者host：</p>
+<p>master</p>
+<p>修改bashrc文件 vi /root/.bashrc 添加以下内容：</p>
+<p>export HADOOP_COMMON_LIB_NATIVE_DIR=/usr/java/hadoop-2.2.0/lib/native<br>export HADOOP_OPTS=”-Djava.library.path=/usr/java/hadoop-2.2.0/lib”</p>
+<p>1.3 验证hadoop是否安装成功 启动HDFS 进入hadoop所在目录</p>
+<p>sbin/ start-dfs.sh</p>
+<p>启动YARN</p>
+<p>sbin/start-yarn.sh</p>
+<p>打开浏览器，输入<a href="http://master:8088" target="_blank" rel="noopener">http://master:8088</a> 1.4 在YARN下尝试运行MapReduce例子程序 搭好hadoop之后，想尝试跑一下例子程序，发现遇到8020端口连接失败错误 网上各种方法都尝试了，包括更改core_site.xml里面的端口为8020，检查防火墙，网络配置都没有问题 后来一个一个log看，发现是/mnt/disk1/yarn/dfs/name 文件有问题 把hdfs格式化久可以了</p>
+<p>bin/hadoop namenode -format</p>
+<p>运行pi例子程序</p>
+<p>bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.2.0.jar pi 20 10</p>
+<p>命令里的20 10分别指20个map10个reduce</p>
+<h3 id="2-Spark安装"><a href="#2-Spark安装" class="headerlink" title="2.Spark安装"></a>2.Spark安装</h3><p>2.1 安装Spark 从官网下载最新版Spark 我下的是spark-1.0.2-bin-hadoop2.tgz 解压 2.2 配置Spark vi con/spark-env.sh 添加一下内容</p>
+<p>export SPARK_LOCAL_IP=master<br>export SCALA_HOME=/usr/java/scala-2.10.3<br>export JAVA_HOME=/usr/java/jdk1.7.0_67<br>export HADOOP_HOME=/usr/java/hadoop-2.2.0<br>export SPARK_LOCAL_DIR=/usr/java/spark-1.0.2-bin-hadoop2<br>export SPARK_JAVA_OPTS=”-Dspark.storage.blockManagerHeartBeatMs=60000 -Dspark.local.dir=$SPARK_LOCAL_DIR -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:$SPARK_HOME/logs/gc.log -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=60”<br>export SPARK_MASTER_IP=master<br>export SPARK_MASTER_PORT=7077<br>export SPARK_WORKER_CORES=1<br>export SPARK_WORKER_MEMORY=2g<br>export SPARK_WORKER_PORT=9090<br>export SPARK_WORKER_WEBUI_PORT=9099</p>
+<p>在slave文件下填上slave主机名：</p>
+<p>master</p>
+<p>2.3 启动Spark</p>
+<p>sbin/start-all.sh</p>
+<p>2.4 验证Spark 输入命令jps，可以看到打出的JVM程序</p>
+<p>8566 SecondaryNameNode<br>8955 NodeManager<br>8082 NameNode<br>17022 Jps<br>8733 ResourceManager<br>8296 DataNode</p>
+<p>进入Spark的Web管理页面：</p>
+<p>master:8080</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spark/" rel="tag"># spark</a>
+          
+            <a href="/tags/YARN/" rel="tag"># YARN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/sfbuy-adidas-red-shoe.html" rel="next" title="SFBuy顺丰海淘adidas红色休闲鞋">
+                <i class="fa fa-chevron-left"></i> SFBuy顺丰海淘adidas红色休闲鞋
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/muji-japan-jshoppers.html" rel="prev" title="日本海淘无印良品cd挂机">
+                日本海淘无印良品cd挂机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Songtao Mai</p>
+              <div class="site-description motion-element" itemprop="description">记录，分享，交流的空间</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">176</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-准备环境"><span class="nav-number">1.</span> <span class="nav-text">0.准备环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-hadoop-YARN安装"><span class="nav-number">2.</span> <span class="nav-text">1.hadoop YARN安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Spark安装"><span class="nav-number">3.</span> <span class="nav-text">2.Spark安装</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2008 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Songtao Mai</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

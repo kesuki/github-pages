@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.mak-blog.com/electronic-device.html</loc>
+    
+    <lastmod>2020-02-20T16:08:00.215Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.mak-blog.com/football-at-scut.html</loc>
+    
+    <lastmod>2020-02-20T16:06:50.290Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.mak-blog.com/configuring-ps4-to-use-my-own-proxy-server.html</loc>
+    
+    <lastmod>2020-02-20T14:30:58.283Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.mak-blog.com/ubuntu-server-multi-node-havana-ovs-gre.html</loc>
     
     <lastmod>2020-02-20T14:26:18.847Z</lastmod>
@@ -285,13 +306,6 @@
     <loc>http://www.mak-blog.com/csharp-string-to-datetime.html</loc>
     
     <lastmod>2020-02-20T12:31:01.635Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.mak-blog.com/configuring-ps4-to-use-my-own-proxy-server.html</loc>
-    
-    <lastmod>2020-02-20T12:30:07.259Z</lastmod>
     
   </url>
   
@@ -716,13 +730,6 @@
   </url>
   
   <url>
-    <loc>http://www.mak-blog.com/football-at-scut.html</loc>
-    
-    <lastmod>2020-02-20T06:07:57.510Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://www.mak-blog.com/0-and-1.html</loc>
     
     <lastmod>2020-02-19T13:35:51.066Z</lastmod>
@@ -768,13 +775,6 @@
     <loc>http://www.mak-blog.com/tags/index.html</loc>
     
     <lastmod>2019-05-07T09:22:29.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.mak-blog.com/short-term-goal.html</loc>
-    
-    <lastmod>2019-05-07T06:35:10.000Z</lastmod>
     
   </url>
   
@@ -892,6 +892,13 @@
   
   <url>
     <loc>http://www.mak-blog.com/just-record.html</loc>
+    
+    <lastmod>2019-05-07T06:35:10.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.mak-blog.com/short-term-goal.html</loc>
     
     <lastmod>2019-05-07T06:35:10.000Z</lastmod>
     

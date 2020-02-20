@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="觉得路由不支持ipv6不爽，而且固件不能自己定制，就想着折腾一下openwrt，一来可以在宿舍用路由上ipv6，下载六维资源，二来路由固件学着可能以后有用，反正也是linux下编译源码，自己并不陌生。开始入手路由，要求只是能刷openwrt，支持ipv6，就在淘宝找了一个MW150R，店主帮改8M闪存，64M内存。快递给力，半天到手">
 <meta property="article:published_time" content="2012-02-25T16:53:46.000Z">
-<meta property="article:modified_time" content="2020-02-20T08:52:45.892Z">
+<meta property="article:modified_time" content="2020-02-20T13:18:03.786Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="openwrt">
 <meta property="article:tag" content="路由">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 16:52:45" itemprop="dateModified" datetime="2020-02-20T16:52:45+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:18:03" itemprop="dateModified" datetime="2020-02-20T21:18:03+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -204,7 +204,7 @@
         <p>觉得路由不支持ipv6不爽，而且固件不能自己定制，就想着折腾一下openwrt，一来可以在宿舍用路由上ipv6，下载六维资源，二来路由固件学着可能以后有用，反正也是linux下编译源码，自己并不陌生。<br>开始入手路由，要求只是能刷openwrt，支持ipv6，就在淘宝找了一个MW150R，店主帮改8M闪存，64M内存。快递给力，半天到手</p>
 <a id="more"></a>
 
-<p>拿到路由，淘宝店主的教导加上以前嵌入式的基础，可以大概明白流程，先启动u-boot，u-boot应该存放在nor-flash中，一般不能刷，然后引导固件，固件存放在闪存中，可能叫nand-flash，掉电保存。运行时会从闪存复制固件到64M内存中运行。<br>在公司编译过一次openwrt的稳定版Backfire 10.03，把该下的包都下了，全保存在dl的子目录下，然后全部拷回宿舍，子选定两个基本选项，ar71xx和Tp-link 741ND，其实在公司target是选WPJ543，而不是Tp-link 741ND，不过下载的包都是那些，其实就是gcc的编译环境的建立，全部都扔到makefile去，已经编译好了。宿舍的半小时编译完成，公司耗时5,6个小时。<br>准备实战，因为怕变砖，所以就先找后路，变砖如何解决，原来用ttl串口可以直接写进去，所以就问店家ttl接线在哪里？他说没有，焊盘很小，不好焊，但是我坚持自己焊，结果是焊盘脱落，没得救。 只能厚着脸皮问店家怎么刷才会不变砖，他说target设为740N V5，我说没找到，他说只在trunk那里有，悲剧鸟。<br>明天再折腾。</p>
+<p>拿到路由，淘宝店主的教导加上以前嵌入式的基础，可以大概明白流程，先启动u-boot，u-boot应该存放在nor-flash中，一般不能刷，然后引导固件，固件存放在闪存中，可能叫nand-flash，掉电保存。运行时会从闪存复制固件到64M内存中运行。<br>在公司编译过一次openwrt的稳定版Backfire 10.03，把该下的包都下了，全保存在dl的子目录下，然后全部拷回宿舍，子选定两个基本选项，ar71xx和Tp-link 741ND，其实在公司target是选WPJ543，而不是Tp-link 741ND，不过下载的包都是那些，其实就是gcc的编译环境的建立，全部都扔到makefile去，已经编译好了。宿舍的半小时编译完成，公司耗时5,6个小时。<br>准备实战，因为怕变砖，所以就先找后路，变砖如何解决，原来用ttl串口可以直接写进去，所以就问店家ttl接线在哪里？他说没有，焊盘很小，不好焊，但是我坚持自己焊，结果是焊盘脱落，没得救。<br>只能厚着脸皮问店家怎么刷才会不变砖，他说target设为740N V5，我说没找到，他说只在trunk那里有，悲剧鸟。<br>明天再折腾。</p>
 
     </div>
 
@@ -303,7 +303,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -313,7 +313,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="吐槽:因为一直都习惯retweet一些好黄好暴力的推，又不想手动同步到新浪，就折腾了一个下午，想用别人基于python实现的wet，苦于真正开发过，首先在gae那里上传，怎知道一句不支持os.makedirs就把我弄到无语了，然后再折腾sae，申请了一个内测python账号，不过又返回500错误，应该也是由于gae同样的问题。几个小时就过去了，心想自己已经基于php用sina的openapi发过微">
 <meta property="article:published_time" content="2012-02-04T15:28:22.000Z">
-<meta property="article:modified_time" content="2020-02-20T08:56:20.558Z">
+<meta property="article:modified_time" content="2020-02-20T13:21:09.266Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="twitter">
 <meta property="article:tag" content="php">
@@ -178,7 +178,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 16:56:20" itemprop="dateModified" datetime="2020-02-20T16:56:20+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:21:09" itemprop="dateModified" datetime="2020-02-20T21:21:09+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -206,9 +206,9 @@
         <p>吐槽:因为一直都习惯retweet一些好黄好暴力的推，又不想手动同步到新浪，就折腾了一个下午，想用别人基于python实现的wet，苦于真正开发过，首先在gae那里上传，怎知道一句不支持os.makedirs就把我弄到无语了，然后再折腾sae，申请了一个内测python账号，不过又返回500错误，应该也是由于gae同样的问题。几个小时就过去了，心想自己已经基于php用sina的openapi发过微博，再弄一个php定时获取twitter内容就行了，然后就决定还是自己写好了。</p>
 <a id="more"></a>
 
-<p>第一步：获取tweet 有两种方法，第一种是用官方的<code>http://twitter.com/statuses/user/timeline/用户名.rss</code>源，然后用php编程获取想同步的内容。这种方法需要墙外的服务器，而且获取的信息量比较少；所以我才用了第二种方法，使用自己的API来获取，例如格式为http://你的API地址/statuses/user_timeline.json?since_id=155030004701405184。这代表着获取id为155030004701405184之后你的tweet，而且格式为json。我的思路是记录tweet的id，因为不想用SQL来保存一个数字，就用一个TXT文本保存，每抓取一次就打开一次文本获取tweet的id，如果有新的tweet，就比较id大小，进而记录较大的到TXT文本中。<br>第二步：发送到新浪微博 因为新浪微博的API要审核，随便弄个发微博的页面先通过审核，主要是要它的APP KEY和APP SECRECT。新浪有php开发的sdk，尽量使用OAUTH1.0的，这样授权出来的OAUTH的码不会变，使用OAUTH2.0的话，授权的OAUTH有时间的限制，时间久了可能要再授权。先进行一次授权，include它的weibooauth.php，把OAUTH_TOKEN和OAUTH_TOKEN_SECRET都echo出来并记录。就凭APP KEY和APP SECRECT和OAUTH_TOKEN和OAUTH_TOKEN_SECRET就可以发微博啦。例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">id;</span><br><span class="line">	if($new\_id &gt; $old\_id) &#123;</span><br><span class="line">		$old\_id &#x3D; $new\_id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	$nonono&#x3D;$item -&gt; text;</span><br><span class="line">	</span><br><span class="line">	$result &#x3D; $c-&gt;update( $nonono );</span><br><span class="line">	if($result\[&#39;id&#39;\]) &#123;</span><br><span class="line">		$fp&#x3D;fopen(&quot;id.txt&quot;,&#39;w&#39;);</span><br><span class="line">		fwrite($fp,$old_id);</span><br><span class="line">		fclose($fp);</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	endforeach;</span><br><span class="line">	endif;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这前两步解决了同步的问题。<br>第三部：定时检测。 有很多方法，如果你是外国的linux主机主机，而且还是cPanel面板的话，就会有一个cron job来执行定时任务。添加任务： * * * * * php /home/<strong>*.</strong>/public_html/<strong>*.</strong>/weibo/sync.php 在网上查了很多方法，有些是填php的完整路径，并不是php，而后面的一定要是最绝对路径。填错了php路径可能显示/bin/sh: /usr/lib/php: is a directory登提示。 第二个就是运行的文件一定要修改他的权限为777，要不会提示Permission denied。 很多东西没有细说，折腾一下还是可以滴。</p>
+<p>第一步：获取tweet<br>有两种方法，第一种是用官方的<code>http://twitter.com/statuses/user/timeline/用户名.rss</code>源，然后用php编程获取想同步的内容。这种方法需要墙外的服务器，而且获取的信息量比较少；所以我才用了第二种方法，使用自己的API来获取，例如格式为<code>http://你的API地址/statuses/user\_timeline.json?since\_id=155030004701405184</code>。这代表着获取id为155030004701405184之后你的tweet，而且格式为json。我的思路是记录tweet的id，因为不想用SQL来保存一个数字，就用一个TXT文本保存，每抓取一次就打开一次文本获取tweet的id，如果有新的tweet，就比较id大小，进而记录较大的到TXT文本中。<br>第二步：发送到新浪微博<br>因为新浪微博的API要审核，随便弄个发微博的页面先通过审核，主要是要它的APP KEY和APP SECRECT。新浪有php开发的sdk，尽量使用OAUTH1.0的，这样授权出来的OAUTH的码不会变，使用OAUTH2.0的话，授权的OAUTH有时间的限制，时间久了可能要再授权。先进行一次授权，include它的weibooauth.php，把OAUTH_TOKEN和OAUTH_TOKEN_SECRET都echo出来并记录。就凭APP KEY和APP SECRECT和OAUTH_TOKEN和OAUTH_TOKEN_SECRET就可以发微博啦。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">id;</span><br><span class="line">	if($new_id &gt; $old_id) &#123;</span><br><span class="line">		$old_id &#x3D; $new_id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	$nonono&#x3D;$item -&gt; text;</span><br><span class="line"></span><br><span class="line">	$result &#x3D; $c-&gt;update( $nonono );</span><br><span class="line">	if($result[&#39;id&#39;]) &#123;</span><br><span class="line">		$fp&#x3D;fopen(&quot;id.txt&quot;,&#39;w&#39;);</span><br><span class="line">		fwrite($fp,$old_id);</span><br><span class="line">		fclose($fp);</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	endforeach;</span><br><span class="line">	endif;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>这前两步解决了同步的问题。<br>第三部：定时检测。<br>有很多方法，如果你是外国的linux主机主机，而且还是cPanel面板的话，就会有一个cron job来执行定时任务。添加任务：<br><code>* * * * * php /home/***.**/public_html/***.**/weibo/sync.php</code><br>在网上查了很多方法，有些是填php的完整路径，并不是php，而后面的一定要是最绝对路径。填错了php路径可能显示/bin/sh: /usr/lib/php: is a directory登提示。<br>第二个就是运行的文件一定要修改他的权限为777，要不会提示Permission denied。<br>很多东西没有细说，折腾一下还是可以滴。</p>
 
     </div>
 
@@ -309,7 +309,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -319,7 +319,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="网上找的方法，主要是记录一下，自己容易找回。  把安装ubuntu目录下winboot文件夹里的wubidr和wubidr.mbr两个文件拷到C盘根目录下。  打开cmd命令界面输入：bcdedit &#x2F;create &#x2F;d &quot;Ubuntu&quot; &#x2F;application bootsector &#x2F;&#x2F;目的是建立一个Ubuntu的选项。然后在命令界面上会返回名字项的ID并显示成功创建，例如">
 <meta property="article:published_time" content="2011-02-20T15:09:31.000Z">
-<meta property="article:modified_time" content="2020-02-20T09:07:11.060Z">
+<meta property="article:modified_time" content="2020-02-20T13:26:38.844Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="ubuntu">
 <meta property="article:tag" content="恢复">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:07:11" itemprop="dateModified" datetime="2020-02-20T17:07:11+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:26:38" itemprop="dateModified" datetime="2020-02-20T21:26:38+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +209,7 @@
 <a id="more"></a>
 </li>
 <li><p>再输入下列命令 //注意：自己替换下面{}中的id为第2步得到的id</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bcdedit &#x2F;set &#123;id&#125; device partition&#x3D;c:             </span><br><span class="line">bcdedit &#x2F;set &#123;id&#125; path \\wubildr.mbr</span><br><span class="line">bcdedit &#x2F;set &#123;id&#125; description &quot;Ubuntu&quot;</span><br><span class="line">bcdedit &#x2F;displayorder &#123;id&#125; &#x2F;addlast</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bcdedit &#x2F;set &#123;id&#125; device partition&#x3D;c:             </span><br><span class="line">bcdedit &#x2F;set &#123;id&#125; path \wubildr.mbr</span><br><span class="line">bcdedit &#x2F;set &#123;id&#125; description &quot;Ubuntu&quot;</span><br><span class="line">bcdedit &#x2F;displayorder &#123;id&#125; &#x2F;addlast</span><br></pre></td></tr></table></figure>
 <p>收工。</p>
 </li>
 </ol>
@@ -311,7 +311,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -321,7 +321,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

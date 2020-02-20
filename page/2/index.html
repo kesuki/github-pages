@@ -173,7 +173,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 15:47:06" itemprop="dateModified" datetime="2020-02-20T15:47:06+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 18:50:27" itemprop="dateModified" datetime="2020-02-20T18:50:27+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -198,7 +198,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>本文主要参考博客：<a href="https://mockingbot.com/blog/how-to-continue-using-google-analytics-after-its-blocked" target="_blank" rel="noopener">Google Analytics被墙后如何继续使用</a> 之前一直觉得Google Analytics不好使，因为google的域名都很多不能访问，然后以前用了一些方法，把js文件下载到自己的主机上，这样做治标不治本，因为js下载回来后，还是会访问一下<code>www.google-analytics.com</code>的，而这时候如果访问不到就会没法统计。 参考了一下别人文章的做法，通过国外主机来转发发往<code>www.google-analytics.com</code>的请求，这就可以解决这个问题。但是别人是用Nginx，我这里就只用到apache，所以今天就折腾一下，看怎么在apache上实现正向代理。</p>
+          <p>本文主要参考博客：</p>
+<blockquote>
+<p><a href="https://mockingbot.com/blog/how-to-continue-using-google-analytics-after-its-blocked" target="_blank" rel="noopener">Google Analytics被墙后如何继续使用</a></p>
+</blockquote>
+<p>之前一直觉得Google Analytics不好使，因为google的域名都很多不能访问，然后以前用了一些方法，把js文件下载到自己的主机上，这样做治标不治本，因为js下载回来后，还是会访问一下<code>www.google-analytics.com</code>的，而这时候如果访问不到就会没法统计。<br>参考了一下别人文章的做法，通过国外主机来转发发往<code>www.google-analytics.com</code>的请求，这就可以解决这个问题。但是别人是用Nginx，我这里就只用到apache，所以今天就折腾一下，看怎么在apache上实现正向代理。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/apache-proxy-google-analytics.html#more" rel="contents">
@@ -256,7 +260,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:55:08" itemprop="dateModified" datetime="2020-02-20T17:55:08+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 22:04:39" itemprop="dateModified" datetime="2020-02-20T22:04:39+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -281,7 +285,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat 下载内容： 都是从官网下载 Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gz Tomcat7:apache-tomcat-7.0.57.tar.gz Eclipse-Tomcat插件：tomcatPluginV33.zip jdk8:jdk-8u31-linux-x64.gz 注：一开始下载的是最新版的Tomcat8，后来发现Eclipse插件只支持到Tomcat7，所以建议下载之前关注一下插件的支持版本 Tomcat官网下载的时候有好多版本，下载core的就可以</p>
+          <p>环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat<br>下载内容：<br>都是从官网下载<br>Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gz<br>Tomcat7:apache-tomcat-7.0.57.tar.gz<br>Eclipse-Tomcat插件：tomcatPluginV33.zip<br>jdk8:jdk-8u31-linux-x64.gz<br>注：一开始下载的是最新版的Tomcat8，后来发现Eclipse插件只支持到Tomcat7，所以建议下载之前关注一下插件的支持版本<br>Tomcat官网下载的时候有好多版本，下载core的就可以</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/ubuntu1204-eclipse-tomcat-jdk.html#more" rel="contents">
@@ -339,7 +343,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:14:51" itemprop="dateModified" datetime="2020-02-20T17:14:51+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:34:35" itemprop="dateModified" datetime="2020-02-20T21:34:35+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -364,7 +368,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了</p>
+          <p>环境：Ubuntu 12.04 LTS Desktop 64bit<br>提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/spark-on-yarn-setup-multinode.html#more" rel="contents">
@@ -505,7 +509,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 16:51:28" itemprop="dateModified" datetime="2020-02-20T16:51:28+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:16:20" itemprop="dateModified" datetime="2020-02-20T21:16:20+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -588,7 +592,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:56:33" itemprop="dateModified" datetime="2020-02-20T17:56:33+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 22:07:09" itemprop="dateModified" datetime="2020-02-20T22:07:09+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -613,7 +617,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>本文主要参考博客：<a href="http://labs.chinamobile.com/mblog/854855_196159" target="_blank" rel="noopener">OpenStack虚拟机创建过程中镜像格式的的变化过程</a> 已有环境：OpenStack Icehouse 版本 Glance组件安装在Controller节点 Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找 以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化</p>
+          <p>本文主要参考博客：<a href="http://labs.chinamobile.com/mblog/854855_196159" target="_blank" rel="noopener">OpenStack虚拟机创建过程中镜像格式的的变化过程</a><br>已有环境：OpenStack Icehouse 版本<br>Glance组件安装在Controller节点<br>Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找<br>以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/vm-deploy.html#more" rel="contents">
@@ -671,7 +675,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 15:37:50" itemprop="dateModified" datetime="2020-02-20T15:37:50+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 18:35:11" itemprop="dateModified" datetime="2020-02-20T18:35:11+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -754,7 +758,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 16:47:01" itemprop="dateModified" datetime="2020-02-20T16:47:01+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:11:27" itemprop="dateModified" datetime="2020-02-20T21:11:27+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -837,7 +841,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:18:34" itemprop="dateModified" datetime="2020-02-20T17:18:34+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 21:39:08" itemprop="dateModified" datetime="2020-02-20T21:39:08+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -862,7 +866,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了</p>
+          <p>环境：Ubuntu 12.04 LTS Desktop 64bit<br>提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/spark-on-yarn-setup.html#more" rel="contents">
@@ -1038,7 +1042,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1048,7 +1052,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

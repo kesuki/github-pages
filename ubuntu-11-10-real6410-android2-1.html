@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="编译源码在源码目录下make即可。错误1： host C++: libutils &lt;&#x3D; frameworks&#x2F;base&#x2F;libs&#x2F;utils&#x2F;RefBase.cpp frameworks&#x2F;base&#x2F;libs&#x2F;utils&#x2F;RefBase.cpp: In member function ‘void android::RefBase::weakref_type::trackMe(bool, boo">
 <meta property="article:published_time" content="2011-10-30T14:33:53.000Z">
-<meta property="article:modified_time" content="2020-02-20T09:54:34.790Z">
+<meta property="article:modified_time" content="2020-02-20T14:01:53.686Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="android2.1">
 <meta property="article:tag" content="Real6410">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:54:34" itemprop="dateModified" datetime="2020-02-20T17:54:34+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 22:01:53" itemprop="dateModified" datetime="2020-02-20T22:01:53+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -204,7 +204,7 @@
         <p>编译源码在源码目录下make即可。<br>错误1： host C++: libutils &lt;= frameworks/base/libs/utils/RefBase.cpp frameworks/base/libs/utils/RefBase.cpp: In member function ‘void android::RefBase::weakref_type::trackMe(bool, bool)’: frameworks/base/libs/utils/RefBase.cpp:483:67: error: passing ‘const android::RefBase::weakref_impl’ as ‘this’ argument of ‘void android::RefBase::weakref_impl::trackMe(bool, bool)’ discards qualifiers [-fpermissive] make: *** [out/host/linux-x86/obj/STATIC_LIBRARIES/libutils_intermediates/RefBase.o] 错误 1 解决：</p>
 <a id="more"></a>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gedit frameworks&#x2F;base&#x2F;libs&#x2F;utils&#x2F;Android.mk</span><br><span class="line">Change the line:</span><br><span class="line">LOCAL\_CFLAGS +&#x3D; -DLIBUTILS\_NATIVE&#x3D;1 $(TOOL_CFLAGS)</span><br><span class="line">To:</span><br><span class="line">LOCAL\_CFLAGS +&#x3D; -DLIBUTILS\_NATIVE&#x3D;1 $(TOOL_CFLAGS) –fpermissive</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gedit frameworks&#x2F;base&#x2F;libs&#x2F;utils&#x2F;Android.mk</span><br><span class="line">Change the line:</span><br><span class="line">LOCAL_CFLAGS +&#x3D; -DLIBUTILS_NATIVE&#x3D;1 $(TOOL_CFLAGS)</span><br><span class="line">To:</span><br><span class="line">LOCAL_CFLAGS +&#x3D; -DLIBUTILS_NATIVE&#x3D;1 $(TOOL_CFLAGS) –fpermissive</span><br></pre></td></tr></table></figure>
 
 <p>错误2： host Executable: aapt (out/host/linux-x86/obj/EXECUTABLES/aapt_intermediates/aapt) out/host/linux-x86/obj/STATIC_LIBRARIES/libcutils_intermediates/libcutils.a(threads.o): In function `thread_store_get’: /home/leno/works/android_dev/bin/system/core/libcutils/threads.c:27: undefined reference to `pthread_getspecific’ out/host/linux-x86/obj/STATIC_LIBRARIES/libcutils_intermediates/libcutils.a(threads.o): In function `thread_store_set’: /home/leno/works/android_dev/bin/system/core/libcutils/threads.c:36: undefined reference to `pthread_key_create’ /home/leno/works/android_dev/bin/system/core/libcutils/threads.c:44: undefined reference to `pthread_setspecific’ collect2: ld returned 1 exit status make: *** [out/host/linux-x86/obj/EXECUTABLES/aapt_intermediates/aapt] 错误 1 解决：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gedit frameworks&#x2F;base&#x2F;tools&#x2F;aapt&#x2F;Android.mk</span><br><span class="line">ifeq ($(HOST_OS),linux)</span><br><span class="line">#LOCAL_LDLIBS +&#x3D; -lrt 　　　　　　&#x2F;&#x2F;把这行注释掉，改为下面一行。</span><br><span class="line">LOCAL_LDLIBS +&#x3D; -lrt -lpthread</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
@@ -213,10 +213,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gedit frameworks&#x2F;base&#x2F;tools&#x2F;localize&#x2F;Android.mk</span><br><span class="line">ifeq ($(HOST_OS),linux)</span><br><span class="line">#LOCAL_LDLIBS +&#x3D; -lrt 　　　&#x2F;&#x2F;把这行注释掉，改为下面一行。</span><br><span class="line">LOCAL_LDLIBS +&#x3D; -lrt -lpthread</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
 
 <p>错误4： host SharedLib: libacc (out/host/linux-x86/obj/lib/libacc.so) host Executable: acc (out/host/linux-x86/obj/EXECUTABLES/acc_intermediates/acc) /usr/bin/ld: out/host/linux-x86/obj/EXECUTABLES/acc_intermediates/main.o: in function symbolLookup(void<em>, char const</em>):system/core/libacc/tests/main.cpp:41: error: undefined reference to ‘dlsym’ collect2: ld returned 1 exit status make: *** [out/host/linux-x86/obj/EXECUTABLES/acc_intermediates/acc] 错误 1 解决：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gedit system&#x2F;core&#x2F;libacc&#x2F;tests&#x2F;Android.mk</span><br><span class="line">LOCAL\_SHARED\_LIBRARIES :&#x3D;  \  &#x2F;&#x2F;在libacc的后面加上</span><br><span class="line">LOCAL_LDLIBS :&#x3D; -ldl</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gedit system&#x2F;core&#x2F;libacc&#x2F;tests&#x2F;Android.mk</span><br><span class="line">LOCAL_SHARED_LIBRARIES :&#x3D;  \  &#x2F;&#x2F;在libacc的后面加上</span><br><span class="line">LOCAL_LDLIBS :&#x3D; -ldl</span><br></pre></td></tr></table></figure>
 
 <p>OK!!收工<br>编译Android 2.3时出现的错误：<br>错误1 host C++: obbtool &lt;= frameworks/base/tools/obbtool/Main.cpp :0:0: error: “_FORTIFY_SOURCE” redefined [-Werror] :0:0: note: this is the location of the previous definition cc1plus: all warnings being treated as errors make: *** [out/host/linux-x86/obj/EXECUTABLES/obbtool_intermediates/Main.o] Error 1 解决方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gedit build&#x2F;core&#x2F;combo&#x2F;HOST_linux-x86.mk</span><br><span class="line">-HOST\_GLOBAL\_CFLAGS +&#x3D; -D\_FORTIFY\_SOURCE&#x3D;0</span><br><span class="line">+HOST\_GLOBAL\_CFLAGS +&#x3D; -U\_FORTIFY\_SOURCE -D\_FORTIFY\_SOURCE&#x3D;0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gedit build&#x2F;core&#x2F;combo&#x2F;HOST_linux-x86.mk</span><br><span class="line">-HOST_GLOBAL_CFLAGS +&#x3D; -D_FORTIFY_SOURCE&#x3D;0</span><br><span class="line">+HOST_GLOBAL_CFLAGS +&#x3D; -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE&#x3D;0</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -314,7 +314,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -324,7 +324,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

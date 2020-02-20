@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="感谢牛人的分享，linux下利用dnw烧写文件 如果在ubuntu下搞开发，又要回到windows下用dnw下载文件，的确很烦人，下面就是解决的方法。  下载Linux下DNW的PC端USB驱动和写入工具 下载地址： https:&#x2F;&#x2F;www.mak-blog.com&#x2F;download&#x2F;dnw\_linux.tar.gz 文件名: dnw_linux.tar.gz">
+  <meta name="description" content="感谢牛人的分享，linux下利用dnw烧写文件如果在ubuntu下搞开发，又要回到windows下用dnw下载文件，的确很烦人，下面就是解决的方法。  下载Linux下DNW的PC端USB驱动和写入工具 下载地址： https:&#x2F;&#x2F;www.mak-blog.com&#x2F;download&#x2F;dnw\_linux.tar.gz 文件名: dnw_linux.tar.gz">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux下利用dnw烧写文件">
 <meta property="og:url" content="http://www.mak-blog.com/linux-dnw.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="感谢牛人的分享，linux下利用dnw烧写文件 如果在ubuntu下搞开发，又要回到windows下用dnw下载文件，的确很烦人，下面就是解决的方法。  下载Linux下DNW的PC端USB驱动和写入工具 下载地址： https:&#x2F;&#x2F;www.mak-blog.com&#x2F;download&#x2F;dnw\_linux.tar.gz 文件名: dnw_linux.tar.gz">
+<meta property="og:description" content="感谢牛人的分享，linux下利用dnw烧写文件如果在ubuntu下搞开发，又要回到windows下用dnw下载文件，的确很烦人，下面就是解决的方法。  下载Linux下DNW的PC端USB驱动和写入工具 下载地址： https:&#x2F;&#x2F;www.mak-blog.com&#x2F;download&#x2F;dnw\_linux.tar.gz 文件名: dnw_linux.tar.gz">
 <meta property="article:published_time" content="2011-02-21T05:08:39.000Z">
-<meta property="article:modified_time" content="2020-02-20T08:28:14.660Z">
+<meta property="article:modified_time" content="2020-02-20T12:54:05.961Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="dnw">
 <meta property="article:tag" content="linux">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 16:28:14" itemprop="dateModified" datetime="2020-02-20T16:28:14+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 20:54:05" itemprop="dateModified" datetime="2020-02-20T20:54:05+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -201,16 +201,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>感谢牛人的分享，linux下利用dnw烧写文件 如果在ubuntu下搞开发，又要回到windows下用dnw下载文件，的确很烦人，下面就是解决的方法。</p>
+        <p>感谢牛人的分享，linux下利用dnw烧写文件<br>如果在ubuntu下搞开发，又要回到windows下用dnw下载文件，的确很烦人，下面就是解决的方法。</p>
 <ol>
 <li><p>下载Linux下DNW的PC端USB驱动和写入工具 下载地址： <a href="https://www.mak-blog.com/download/dnw\_linux.tar.gz">https://www.mak-blog.com/download/dnw\_linux.tar.gz</a> 文件名: dnw_linux.tar.gz </p>
 <a id="more"></a>
 </li>
 <li><p>编译PC端USB驱动和写入工具</p>
 <ol>
-<li>解压缩<br><code>$ tar xzvf /path/to/dnw_linux.tgz</code><br>有以下文件 dnw_linux/ dnw_linux/secbulk/ dnw_linux/secbulk/Makefile dnw_linux/secbulk/secbulk.c dnw_linux/dnw/ dnw_linux/dnw/dnw.c 其中secbulk.c是PC端USB驱动, dnw.c是写入工具</li>
-<li>编译并加载secbulk.c内核模块<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$cd secbulk</span><br><span class="line">$make -C &#x2F;lib&#x2F;modules&#x2F;\&#96;uname -r\&#96;&#x2F;build M&#x3D;\&#96;pwd\&#96; modules &#x2F;&#x2F;编译不过就修改参数</span><br></pre></td></tr></table></figure>
-编译成功后在当前目录下可以看到secbulk.ko 用insmod命令加载模块，这需要root权限<br><code>$sudo insmod ./secbulk.ko</code><br>加载后用dmesg命令可以看到模块已经成功加载 [ 238.007970] secbulk:secbulk loaded [ 238.009101] usbcore: registered new interface driver secbulk</li>
+<li>解压缩<br><code>$ tar xzvf /path/to/dnw_linux.tgz</code><br>有以下文件<br>dnw_linux/<br>dnw_linux/secbulk/<br>dnw_linux/secbulk/Makefile<br>dnw_linux/secbulk/secbulk.c<br>dnw_linux/dnw/<br>dnw_linux/dnw/dnw.c<br>其中secbulk.c是PC端USB驱动, dnw.c是写入工具</li>
+<li>编译并加载secbulk.c内核模块<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$cd secbulk</span><br><span class="line">$make -C &#x2F;lib&#x2F;modules&#x2F;&#96;uname -r&#96;&#x2F;build M&#x3D;&#96;pwd&#96; modules &#x2F;&#x2F;编译不过就修改参数</span><br></pre></td></tr></table></figure>
+编译成功后在当前目录下可以看到secbulk.ko<br>用insmod命令加载模块，这需要root权限<br><code>$sudo insmod ./secbulk.ko</code><br>加载后用dmesg命令可以看到模块已经成功加载<br>[ 238.007970] secbulk:secbulk loaded<br>[ 238.009101] usbcore: registered new interface driver secbulk</li>
 <li>编译dnw写入工具<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$cd dnw</span><br><span class="line">$gcc -o dnw dnw.c</span><br></pre></td></tr></table></figure>
 编译成功后生成可执行档dnw</li>
 </ol>
@@ -218,7 +218,7 @@
 <li><p>使用DNW下载</p>
 <ol>
 <li>启动开发板，进入kermit，并将开发板和PC用USB电缆连接，先加载secbulk驱动：</li>
-<li>当出现“USB host is connected. Waiting a download.”时，在PC端Linux上用dnw工具写入要下载的文件 切换到root权限，执行dnw下载.<br><code>$./dnw /path/to/what/you/want/download</code><br>写入完成后提示成功 100% xxxxxxx bytes OK 如果发现速度太慢了，可以修改缓冲区的大小。在源码中 发现是#define BULKOUT_BUFFER_SIZE 32所设定的值太小了。 改为#define BULKOUT_BUFFER_SIZE 512后可发现速度快了很多。” 改了缓冲区大小之后，速度会快很多，设多少自己把握。 </li>
+<li>当出现“USB host is connected. Waiting a download.”时，在PC端Linux上用dnw工具写入要下载的文件<br>切换到root权限，执行dnw下载.<br><code>$./dnw /path/to/what/you/want/download</code><br>写入完成后提示成功<br>100% xxxxxxx bytes OK<br>如果发现速度太慢了，可以修改缓冲区的大小。在源码中<br>发现是#define BULKOUT_BUFFER_SIZE 32所设定的值太小了。<br>改为#define BULKOUT_BUFFER_SIZE 512后可发现速度快了很多。<br>改了缓冲区大小之后，速度会快很多，设多少自己把握。 </li>
 </ol>
 </li>
 </ol>
@@ -323,7 +323,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -333,7 +333,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

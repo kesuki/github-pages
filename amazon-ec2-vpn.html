@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="本文介绍如何在Amazon ec2的Instance中建立vpn服务，我的Instance是Amazon Linux AMI的64位系统。本文是基于你已经有一个AWS账号并运行了Instance并已经会用SSH远程登陆进去运行命令。如果前面步骤有疑问请自行google。 我是在前人的基础上实现的，参考文章是 Amazon EC2上一键安装配置PPTP VPN服务 Automaticlly inst">
+  <meta name="description" content="本文介绍如何在Amazon ec2的Instance中建立vpn服务，我的Instance是Amazon Linux AMI的64位系统。本文是基于你已经有一个AWS账号并运行了Instance并已经会用SSH远程登陆进去运行命令。如果前面步骤有疑问请自行google。我是在前人的基础上实现的，参考文章是：  Amazon EC2上一键安装配置PPTP VPN服务Automaticlly inst">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Amazon EC2配置VPN服务">
 <meta property="og:url" content="http://www.mak-blog.com/amazon-ec2-vpn.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="本文介绍如何在Amazon ec2的Instance中建立vpn服务，我的Instance是Amazon Linux AMI的64位系统。本文是基于你已经有一个AWS账号并运行了Instance并已经会用SSH远程登陆进去运行命令。如果前面步骤有疑问请自行google。 我是在前人的基础上实现的，参考文章是 Amazon EC2上一键安装配置PPTP VPN服务 Automaticlly inst">
+<meta property="og:description" content="本文介绍如何在Amazon ec2的Instance中建立vpn服务，我的Instance是Amazon Linux AMI的64位系统。本文是基于你已经有一个AWS账号并运行了Instance并已经会用SSH远程登陆进去运行命令。如果前面步骤有疑问请自行google。我是在前人的基础上实现的，参考文章是：  Amazon EC2上一键安装配置PPTP VPN服务Automaticlly inst">
 <meta property="article:published_time" content="2012-10-05T07:35:31.000Z">
-<meta property="article:modified_time" content="2020-02-20T07:36:38.068Z">
+<meta property="article:modified_time" content="2020-02-20T10:34:19.723Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="Amazon EC2">
 <meta property="article:tag" content="vpn">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 15:36:38" itemprop="dateModified" datetime="2020-02-20T15:36:38+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 18:34:19" itemprop="dateModified" datetime="2020-02-20T18:34:19+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -201,18 +201,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本文介绍如何在Amazon ec2的Instance中建立vpn服务，我的Instance是Amazon Linux AMI的64位系统。本文是基于你已经有一个AWS账号并运行了Instance并已经会用SSH远程登陆进去运行命令。如果前面步骤有疑问请自行google。 我是在前人的基础上实现的，参考文章是 <a href="http://passtest.net/2010/11/amazon-aws-ec2-vpn-vps-2/" target="_blank" rel="noopener" title="Amazon EC2上一键安装配置PPTP VPN服务">Amazon EC2上一键安装配置PPTP VPN服务</a> <a href="https://gist.github.com/999866" target="_blank" rel="noopener" title="Automaticlly install pptpd on Amazon EC2 Amazon Linux">Automaticlly install pptpd on Amazon EC2 Amazon Linux</a> 毕竟是2010年的文章，按照步骤做了一次，毫无疑问是失败的。 显示错误提示如下：</p>
+        <p>本文介绍如何在Amazon ec2的Instance中建立vpn服务，我的Instance是Amazon Linux AMI的64位系统。本文是基于你已经有一个AWS账号并运行了Instance并已经会用SSH远程登陆进去运行命令。如果前面步骤有疑问请自行google。<br>我是在前人的基础上实现的，参考文章是：</p>
+<blockquote>
+<p><a href="http://passtest.net/2010/11/amazon-aws-ec2-vpn-vps-2/" target="_blank" rel="noopener" title="Amazon EC2上一键安装配置PPTP VPN服务">Amazon EC2上一键安装配置PPTP VPN服务</a><br><a href="https://gist.github.com/999866" target="_blank" rel="noopener" title="Automaticlly install pptpd on Amazon EC2 Amazon Linux">Automaticlly install pptpd on Amazon EC2 Amazon Linux</a></p>
+</blockquote>
+<p>毕竟是2010年的文章，按照步骤做了一次，毫无疑问是失败的。<br>显示错误提示如下：</p>
 <a id="more"></a>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">error: open of ..&#x2F;rpmbuild&#x2F;RPMS&#x2F;i386&#x2F;pptpd-1.3.4-1.amzn1.i386.rpm failed: No such file or directory</span><br><span class="line">sed: can&#39;t read &#x2F;etc&#x2F;pptpd.conf: No such file or directory</span><br><span class="line">net.ipv4.ip_forward &#x3D; 1</span><br><span class="line">net.ipv4.conf.default.rp_filter &#x3D; 1</span><br><span class="line">net.ipv4.conf.default.accept\_source\_route &#x3D; 0</span><br><span class="line">kernel.sysrq &#x3D; 0</span><br><span class="line">kernel.core\_uses\_pid &#x3D; 1</span><br><span class="line">net.ipv4.tcp_syncookies &#x3D; 1</span><br><span class="line">error: &quot;net.bridge.bridge-nf-call-ip6tables&quot; is an unknown key</span><br><span class="line">error: &quot;net.bridge.bridge-nf-call-iptables&quot; is an unknown key</span><br><span class="line">error: &quot;net.bridge.bridge-nf-call-arptables&quot; is an unknown key</span><br><span class="line">kernel.msgmnb &#x3D; 65536</span><br><span class="line">kernel.msgmax &#x3D; 65536</span><br><span class="line">kernel.shmmax &#x3D; 68719476736</span><br><span class="line">kernel.shmall &#x3D; 4294967296</span><br><span class="line">iptables: Saving firewall rules to &#x2F;etc&#x2F;sysconfig&#x2F;iptables:\[  OK  \]</span><br><span class="line">error reading information on service pptpd: No such file or directory</span><br><span class="line">pptpd: unrecognized service</span><br><span class="line"></span><br><span class="line">error: File not found by glob: ..&#x2F;rpmbuild&#x2F;RPMS&#x2F;i386&#x2F;pptpd-1.3.4-1.*.i386.rpm</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">error: open of ..&#x2F;rpmbuild&#x2F;RPMS&#x2F;i386&#x2F;pptpd-1.3.4-1.amzn1.i386.rpm failed: No such file or directory</span><br><span class="line">sed: can&#39;t read &#x2F;etc&#x2F;pptpd.conf: No such file or directory</span><br><span class="line">net.ipv4.ip_forward &#x3D; 1</span><br><span class="line">net.ipv4.conf.default.rp_filter &#x3D; 1</span><br><span class="line">net.ipv4.conf.default.accept_source_route &#x3D; 0</span><br><span class="line">kernel.sysrq &#x3D; 0</span><br><span class="line">kernel.core_uses_pid &#x3D; 1</span><br><span class="line">net.ipv4.tcp_syncookies &#x3D; 1</span><br><span class="line">error: &quot;net.bridge.bridge-nf-call-ip6tables&quot; is an unknown key</span><br><span class="line">error: &quot;net.bridge.bridge-nf-call-iptables&quot; is an unknown key</span><br><span class="line">error: &quot;net.bridge.bridge-nf-call-arptables&quot; is an unknown key</span><br><span class="line">kernel.msgmnb &#x3D; 65536</span><br><span class="line">kernel.msgmax &#x3D; 65536</span><br><span class="line">kernel.shmmax &#x3D; 68719476736</span><br><span class="line">kernel.shmall &#x3D; 4294967296</span><br><span class="line">iptables: Saving firewall rules to &#x2F;etc&#x2F;sysconfig&#x2F;iptables:[  OK  ]</span><br><span class="line">error reading information on service pptpd: No such file or directory</span><br><span class="line">pptpd: unrecognized service</span><br><span class="line"></span><br><span class="line">error: File not found by glob: ..&#x2F;rpmbuild&#x2F;RPMS&#x2F;i386&#x2F;pptpd-1.3.4-1.*.i386.rpm</span><br></pre></td></tr></table></figure>
 <p>看了文章后面的评论发现问题在于64位要使用不同的RPM，但是还是出现上一行的error: File not found by glob的提示，我就觉得应该是运行脚步路径出了问题。打开脚步文件，发现运行完</p>
 <p><code>rpmbuild --rebuild pptpd-1.3.4-1.amzn1.src.rpm</code></p>
 <p>终端的路径会进入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\+ cd &#x2F;root&#x2F;rpmbuild&#x2F;BUILD</span><br><span class="line">\+ rm -rf pptpd-1.3.4</span><br><span class="line">\+ exit 0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ cd &#x2F;root&#x2F;rpmbuild&#x2F;BUILD</span><br><span class="line">+ rm -rf pptpd-1.3.4</span><br><span class="line">+ exit 0</span><br></pre></td></tr></table></figure>
 <p>这当然不能运行</p>
 <p><code>rpm -i ../rpmbuild/RPMS/i386/pptpd-1.3.4-1.*.i386.rpm</code></p>
 <p>而且路径错了，文件名也错了，应该改为</p>
-<p><code>rpm -i ~/rpmbuild/RPMS/x86\_64/pptpd-1.3.4-1.amzn1.x86\_64.rpm</code></p>
+<p><code>rpm -i ~/rpmbuild/RPMS/x86_64/pptpd-1.3.4-1.amzn1.x86_64.rpm</code></p>
 <p>但是运行上一行的命令是可以找到文件，不过还提示</p>
 <p><code>warning: /etc/pptpd.conf created as /etc/pptpd.conf.rpmnew</code></p>
 <p>所以脚本文件要加一行</p>
@@ -221,7 +225,7 @@
 <p>这是分割线，如果你比较懒，以上的全部都是废话，配置VPN只需要两行命令，以下是我已经修改好的脚本。 进入EC2系统终端后，输入下面的代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;raw.github.com&#x2F;kesuki&#x2F;Amazon-linux-ami&#x2F;master&#x2F;pptpd.sh</span><br><span class="line">sudo sh pptpd.sh</span><br></pre></td></tr></table></figure>
 <p>然后安装配置完成后会高亮提示vpn用户名和密码，如果出现以下两个OK，表明你已经成功了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables: Saving firewall rules to &#x2F;etc&#x2F;sysconfig&#x2F;iptables:\[  OK  \]</span><br><span class="line">Starting pptpd:                                            \[  OK  \]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables: Saving firewall rules to &#x2F;etc&#x2F;sysconfig&#x2F;iptables:[  OK  ]</span><br><span class="line">Starting pptpd:                                            [  OK  ]</span><br></pre></td></tr></table></figure>
 <p>搞定，收工。</p>
 
     </div>
@@ -321,7 +325,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -331,7 +335,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="本文主要参考博客：OpenStack虚拟机创建过程中镜像格式的的变化过程 已有环境：OpenStack Icehouse 版本 Glance组件安装在Controller节点 Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找 以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化">
+  <meta name="description" content="本文主要参考博客：OpenStack虚拟机创建过程中镜像格式的的变化过程已有环境：OpenStack Icehouse 版本Glance组件安装在Controller节点Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从镜像启动虚拟机镜像的变化过程">
 <meta property="og:url" content="http://www.mak-blog.com/vm-deploy.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="本文主要参考博客：OpenStack虚拟机创建过程中镜像格式的的变化过程 已有环境：OpenStack Icehouse 版本 Glance组件安装在Controller节点 Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找 以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化">
+<meta property="og:description" content="本文主要参考博客：OpenStack虚拟机创建过程中镜像格式的的变化过程已有环境：OpenStack Icehouse 版本Glance组件安装在Controller节点Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化">
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/vm-deploy1.jpg">
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg">
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg">
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg">
 <meta property="article:published_time" content="2014-11-04T17:11:28.000Z">
-<meta property="article:modified_time" content="2020-02-20T09:56:33.515Z">
+<meta property="article:modified_time" content="2020-02-20T14:07:09.721Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="虚拟机">
 <meta property="article:tag" content="部署">
@@ -181,7 +181,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:56:33" itemprop="dateModified" datetime="2020-02-20T17:56:33+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 22:07:09" itemprop="dateModified" datetime="2020-02-20T22:07:09+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -206,7 +206,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本文主要参考博客：<a href="http://labs.chinamobile.com/mblog/854855_196159" target="_blank" rel="noopener">OpenStack虚拟机创建过程中镜像格式的的变化过程</a> 已有环境：OpenStack Icehouse 版本 Glance组件安装在Controller节点 Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找 以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化</p>
+        <p>本文主要参考博客：<a href="http://labs.chinamobile.com/mblog/854855_196159" target="_blank" rel="noopener">OpenStack虚拟机创建过程中镜像格式的的变化过程</a><br>已有环境：OpenStack Icehouse 版本<br>Glance组件安装在Controller节点<br>Glance组件是OpenStack中负责镜像服务的组件，主要进行镜像的添加、删除以及查找<br>以创建一个m1.medium类型的win7虚拟机过程为例分析镜像变化</p>
 <a id="more"></a>
 
 <h3 id="查看现有镜像"><a href="#查看现有镜像" class="headerlink" title="查看现有镜像"></a>查看现有镜像</h3><p>在Controller节点运行命令查看现有的镜像</p>
@@ -216,8 +216,8 @@
 <p><code>cd /var/lib/glance/images</code></p>
 <p>查看镜像详细信息</p>
 <p><code>ll -alh</code></p>
-<p><a href="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg" alt="image1"></a><br>看到win7镜像是7.7G 运行：qemu-img info 镜像id 可以看到镜像的格式是qcow2</p>
-<h3 id="导入镜像"><a href="#导入镜像" class="headerlink" title="导入镜像"></a>导入镜像</h3><p>启动win7虚拟机后，在计算节点上，进入/var/lib/nova/instances/_base目录，可以看到一个.part结尾的文件。 这时win7的镜像正在从Controller节点拷贝到运行该win7镜像的计算节点上，存储在该目录下，.part文件是还没有拷贝完的文件 运行 ll -alh 可以看到.part文件的大小在不断增大 镜像文件传输结束后，在目录下会看到有两个文件名相同后缀分别是.part和.converted存在<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg" alt="image2"></a><br>此时是以原始镜像为基础进行了一次格式转化，把qcow2格式7.7G的镜像转化成了raw格式的30G的镜像 看到.part文件的大小是7.7G，.converted文件大小是30G和m1.medium类型的硬盘大小相同 很快.part文件就不见了，只剩下30G的.converted文件<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg" alt="image3"></a><br>Tips：在镜像从控制节点拷贝到计算节点的过程中，走的是管理网络 后续补上对qcow2、raw两种格式的理解</p>
+<p><a href="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg" alt="image1"></a><br>看到win7镜像是7.7G<br>运行：qemu-img info 镜像id<br>可以看到镜像的格式是qcow2</p>
+<h3 id="导入镜像"><a href="#导入镜像" class="headerlink" title="导入镜像"></a>导入镜像</h3><p>启动win7虚拟机后，在计算节点上，进入/var/lib/nova/instances/_base目录，可以看到一个.part结尾的文件。<br>这时win7的镜像正在从Controller节点拷贝到运行该win7镜像的计算节点上，存储在该目录下，.part文件是还没有拷贝完的文件<br>运行 ll -alh可以看到.part文件的大小在不断增大<br>镜像文件传输结束后，在目录下会看到有两个文件名相同后缀分别是.part和.converted存在<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg" alt="image2"></a><br>此时是以原始镜像为基础进行了一次格式转化，把qcow2格式7.7G的镜像转化成了raw格式的30G的镜像<br>看到.part文件的大小是7.7G，.converted文件大小是30G和m1.medium类型的硬盘大小相同<br>很快.part文件就不见了，只剩下30G的.converted文件<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg" alt="image3"></a><br>Tips：在镜像从控制节点拷贝到计算节点的过程中，走的是管理网络<br>后续补上对qcow2、raw两种格式的理解</p>
 
     </div>
 
@@ -317,7 +317,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -327,7 +327,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

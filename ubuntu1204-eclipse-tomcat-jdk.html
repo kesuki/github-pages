@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat 下载内容： 都是从官网下载 Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gz Tomcat7:apache-tomcat-7.0.57.tar.gz Eclipse-Tomcat插件：tomcatPluginV33.zip">
+  <meta name="description" content="环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat下载内容：都是从官网下载Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gzTomcat7:apache-tomcat-7.0.57.tar.gzEclipse-Tomcat插件：tomcatPluginV33.zipjdk8:j">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Ubuntu 12.04 Eclipse-Tomcat搭建">
 <meta property="og:url" content="http://www.mak-blog.com/ubuntu1204-eclipse-tomcat-jdk.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat 下载内容： 都是从官网下载 Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gz Tomcat7:apache-tomcat-7.0.57.tar.gz Eclipse-Tomcat插件：tomcatPluginV33.zip">
+<meta property="og:description" content="环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat下载内容：都是从官网下载Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gzTomcat7:apache-tomcat-7.0.57.tar.gzEclipse-Tomcat插件：tomcatPluginV33.zipjdk8:j">
 <meta property="article:published_time" content="2015-03-18T17:42:20.000Z">
-<meta property="article:modified_time" content="2020-02-20T09:55:08.447Z">
+<meta property="article:modified_time" content="2020-02-20T14:04:39.915Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="eclipse">
 <meta property="article:tag" content="JDK">
@@ -177,7 +177,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 17:55:08" itemprop="dateModified" datetime="2020-02-20T17:55:08+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-20 22:04:39" itemprop="dateModified" datetime="2020-02-20T22:04:39+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,17 +202,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat 下载内容： 都是从官网下载 Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gz Tomcat7:apache-tomcat-7.0.57.tar.gz Eclipse-Tomcat插件：tomcatPluginV33.zip jdk8:jdk-8u31-linux-x64.gz 注：一开始下载的是最新版的Tomcat8，后来发现Eclipse插件只支持到Tomcat7，所以建议下载之前关注一下插件的支持版本 Tomcat官网下载的时候有好多版本，下载core的就可以</p>
+        <p>环境：Ubuntu 12.04 Desktop 64-bit Eclipse + jdk8 + Tomcat<br>下载内容：<br>都是从官网下载<br>Eclipse Juno:eclipse-jee-juno-SR2-linux-gtk-x86_64.tar.gz<br>Tomcat7:apache-tomcat-7.0.57.tar.gz<br>Eclipse-Tomcat插件：tomcatPluginV33.zip<br>jdk8:jdk-8u31-linux-x64.gz<br>注：一开始下载的是最新版的Tomcat8，后来发现Eclipse插件只支持到Tomcat7，所以建议下载之前关注一下插件的支持版本<br>Tomcat官网下载的时候有好多版本，下载core的就可以</p>
 <a id="more"></a>
 
 <h3 id="安装配置JDK环境"><a href="#安装配置JDK环境" class="headerlink" title="安装配置JDK环境"></a>安装配置JDK环境</h3><ol>
 <li>把jdk包解压到/opt目录下：（注：目录不一定非要是/opt 可以自己制定）<br><code>tar xvzf jdk-8u31-linux-x64.gz</code></li>
-<li>修改环境变量 vi /etc/profile 添加下列内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA\_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0\_31</span><br><span class="line">export JRE\_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0\_31&#x2F;jre</span><br><span class="line">export PATH&#x3D;$JAVA\_HOME&#x2F;bin:$JAVA\_HOME&#x2F;jre&#x2F;bin:$PATH</span><br><span class="line">export CLASSPATH&#x3D;$CLASSPATH:.:$JAVA\_HOME&#x2F;lib:$JAVA\_HOME&#x2F;jre&#x2F;lib</span><br></pre></td></tr></table></figure>
+<li>修改环境变量<br><code>vi /etc/profile</code><br>添加下列内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0_31</span><br><span class="line">export JRE_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0_31&#x2F;jre</span><br><span class="line">export PATH&#x3D;$JAVA_HOME&#x2F;bin:$JAVA_HOME&#x2F;jre&#x2F;bin:$PATH</span><br><span class="line">export CLASSPATH&#x3D;$CLASSPATH:.:$JAVA_HOME&#x2F;lib:$JAVA_HOME&#x2F;jre&#x2F;lib</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
 <h3 id="安装Eclipse"><a href="#安装Eclipse" class="headerlink" title="安装Eclipse"></a>安装Eclipse</h3><ol>
-<li>把Eclipse解压到一个制定路径，我解压在了/home/username/Document里 注：username为自己的用户名 这时如果Eclipse的路径和jdk的路径不一支，打开Eclipse后会弹出错误，这里没有截图，错误的大概意思就是找不到jdk <a href="http://www.videotube.dk" target="_blank" rel="noopener">videotube</a> <a href="http://www.gadgetguru.dk" target="_blank" rel="noopener">gadgetguru</a> 2.2 解决Eclipse和jdk安装路径不一致问题 修改eclipse.ini ＊号之间的两行为添加内容，注意：-vm一定要在-vmargs之前 vi eclipse.ini<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">-startup</span><br><span class="line">plugins&#x2F;org.eclipse.equinox.launcher_1.1.0.v20100507.jar</span><br><span class="line">--launcher.library</span><br><span class="line">plugins&#x2F;org.eclipse.equinox.launcher.gtk.linux.x86\_64\_1.1.0.v20100503</span><br><span class="line">-product</span><br><span class="line">org.eclipse.epp.package.jee.product</span><br><span class="line">--launcher.defaultAction</span><br><span class="line">openFile</span><br><span class="line">-showsplash</span><br><span class="line">org.eclipse.platform</span><br><span class="line">--launcher.XXMaxPermSize</span><br><span class="line">256m</span><br><span class="line">--launcher.defaultAction</span><br><span class="line">openFile</span><br><span class="line">＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊</span><br><span class="line">-vm</span><br><span class="line">&#x2F;opt&#x2F;jdk1.8.0_31&#x2F;bin&#x2F;java</span><br><span class="line">＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊</span><br><span class="line">-vmargs</span><br><span class="line">-Dosgi.requiredJavaVersion&#x3D;1.5</span><br><span class="line">-XX:MaxPermSize&#x3D;256m</span><br><span class="line">-Xms40m</span><br><span class="line">-Xmx512m</span><br></pre></td></tr></table></figure>
+<li>把Eclipse解压到一个制定路径，我解压在了/home/username/Document里<br>注：username为自己的用户名<br>这时如果Eclipse的路径和jdk的路径不一支，打开Eclipse后会弹出错误，这里没有截图，错误的大概意思就是找不到jdk<br><a href="http://www.videotube.dk" target="_blank" rel="noopener">videotube</a><br><a href="http://www.gadgetguru.dk" target="_blank" rel="noopener">gadgetguru</a></li>
+<li>解决Eclipse和jdk安装路径不一致问题<br>修改eclipse.ini ＊号之间的两行为添加内容，注意：-vm一定要在-vmargs之前<br><code>vi eclipse.ini</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">-startup</span><br><span class="line">plugins&#x2F;org.eclipse.equinox.launcher_1.1.0.v20100507.jar</span><br><span class="line">--launcher.library</span><br><span class="line">plugins&#x2F;org.eclipse.equinox.launcher.gtk.linux.x86\_64\_1.1.0.v20100503</span><br><span class="line">-product</span><br><span class="line">org.eclipse.epp.package.jee.product</span><br><span class="line">--launcher.defaultAction</span><br><span class="line">openFile</span><br><span class="line">-showsplash</span><br><span class="line">org.eclipse.platform</span><br><span class="line">--launcher.XXMaxPermSize</span><br><span class="line">256m</span><br><span class="line">--launcher.defaultAction</span><br><span class="line">openFile</span><br><span class="line">＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊</span><br><span class="line">-vm</span><br><span class="line">&#x2F;opt&#x2F;jdk1.8.0_31&#x2F;bin&#x2F;java</span><br><span class="line">＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊</span><br><span class="line">-vmargs</span><br><span class="line">-Dosgi.requiredJavaVersion&#x3D;1.5</span><br><span class="line">-XX:MaxPermSize&#x3D;256m</span><br><span class="line">-Xms40m</span><br><span class="line">-Xmx512m</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -324,7 +325,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -334,7 +335,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">173</span>
+        <span class="site-state-item-count">171</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

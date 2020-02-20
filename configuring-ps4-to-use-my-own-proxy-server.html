@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="0.前言">
+  <meta name="description" content="前言写在最前面，共享一个自己架设的ps4专用的HTTP**服务器。 IP地址为：47.90.8.35，端口为：888 为什么说是ps4专用的呢，因为只转发目标地址为playstation.net&#x2F;com的请求，其他请求一律过滤。 《重要》设置完成网络之后，不建议经常点“测试互联网连接”来验证HTTP服务器是否可用，因为测试下载速度的时候可能会造成网络资源的抢占，可以在ps4上点击下面一项“查看Pl">
 <meta property="og:type" content="article">
 <meta property="og:title" content="架设ps4专用的HTTP**服务器">
 <meta property="og:url" content="http://www.mak-blog.com/configuring-ps4-to-use-my-own-proxy-server.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="0.前言">
+<meta property="og:description" content="前言写在最前面，共享一个自己架设的ps4专用的HTTP**服务器。 IP地址为：47.90.8.35，端口为：888 为什么说是ps4专用的呢，因为只转发目标地址为playstation.net&#x2F;com的请求，其他请求一律过滤。 《重要》设置完成网络之后，不建议经常点“测试互联网连接”来验证HTTP服务器是否可用，因为测试下载速度的时候可能会造成网络资源的抢占，可以在ps4上点击下面一项“查看Pl">
 <meta property="article:published_time" content="2016-05-12T16:19:37.000Z">
-<meta property="article:modified_time" content="2019-05-07T06:35:10.000Z">
+<meta property="article:modified_time" content="2020-02-20T08:02:34.312Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="HTTP">
 <meta property="article:tag" content="ps4">
@@ -177,7 +177,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-05-07 14:35:10" itemprop="dateModified" datetime="2019-05-07T14:35:10+08:00">2019-05-07</time>
+                <time title="Modified: 2020-02-20 16:02:34" itemprop="dateModified" datetime="2020-02-20T16:02:34+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,9 +202,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0.前言"></a>0.前言</h3><p>写在最前面，共享一个自己架设的ps4专用的HTTP**服务器。 IP地址为：47.90.8.35，端口为：888 为什么说是ps4专用的呢，因为只转发目标地址为playstation.net/com的请求，其他请求一律过滤。 《重要》设置完成网络之后，不建议经常点“测试互联网连接”来验证HTTP服务器是否可用，因为测试下载速度的时候可能会造成网络资源的抢占，可以在ps4上点击下面一项“查看PlayStation Network的服务状态”来验证，如果此HTTP服务器已经失效，可以再到本网页查看最新的信息。</p>
-<h3 id="1-原因"><a href="#1-原因" class="headerlink" title="1.原因"></a>1.原因</h3><p>之前我的选择是在远程服务器架设一个ss-server，然后在家里用一个树莓派跑一个ss-local，然后树莓派再用Privoxy实现SOCK转HTTP，最后在ps4上面跑上面那个HTTP。 这样做的优点：ss毕竟是一个加密的信道，你想访问国外的任何网址都可以，防火墙虽然厉害，但是目前加密的东西还是无法审查。 缺点：需要借助外部设备 但是我为什么要直接架一个HTTP**服务器，因为我只想访问playstation.net这个域名，而这个域名到目前为止还没有被防火墙弄，所以干嘛要偷偷摸摸的访问，直接明文传输就得了。 优点：不用借助外界设备直接能用，方便简单。 缺点：如果访问一些不该访问的网页或者有某些关键字，防火墙就会重置你的访问请求，导致你一段时间不能访问，提示ERR_CONNECTION_RESET。</p>
-<h3 id="2-说明"><a href="#2-说明" class="headerlink" title="2.说明"></a>2.说明</h3><p>1.怎么测速度，速度等同于207.46.135.99，可以ping 207.46.135.99来测试，我这里华南电信的网络平时一般是20ms以内，这时候就极其流畅；但是晚上9点多以后会上升到60ms，甚至是120ms，这时候的联机效果就不太好；而且如果还伴随着丢包，那效果就更差了。 顺便普及一个知识，联机的时延是由60ms，120ms这样的数值决定的，根据以前玩FIFA直连IP的经验，150-200ms的时延是基本感觉不出来的；联机的卡顿是由丢包照成的，而下载速度跟联机半毛钱关系都没有。举一个例子：如果有时候你没有丢包，就是时延太大，就感觉动作总比别人慢一步。 而为什么晚上9点过后的网络突然这么差，可以想象一下，出境流量的水管就这么大，如果晚上高峰时段出境流量大了，肯定是按优先级来随机丢包。 2.使用原则：只能在ps4上使用。 如果有一些人在用在其他地方，或访问一些其他网页（其实是访问不到的，因为服务器上面做了限制）导致服务器的稳定性出现问题，我可能就不再共享了。</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>写在最前面，共享一个自己架设的ps4专用的HTTP**服务器。 IP地址为：47.90.8.35，端口为：888 为什么说是ps4专用的呢，因为只转发目标地址为playstation.net/com的请求，其他请求一律过滤。 《重要》设置完成网络之后，不建议经常点“测试互联网连接”来验证HTTP服务器是否可用，因为测试下载速度的时候可能会造成网络资源的抢占，可以在ps4上点击下面一项“查看PlayStation Network的服务状态”来验证，如果此HTTP服务器已经失效，可以再到本网页查看最新的信息。</p>
+<a id="more"></a>
+
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>之前我的选择是在远程服务器架设一个ss-server，然后在家里用一个树莓派跑一个ss-local，然后树莓派再用Privoxy实现SOCK转HTTP，最后在ps4上面跑上面那个HTTP。 这样做的优点：ss毕竟是一个加密的信道，你想访问国外的任何网址都可以，防火墙虽然厉害，但是目前加密的东西还是无法审查。 缺点：需要借助外部设备 但是我为什么要直接架一个HTTP**服务器，因为我只想访问playstation.net这个域名，而这个域名到目前为止还没有被防火墙弄，所以干嘛要偷偷摸摸的访问，直接明文传输就得了。 优点：不用借助外界设备直接能用，方便简单。 缺点：如果访问一些不该访问的网页或者有某些关键字，防火墙就会重置你的访问请求，导致你一段时间不能访问，提示ERR_CONNECTION_RESET。</p>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>1.怎么测速度，速度等同于207.46.135.99，可以ping 207.46.135.99来测试，我这里华南电信的网络平时一般是20ms以内，这时候就极其流畅；但是晚上9点多以后会上升到60ms，甚至是120ms，这时候的联机效果就不太好；而且如果还伴随着丢包，那效果就更差了。 顺便普及一个知识，联机的时延是由60ms，120ms这样的数值决定的，根据以前玩FIFA直连IP的经验，150-200ms的时延是基本感觉不出来的；联机的卡顿是由丢包照成的，而下载速度跟联机半毛钱关系都没有。举一个例子：如果有时候你没有丢包，就是时延太大，就感觉动作总比别人慢一步。 而为什么晚上9点过后的网络突然这么差，可以想象一下，出境流量的水管就这么大，如果晚上高峰时段出境流量大了，肯定是按优先级来随机丢包。 2.使用原则：只能在ps4上使用。 如果有一些人在用在其他地方，或访问一些其他网页（其实是访问不到的，因为服务器上面做了限制）导致服务器的稳定性出现问题，我可能就不再共享了。</p>
 
     </div>
 
@@ -291,7 +293,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-前言"><span class="nav-number">1.</span> <span class="nav-text">0.前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-原因"><span class="nav-number">2.</span> <span class="nav-text">1.原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-说明"><span class="nav-number">3.</span> <span class="nav-text">2.说明</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原因"><span class="nav-number">2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">3.</span> <span class="nav-text">说明</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -315,7 +317,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

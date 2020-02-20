@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="内核版本：linux-2.6.37.2 软件平台：ubuntu 10.10 硬件平台：mini2440 一，建立交叉编译环境 简单来说，就是安装上arm-linux-等编译工具，对于交叉编译器，我选择了arm920t-eabi.tgz，版本号是4.1.2，对于新版的内核，busybox和Qt都支持。把交叉编译器解压到某路径，如&#x2F;opt&#x2F;toolchains&#x2F;arm920t-eabi，然后在命令行窗">
 <meta property="article:published_time" content="2011-03-03T08:22:44.000Z">
-<meta property="article:modified_time" content="2020-02-19T14:08:09.431Z">
+<meta property="article:modified_time" content="2020-02-20T08:46:04.952Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="mini2440">
 <meta property="article:tag" content="内核">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-19 22:08:09" itemprop="dateModified" datetime="2020-02-19T22:08:09+08:00">2020-02-19</time>
+                <time title="Modified: 2020-02-20 16:46:04" itemprop="dateModified" datetime="2020-02-20T16:46:04+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,24 +202,32 @@
 
       
         <p>内核版本：linux-2.6.37.2 软件平台：ubuntu 10.10 硬件平台：mini2440 一，建立交叉编译环境 简单来说，就是安装上arm-linux-等编译工具，对于交叉编译器，我选择了arm920t-eabi.tgz，版本号是4.1.2，对于新版的内核，busybox和Qt都支持。把交叉编译器解压到某路径，如/opt/toolchains/arm920t-eabi，然后在命令行窗口输入</p>
-<p>gedit ~/.bashrc //在最后一行添加<br>export PATH=$PATH:/opt/toolchains/arm920t-eabi/bin</p>
-<p>然后logout，再输入arm-linux-gcc -v ，就可以查看arm-linux的版本信息，建立完成。 二，开始编译内核 在官网那里下载了一个最新稳定版内核linux-2.6.37.2，解压到某路径，如/work，进入内核文件夹， 1.修改makefile文件，指向交叉编译器，修改如下：</p>
-<p>ARCH        ?= arm<br>CROSS_COMPILE    ?= arm-linux-</p>
-<p>2.读取配置文件：</p>
-<p>make s3c2410_defconfig</p>
-<p>3.波特率修改 修改arch/arm/mach-s3c2440/mach-smdk2440.c文件 把s3c24xx_init_clocks(16934400)里面的16934400改成12000000; 4.MTD修改 修改arch/arm/plat-s3c24xx/common-smdk.c文件 改成如下，我的mini2440开发板是64M的nand flash。所以大小最大值为0x04000000，而且要与mini板上的part show显示的大小一致，对应改就行了。</p>
-<p>static struct mtd_partition smdk_default_nand_part[] = {<br>    [0] = {<br>        .name    = “vivi”,<br>        .offset    = 0,<br>                .size    = 0x00040000,<br>    },<br>    [1] = {<br>        .name    = “mRtos”,<br>        .offset = 0x00040000,<br>        .size    = 0x00020000,<br>    },<br>    [2] = {<br>        .name    = “kernel”,<br>        .offset = 0x00060000,<br>        .size    = 0x00500000,<br>    },<br>    [3] = {<br>        .name    = “roofs”,<br>        .offset = 0x00560000,<br>        .size    = 0x03a9c000,<br>    }<br>};</p>
-<p>5.yaffs补丁 网上下载的yaffs2常见版本， 点击网址下载<a href="https://www.mak-blog.com/download/cvs-root.tar.gz，一般不支持2.6.36/37，">https://www.mak-blog.com/download/cvs-root.tar.gz，一般不支持2.6.36/37，</a> 支持2.6.36/37的yaffs补丁，2011年4月的版本， 下载地址<a href="https://www.mak-blog.com/download/yaffs2.tar.gz，">https://www.mak-blog.com/download/yaffs2.tar.gz，</a> 下载最新版本请到yaffs.net。 解压后进入yaffs源码目录，打补丁的命令：</p>
-<p>新版：#./patch-kernel.sh c m /work/linux-2.6.37<br>旧版：#./patch-ker.sh c /work/linux-2.6.37</p>
-<p>其实新版就是多了一个参数。 6.机器码修改 修改arch/arm/tools/mach-types,mini2440版上的机器码是1999，要与板相对应。</p>
-<p>s3c2440        ARCH_S3C2440        S3C2440        1999</p>
-<p>7.配置内核</p>
-<p>General setup —&gt;<br>        [<em>] Configure standard kernel features (for small systems) —&gt;<br>Kernel Features —&gt;<br>    [</em>] Use the ARM EABI to compile the kernel<br>System Type —&gt;<br>    [<em>] S3C2440 and S3C2442 Machines —&gt;  //切记：只选这个，不要选其他S3C，里面的也只选2个<br>        [</em>] SMDK2440<br>        [<em>] SMDK2440 with S3C2440 CPU module<br>File systems  —&gt;<br>    Miscellaneous filesystems  —&gt;<br>       &lt;</em>>   YAFFS2 file system support </p>
-<p>======================================================= 编译过程中出现的错误 错误1： <strong><em> Unable to find the ncurses libraries or the </em></strong> required header files. <strong><em> ‘make menuconfig’ requires the ncurses libraries. </em></strong> <strong><em> Install ncurses (ncurses-devel) and try again. </em></strong> make[1]: <strong><em> [scripts/kconfig/dochecklxdialog] Error 1 make: </em></strong> [menuconfig] Error 2 解决方法：</p>
-<p>apt-get install libncurses*</p>
-<p>错误2： /bin/sh: arm-linux-nm: not found No valid symbol. make: *** [.tmp_kallsyms1.S] Error 1 解决方法 ：进入交叉编译器的目录，建立快捷方式到arm-linux-nm</p>
-<p>ln -s arm-angstrom-linux-gnueabi-nm arm-linux-nm</p>
-<p>错误3: fs/yaffs2/yaffs_fs.c:310: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c:380: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c:393: error: unknown field ‘delete_inode’ specified in initializer fs/yaffs2/yaffs_fs.c:393: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c:394: error: unknown field ‘clear_inode’ specified in initializer fs/yaffs2/yaffs_fs.c:394: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c: In function ‘yaffs_delete_inode’: fs/yaffs2/yaffs_fs.c:725: error: implicit declaration of function ‘clear_inode’ fs/yaffs2/yaffs_fs.c: In function ‘yaffs_setattr’: fs/yaffs2/yaffs_fs.c:1703: error: implicit declaration of function ‘inode_setattr’ fs/yaffs2/yaffs_fs.c: In function ‘yaffs_internal_read_super’: fs/yaffs2/yaffs_fs.c:2498: error: implicit declaration of function ‘init_MUTEX’ make[2]: <strong><em> [fs/yaffs2/yaffs_fs.o] Error 1 make[1]: </em></strong> [fs/yaffs2] Error 2 make: *** [fs] Error 2 解决方法 ：安装新版yaffs补丁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gedit ~&#x2F;.bashrc &#x2F;&#x2F;在最后一行添加</span><br><span class="line">export PATH&#x3D;$PATH:&#x2F;opt&#x2F;toolchains&#x2F;arm920t-eabi&#x2F;bin</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>然后logout，再输入arm-linux-gcc -v ，就可以查看arm-linux的版本信息，建立完成。 二，开始编译内核 在官网那里下载了一个最新稳定版内核linux-2.6.37.2，解压到某路径，如/work，进入内核文件夹。</p>
+<ol>
+<li>修改makefile文件，指向交叉编译器，修改如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ARCH		?&#x3D; arm</span><br><span class="line">CROSS_COMPILE	?&#x3D; arm-linux-</span><br></pre></td></tr></table></figure></li>
+<li>读取配置文件：<br><code>make s3c2410_defconfig</code></li>
+<li>波特率修改 修改arch/arm/mach-s3c2440/mach-smdk2440.c文件 把s3c24xx_init_clocks(16934400)里面的16934400改成12000000。</li>
+<li>MTD修改 修改arch/arm/plat-s3c24xx/common-smdk.c文件 改成如下，我的mini2440开发板是64M的nand flash。所以大小最大值为0x04000000，而且要与mini板上的part show显示的大小一致，对应改就行了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">static struct mtd\_partition smdk\_default\_nand\_part\[\] &#x3D; &#123;</span><br><span class="line">	\[0\] &#x3D; &#123;</span><br><span class="line">		.name	&#x3D; &quot;vivi&quot;,</span><br><span class="line">		.offset	&#x3D; 0,</span><br><span class="line">                .size    &#x3D; 0x00040000,</span><br><span class="line">	&#125;,</span><br><span class="line">	\[1\] &#x3D; &#123;</span><br><span class="line">		.name	&#x3D; &quot;mRtos&quot;,</span><br><span class="line">		.offset &#x3D; 0x00040000,</span><br><span class="line">		.size	&#x3D; 0x00020000,</span><br><span class="line">	&#125;,</span><br><span class="line">	\[2\] &#x3D; &#123;</span><br><span class="line">		.name	&#x3D; &quot;kernel&quot;,</span><br><span class="line">		.offset &#x3D; 0x00060000,</span><br><span class="line">		.size	&#x3D; 0x00500000,</span><br><span class="line">	&#125;,</span><br><span class="line">	\[3\] &#x3D; &#123;</span><br><span class="line">		.name	&#x3D; &quot;roofs&quot;,</span><br><span class="line">		.offset &#x3D; 0x00560000,</span><br><span class="line">		.size	&#x3D; 0x03a9c000,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li>yaffs补丁 网上下载的yaffs2常见版本， 点击网址下载<a href="https://www.mak-blog.com/download/cvs-root.tar.gz，一般不支持2.6.36/37，">https://www.mak-blog.com/download/cvs-root.tar.gz，一般不支持2.6.36/37，</a> 支持2.6.36/37的yaffs补丁，2011年4月的版本， 下载地址<a href="https://www.mak-blog.com/download/yaffs2.tar.gz，">https://www.mak-blog.com/download/yaffs2.tar.gz，</a> 下载最新版本请到yaffs.net。 解压后进入yaffs源码目录，打补丁的命令：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">新版：#.&#x2F;patch-kernel.sh c m &#x2F;work&#x2F;linux-2.6.37</span><br><span class="line">旧版：#.&#x2F;patch-ker.sh c &#x2F;work&#x2F;linux-2.6.37</span><br></pre></td></tr></table></figure>
+其实新版就是多了一个参数。</li>
+<li>机器码修改 修改arch/arm/tools/mach-types,mini2440版上的机器码是1999，要与板相对应。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s3c2440        ARCH_S3C2440		S3C2440        1999</span><br></pre></td></tr></table></figure></li>
+<li>配置内核<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">General setup ---&gt;</span><br><span class="line">        \[*\] Configure standard kernel features (for small systems) ---&gt;</span><br><span class="line">Kernel Features ---&gt;</span><br><span class="line">	\[*\] Use the ARM EABI to compile the kernel</span><br><span class="line">System Type ---&gt;</span><br><span class="line">	\[*\] S3C2440 and S3C2442 Machines ---&gt;  &#x2F;&#x2F;切记：只选这个，不要选其他S3C，里面的也只选2个</span><br><span class="line">		\[*\] SMDK2440</span><br><span class="line">		\[*\] SMDK2440 with S3C2440 CPU module</span><br><span class="line">File systems  ---&gt; </span><br><span class="line">	Miscellaneous filesystems  ---&gt; </span><br><span class="line">	   &lt;*\&gt;   YAFFS2 file system support</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<hr>
+<p>编译过程中出现的错误</p>
+<ol>
+<li><p><strong>* Unable to find the ncurses libraries or the *</strong> required header files. <strong>* ‘make menuconfig’ requires the ncurses libraries. *</strong> <strong>* Install ncurses (ncurses-devel) and try again. *</strong> make[1]: <strong>* [scripts/kconfig/dochecklxdialog] Error 1 make: *</strong> [menuconfig] Error 2<br>解决方法：<br><code>apt-get install libncurses*</code></p>
+</li>
+<li><p>/bin/sh: arm-linux-nm: not found No valid symbol. make: *** [.tmp_kallsyms1.S] Error 1<br>解决方法 ：进入交叉编译器的目录，建立快捷方式到arm-linux-nm<br><code>ln -s arm-angstrom-linux-gnueabi-nm arm-linux-nm</code></p>
+</li>
+<li><p>fs/yaffs2/yaffs_fs.c:310: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c:380: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c:393: error: unknown field ‘delete_inode’ specified in initializer fs/yaffs2/yaffs_fs.c:393: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c:394: error: unknown field ‘clear_inode’ specified in initializer fs/yaffs2/yaffs_fs.c:394: warning: initialization from incompatible pointer type fs/yaffs2/yaffs_fs.c: In function ‘yaffs_delete_inode’: fs/yaffs2/yaffs_fs.c:725: error: implicit declaration of function ‘clear_inode’ fs/yaffs2/yaffs_fs.c: In function ‘yaffs_setattr’: fs/yaffs2/yaffs_fs.c:1703: error: implicit declaration of function ‘inode_setattr’ fs/yaffs2/yaffs_fs.c: In function ‘yaffs_internal_read_super’: fs/yaffs2/yaffs_fs.c:2498: error: implicit declaration of function ‘init_MUTEX’ make[2]: <strong>* [fs/yaffs2/yaffs_fs.o] Error 1 make[1]: *</strong> [fs/yaffs2] Error 2 make: *** [fs] Error 2<br>解决方法 ：安装新版yaffs补丁</p>
+</li>
+</ol>
 
     </div>
 
@@ -328,7 +336,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

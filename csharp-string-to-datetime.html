@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="前言，想在WP7编辑一个twitter API的应用，在获取数据时发现时间格式为：“Fri Jul 16 16:58:46 +0000 2010”。而且获取格式为string，很难进行处理。 Google一下，发现DateTime.ParseExact()这个函数，可以自定来源格式。下面是debug的过程：">
 <meta property="article:published_time" content="2012-03-10T04:59:29.000Z">
-<meta property="article:modified_time" content="2019-05-07T06:35:10.000Z">
+<meta property="article:modified_time" content="2020-02-20T08:02:55.580Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="created_at">
 <meta property="article:tag" content="windows phone">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-05-07 14:35:10" itemprop="dateModified" datetime="2019-05-07T14:35:10+08:00">2019-05-07</time>
+                <time title="Modified: 2020-02-20 16:02:55" itemprop="dateModified" datetime="2020-02-20T16:02:55+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,11 +202,12 @@
 
       
         <p>前言，想在WP7编辑一个twitter API的应用，在获取数据时发现时间格式为：“Fri Jul 16 16:58:46 +0000 2010”。而且获取格式为string，很难进行处理。 Google一下，发现DateTime.ParseExact()这个函数，可以自定来源格式。下面是debug的过程：</p>
-<p>using System.Globalization;<br>System.Diagnostics.Debug.WriteLine(“Debug Message”);<br>System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo(“en-us”);<br>System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString(“ddd MMM dd HH:mm:ss zzz yyyy”, System.Threading.Thread.CurrentThread.CurrentCulture));</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">using System.Globalization;</span><br><span class="line">System.Diagnostics.Debug.WriteLine(&quot;Debug Message&quot;);</span><br><span class="line">System.Threading.Thread.CurrentThread.CurrentCulture &#x3D; new CultureInfo(&quot;en-us&quot;);</span><br><span class="line">System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString(&quot;ddd MMM dd HH:mm:ss zzz yyyy&quot;, System.Threading.Thread.CurrentThread.CurrentCulture));</span><br></pre></td></tr></table></figure>
 <p>可以得出系统时间的输出格式，如果不指定culture，会默认显示中文，如果指定en-us，则显示英文。</p>
-<p>Sat Mar 10 12:48:18 +08:00 2012</p>
+<p><code>Sat Mar 10 12:48:18 +08:00 2012</code></p>
 <p>可见与twitter api的格式在时区里只相差一个冒号，问题就很容易解决，在字符串23个字节中加入冒号，然后再进行转换。</p>
-<p>string created_at = “Fri Jul 16 16:58:46 +0000 2010”;<br>System.Diagnostics.Debug.WriteLine(DateTime.ParseExact(created_at.Insert(23, “:”), “ddd MMM dd HH:mm:ss zzz yyyy”, null));<br>//输出如下<br>7/17/2010 12:58:46 AM</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string created_at &#x3D; &quot;Fri Jul 16 16:58:46 +0000 2010&quot;;</span><br><span class="line">System.Diagnostics.Debug.WriteLine(DateTime.ParseExact(created_at.Insert(23, &quot;:&quot;), &quot;ddd MMM dd HH:mm:ss zzz yyyy&quot;, null));</span><br><span class="line">&#x2F;&#x2F;输出如下</span><br><span class="line">7&#x2F;17&#x2F;2010 12:58:46 AM</span><br></pre></td></tr></table></figure>
 <p>折腾了一个晚上。。。。。</p>
 
     </div>
@@ -316,7 +317,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

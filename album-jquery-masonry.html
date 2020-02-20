@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="对wordpress主题的折腾实在没有什么动力，什么AJAX动态加载之类的，主要感觉主题能看就行。由于之前是使用ImageVue建立相册，对于我来说功能太复杂，只是想实现照片墙的功能和点击放大，觉得自己写也差不多吧。 开始：在网上查找一个页面混合排版的插件，发现了一个jQuery Masonry的插件，心想就用jQuery来实现吧。 基于jQuery Masonry的照片墙是挺简单的，不需要管页面">
 <meta property="article:published_time" content="2012-04-02T20:27:22.000Z">
-<meta property="article:modified_time" content="2020-02-19T14:08:09.405Z">
+<meta property="article:modified_time" content="2020-02-20T07:34:52.243Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="jQuery Masonry">
 <meta property="article:tag" content="照片墙">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-19 22:08:09" itemprop="dateModified" datetime="2020-02-19T22:08:09+08:00">2020-02-19</time>
+                <time title="Modified: 2020-02-20 15:34:52" itemprop="dateModified" datetime="2020-02-20T15:34:52+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,124 +202,10 @@
 
       
         <p>对wordpress主题的折腾实在没有什么动力，什么AJAX动态加载之类的，主要感觉主题能看就行。由于之前是使用ImageVue建立相册，对于我来说功能太复杂，只是想实现照片墙的功能和点击放大，觉得自己写也差不多吧。 开始：在网上查找一个页面混合排版的插件，发现了一个jQuery Masonry的插件，心想就用jQuery来实现吧。 基于jQuery Masonry的照片墙是挺简单的，不需要管页面的布局，首先加载一个jQuery1.4以上的版本，用jquery.masonry.min.js来管理页面布局，用slimbox2.js来显示大图。思路就是这样，下面就贴核心的代码吧</p>
-<pre><code>相册 · mak
+<a id="more"></a>
 
-
-
-
-随机显示    
-
-
-
-  [![Stanley](http://farm5.static.flickr.com/4113/5013039951_3a47ccd509.jpg)](http://www.flickr.com/photos/nemoorange/5013039951/ &quot;Stanley by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Officer](http://farm5.static.flickr.com/4131/5013039885_0d16ac87bc.jpg)](http://www.flickr.com/photos/nemoorange/5013039885/ &quot;Officer by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Tony](http://farm5.static.flickr.com/4086/5013039583_26717f6e89.jpg)](http://www.flickr.com/photos/nemoorange/5013039583/ &quot;Tony by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Kendra](http://farm5.static.flickr.com/4146/5013646070_f1f44b1939.jpg)](http://www.flickr.com/photos/nemoorange/5013646070/ &quot;Kendra by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Giraffe](http://farm5.static.flickr.com/4144/5013039541_17f2579e33.jpg)](http://www.flickr.com/photos/nemoorange/5013039541/ &quot;Giraffe by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Gavin](http://farm5.static.flickr.com/4153/5013039741_d860fb640b.jpg)](http://www.flickr.com/photos/nemoorange/5013039741/ &quot;Gavin by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Anita](http://farm5.static.flickr.com/4113/5013039697_a15e41fcd8.jpg)](http://www.flickr.com/photos/nemoorange/5013039697/ &quot;Anita by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Take My Portrait](http://farm5.static.flickr.com/4124/5013646314_c7eaf84918.jpg)](http://www.flickr.com/photos/nemoorange/5013646314/ &quot;Take My Portrait by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-  [![Wonder](http://farm5.static.flickr.com/4089/5013040075_bac12ff74e.jpg)](http://www.flickr.com/photos/nemoorange/5013040075/ &quot;Wonder by Dave DeSandro, on Flickr&quot;)
-
-
-
-
-
-
-
-
-
-     **Copyright © 2009-2012 [Mak](https://www.mak-blog.com) | Powered by [jQuery Masonry](http://masonry.desandro.com/)** 
-</code></pre><p> jQuery(document).ready(function($){<br>    //动态加载class为box的图片<br>    var $container = $(‘#container’);<br>    $container.imagesLoaded( function(){<br>        $container.masonry({<br>            itemSelector : ‘.box’,<br>            isAnimated: true,<br>        });<br>    });</p>
-<pre><code>//实现图片选中突出
-$(&quot;.box&quot;).hover(function(){
-    $(this).fadeTo(&quot;fast&quot;, 0.75);
-},function(){
-       $(this).fadeTo(&quot;fast&quot;, 1.0);
-});
-
-/\*\*
-\* 下面主要实现点击随机显示图片的功能
-*/    
-//图片的相对路径
-var blogString = &apos;http://farm5.static.flickr.com/4113/5013039951\_3a47ccd509.jpg+http://farm5.static.flickr.com/4131/5013039885\_0d16ac87bc.jpg+http://farm5.static.flickr.com/4086/5013039583\_26717f6e89.jpg+http://farm5.static.flickr.com/4146/5013646070\_f1f44b1939.jpg+http://farm5.static.flickr.com/4144/5013039541\_17f2579e33.jpg+http://farm5.static.flickr.com/4153/5013039741\_d860fb640b.jpg+http://farm5.static.flickr.com/4113/5013039697\_a15e41fcd8.jpg+http://farm5.static.flickr.com/4124/5013646314\_c7eaf84918.jpg+http://farm5.static.flickr.com/4089/5013040075_bac12ff74e.jpg&apos;;
-var blog = blogString.split(&quot;+&quot;);
-var blogLen = blog.length;
-
-$(&apos;#random&apos;).click(function(){
-    var whichSentence = &apos;&apos;;
-    var allText = &apos;&apos;;
-    var contain = &apos;&apos;;
-    $container.children().each(function(){
-        //生成随机数选取图片
-        whichSentence = Math.floor( Math.random() * blogLen );
-        allText = blog\[whichSentence\];
-        //防止图片重复出现
-        while(contain.indexOf(allText) &gt;=0)    {
-        whichSentence = Math.floor( Math.random() * blogLen );
-        allText = blog\[whichSentence\];
-        }
-        contain = contain + allText;
-        //修改图片的地址            
-        $(this).children().children().attr(&quot;src&quot;,allText);
-        $(this).children().attr(&quot;href&quot;,allText);
-    });
-    //再次等待图片的加载
-    $container.imagesLoaded( function(){
-      $container.masonry({
-        itemSelector : &apos;.box&apos;,
-        isAnimated: true,
-      });
-    });
-    //重新排版
-    $container.prepend($container.children().last().prev().prev());
-    $container.prepend($container.children().last().prev().prev().prev());
-    $container.prepend($container.children().last());
-    $container.prepend($container.children().last().prev());
-    $container.masonry( &apos;reload&apos; );
-});
-</code></pre><p>});</p>
-
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">相册 · mak</span><br><span class="line">随机显示	</span><br><span class="line">     [![Stanley](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4113&#x2F;5013039951_3a47ccd509.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013039951&#x2F; &quot;Stanley by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Officer](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4131&#x2F;5013039885_0d16ac87bc.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013039885&#x2F; &quot;Officer by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Tony](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4086&#x2F;5013039583_26717f6e89.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013039583&#x2F; &quot;Tony by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Kendra](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4146&#x2F;5013646070_f1f44b1939.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013646070&#x2F; &quot;Kendra by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Giraffe](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4144&#x2F;5013039541_17f2579e33.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013039541&#x2F; &quot;Giraffe by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Gavin](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4153&#x2F;5013039741_d860fb640b.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013039741&#x2F; &quot;Gavin by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Anita](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4113&#x2F;5013039697_a15e41fcd8.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013039697&#x2F; &quot;Anita by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Take My Portrait](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4124&#x2F;5013646314_c7eaf84918.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013646314&#x2F; &quot;Take My Portrait by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">     [![Wonder](http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4089&#x2F;5013040075_bac12ff74e.jpg)](http:&#x2F;&#x2F;www.flickr.com&#x2F;photos&#x2F;nemoorange&#x2F;5013040075&#x2F; &quot;Wonder by Dave DeSandro, on Flickr&quot;)</span><br><span class="line">	 **Copyright © 2009-2012 [Mak](https:&#x2F;&#x2F;www.mak-blog.com) | Powered by [jQuery Masonry](http:&#x2F;&#x2F;masonry.desandro.com&#x2F;)**</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"> jQuery(document).ready(function($)&#123;      </span><br><span class="line">	&#x2F;&#x2F;动态加载class为box的图片</span><br><span class="line">	var $container &#x3D; $(&#39;#container&#39;);</span><br><span class="line">    $container.imagesLoaded( function()&#123;</span><br><span class="line">		$container.masonry(&#123;</span><br><span class="line">			itemSelector : &#39;.box&#39;,</span><br><span class="line">			isAnimated: true,</span><br><span class="line">		&#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">	</span><br><span class="line">	&#x2F;&#x2F;实现图片选中突出</span><br><span class="line">	$(&quot;.box&quot;).hover(function()&#123;</span><br><span class="line">		$(this).fadeTo(&quot;fast&quot;, 0.75);</span><br><span class="line">	&#125;,function()&#123;</span><br><span class="line">   		$(this).fadeTo(&quot;fast&quot;, 1.0);</span><br><span class="line">	&#125;);</span><br><span class="line">	</span><br><span class="line">	&#x2F;\*\*</span><br><span class="line">	\* 下面主要实现点击随机显示图片的功能</span><br><span class="line">	*&#x2F;	</span><br><span class="line">	&#x2F;&#x2F;图片的相对路径</span><br><span class="line">	var blogString &#x3D; &#39;http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4113&#x2F;5013039951\_3a47ccd509.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4131&#x2F;5013039885\_0d16ac87bc.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4086&#x2F;5013039583\_26717f6e89.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4146&#x2F;5013646070\_f1f44b1939.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4144&#x2F;5013039541\_17f2579e33.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4153&#x2F;5013039741\_d860fb640b.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4113&#x2F;5013039697\_a15e41fcd8.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4124&#x2F;5013646314\_c7eaf84918.jpg+http:&#x2F;&#x2F;farm5.static.flickr.com&#x2F;4089&#x2F;5013040075_bac12ff74e.jpg&#39;;</span><br><span class="line">	var blog &#x3D; blogString.split(&quot;+&quot;);</span><br><span class="line">	var blogLen &#x3D; blog.length;</span><br><span class="line">	</span><br><span class="line">	$(&#39;#random&#39;).click(function()&#123;</span><br><span class="line">		var whichSentence &#x3D; &#39;&#39;;</span><br><span class="line">		var allText &#x3D; &#39;&#39;;</span><br><span class="line">		var contain &#x3D; &#39;&#39;;</span><br><span class="line">		$container.children().each(function()&#123;</span><br><span class="line">			&#x2F;&#x2F;生成随机数选取图片</span><br><span class="line">			whichSentence &#x3D; Math.floor( Math.random() * blogLen );</span><br><span class="line">			allText &#x3D; blog\[whichSentence\];</span><br><span class="line">			&#x2F;&#x2F;防止图片重复出现</span><br><span class="line">			while(contain.indexOf(allText) &gt;&#x3D;0)	&#123;</span><br><span class="line">			whichSentence &#x3D; Math.floor( Math.random() * blogLen );</span><br><span class="line">			allText &#x3D; blog\[whichSentence\];</span><br><span class="line">			&#125;</span><br><span class="line">			contain &#x3D; contain + allText;</span><br><span class="line">			&#x2F;&#x2F;修改图片的地址			</span><br><span class="line">			$(this).children().children().attr(&quot;src&quot;,allText);</span><br><span class="line">			$(this).children().attr(&quot;href&quot;,allText);</span><br><span class="line">		&#125;);</span><br><span class="line">		&#x2F;&#x2F;再次等待图片的加载</span><br><span class="line">		$container.imagesLoaded( function()&#123;</span><br><span class="line">		  $container.masonry(&#123;</span><br><span class="line">			itemSelector : &#39;.box&#39;,</span><br><span class="line">			isAnimated: true,</span><br><span class="line">		  &#125;);</span><br><span class="line">		&#125;);</span><br><span class="line">		&#x2F;&#x2F;重新排版</span><br><span class="line">		$container.prepend($container.children().last().prev().prev());</span><br><span class="line">		$container.prepend($container.children().last().prev().prev().prev());</span><br><span class="line">		$container.prepend($container.children().last());</span><br><span class="line">		$container.prepend($container.children().last().prev());</span><br><span class="line">		$container.masonry( &#39;reload&#39; );</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -427,7 +313,7 @@ $(&apos;#random&apos;).click(function(){
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

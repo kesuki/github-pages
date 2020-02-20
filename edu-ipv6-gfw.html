@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="前提1：你的网络支持ipv6，可以打开http:&#x2F;&#x2F;ipv6.google.com.hk测试。 前提2：你的ipv4网络是手动设置ip地址的，并不是自动获取ip地址。 1.翻墙 首先，因为北邮的方校长的墙只是建立在ipv4的基础上，ipv6网络大多是在大学校园里，而墙还没有延伸进去，所以支持ipv6的网络只要简单设置ipv6的代理edu6.zzzcn.info:2012，就可以翻墙，不同浏览器有不">
+  <meta name="description" content="前提1：你的网络支持ipv6，可以打开http:&#x2F;&#x2F;ipv6.google.com.hk测试。前提2：你的ipv4网络是手动设置ip地址的，并不是自动获取ip地址。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="校园网通过ipv6来翻墙和突破断网机制">
 <meta property="og:url" content="http://www.mak-blog.com/edu-ipv6-gfw.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="前提1：你的网络支持ipv6，可以打开http:&#x2F;&#x2F;ipv6.google.com.hk测试。 前提2：你的ipv4网络是手动设置ip地址的，并不是自动获取ip地址。 1.翻墙 首先，因为北邮的方校长的墙只是建立在ipv4的基础上，ipv6网络大多是在大学校园里，而墙还没有延伸进去，所以支持ipv6的网络只要简单设置ipv6的代理edu6.zzzcn.info:2012，就可以翻墙，不同浏览器有不">
+<meta property="og:description" content="前提1：你的网络支持ipv6，可以打开http:&#x2F;&#x2F;ipv6.google.com.hk测试。前提2：你的ipv4网络是手动设置ip地址的，并不是自动获取ip地址。">
 <meta property="article:published_time" content="2011-02-20T15:56:28.000Z">
-<meta property="article:modified_time" content="2020-02-19T14:08:09.386Z">
+<meta property="article:modified_time" content="2020-02-20T08:05:16.812Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="ipv6">
 <meta property="article:tag" content="校园网">
@@ -177,7 +177,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-19 22:08:09" itemprop="dateModified" datetime="2020-02-19T22:08:09+08:00">2020-02-19</time>
+                <time title="Modified: 2020-02-20 16:05:16" itemprop="dateModified" datetime="2020-02-20T16:05:16+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,7 +202,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>前提1：你的网络支持ipv6，可以打开<a href="http://ipv6.google.com.hk" target="_blank" rel="noopener">http://ipv6.google.com.hk</a>测试。 前提2：你的ipv4网络是手动设置ip地址的，并不是自动获取ip地址。 1.翻墙 首先，因为北邮的方校长的墙只是建立在ipv4的基础上，ipv6网络大多是在大学校园里，而墙还没有延伸进去，所以支持ipv6的网络只要简单设置ipv6的代理edu6.zzzcn.info:2012，就可以翻墙，不同浏览器有不一样设置代理的方法，这里就不多说了。 2.突破校园内的断网 由于校园取消了DNS的解析，所以只要在ipv6的DNS那里填上海交大DNS服务器：2001:da8:8000:1:202:120:2:101，就可以继续用IPV6上网了。 但是如果访问的网站不支持ipv6，那么就要建立ipv6到ipv4的隧道连接，就可以通过ipv6的隧道访问ipv4的网址了。方法如下： win7用户，以管理员身份运行命令行窗口建立隧道连接。 netsh(回车，输入大于符号以后的内容，下同) netsh&gt;int netsh&gt;interface&gt;ipv6 netsh&gt;interface&gt;ipv6&gt;isatap netsh&gt;interface&gt;ipv6&gt;isatap&gt;set router isatap.scu.edu.cn netsh&gt;interface&gt;ipv6&gt;isatap&gt;set state enabled netsh&gt;interface&gt;ipv6&gt;isatap&gt;quit PS.再提供一个上交的router地址，如果华农的那个用不到就试试这个吧。 set router isatap.sjtu.edu.cn ————————————————————- 再提供利用Goagent的ipv6链路实现的方法：<a href="https://www.mak-blog.com/edu-ipv6-part2.html" title="校园网通过ipv6来翻墙和突破断网机制之二">校园网通过ipv6来翻墙和突破断网机制之二</a> 最新修改于2012-10-30</p>
+        <p>前提1：你的网络支持ipv6，可以打开<a href="http://ipv6.google.com.hk" target="_blank" rel="noopener">http://ipv6.google.com.hk</a>测试。<br>前提2：你的ipv4网络是手动设置ip地址的，并不是自动获取ip地址。</p>
+<a id="more"></a>
+
+<ol>
+<li>翻墙 首先，因为北邮的方校长的墙只是建立在ipv4的基础上，ipv6网络大多是在大学校园里，而墙还没有延伸进去，所以支持ipv6的网络只要简单设置ipv6的代理edu6.zzzcn.info:2012，就可以翻墙，不同浏览器有不一样设置代理的方法，这里就不多说了。</li>
+<li>突破校园内的断网 由于校园取消了DNS的解析，所以只要在ipv6的DNS那里填上海交大DNS服务器：2001:da8:8000:1:202:120:2:101，就可以继续用IPV6上网了。 但是如果访问的网站不支持ipv6，那么就要建立ipv6到ipv4的隧道连接，就可以通过ipv6的隧道访问ipv4的网址了。方法如下： win7用户，以管理员身份运行命令行窗口建立隧道连接。 netsh(回车，输入大于符号以后的内容，下同) netsh&gt;int netsh&gt;interface&gt;ipv6 netsh&gt;interface&gt;ipv6&gt;isatap netsh&gt;interface&gt;ipv6&gt;isatap&gt;set router isatap.scu.edu.cn netsh&gt;interface&gt;ipv6&gt;isatap&gt;set state enabled netsh&gt;interface&gt;ipv6&gt;isatap&gt;quit</li>
+</ol>
+<p>PS.再提供一个上交的router地址，如果华农的那个用不到就试试这个吧。<code>set router isatap.sjtu.edu.cn</code></p>
+<hr>
+<p>再提供利用Goagent的ipv6链路实现的方法：<a href="https://www.mak-blog.com/edu-ipv6-part2.html" title="校园网通过ipv6来翻墙和突破断网机制之二">校园网通过ipv6来翻墙和突破断网机制之二</a> 最新修改于2012-10-30</p>
 
     </div>
 
@@ -312,7 +321,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

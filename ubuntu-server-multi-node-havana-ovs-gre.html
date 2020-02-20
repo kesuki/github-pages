@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192">
+  <meta name="description" content="控制节点：  准备工作  配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192.168.2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ubuntu server多节点部署havana的OVS-GRE模式">
 <meta property="og:url" content="http://www.mak-blog.com/ubuntu-server-multi-node-havana-ovs-gre.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192">
+<meta property="og:description" content="控制节点：  准备工作  配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192.168.2">
 <meta property="article:published_time" content="2014-04-10T08:27:23.000Z">
-<meta property="article:modified_time" content="2019-05-07T06:35:10.000Z">
+<meta property="article:modified_time" content="2020-02-20T09:52:10.502Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="openstack">
 <meta property="article:tag" content="havana">
@@ -177,7 +177,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-05-07 14:35:10" itemprop="dateModified" datetime="2019-05-07T14:35:10+08:00">2019-05-07</time>
+                <time title="Modified: 2020-02-20 17:52:10" itemprop="dateModified" datetime="2020-02-20T17:52:10+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,350 +202,61 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>控制节点： 1. 准备工作 1.1. 配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192.168.200.xx网段，内部网络不用配置网关。10是controller，11是compute1，12是compute2，如此类推。注意区分eth是千兆口还是万兆口。 vi /etc/network/interfaces</p>
-<pre><code>#For Exposing OpenStack API over the internet
-auto eth0
-iface eth0 inet static
-address 192.168.1.10
-netmask 255.255.255.0
-gateway 192.168.1.1
-
-#Not internet connected(used for OpenStack management)
-auto eth1
-iface eth1 inet static
-    address 192.168.100.10
-    netmask 255.255.255.0
-
-#DATA_INTERFACE
-auto eth3
-iface eth3 inet static
-    address 192.168.200.10
-    netmask 255.255.255.0
-</code></pre><p>service networking restart 1.2.配置本机的hostname hostname controller #更改hosts文件 vi /etc/hosts</p>
-<pre><code>127.0.0.1 localhost
-192.168.100.10 controller
-192.168.100.11 compute1
-192.168.100.12 compute2
-192.168.100.13 compute3
-192.168.1.12 controller_ext
-</code></pre><p>1.3.更新教育网的源 vi /etc/apt/sources.list</p>
-<pre><code>deb http://mirror.bjtu.edu.cn/ubuntu/ precise main multiverse restricted universe
-deb http://mirror.bjtu.edu.cn/ubuntu/ precise-backports main multiverse restricted universe
-deb http://mirror.bjtu.edu.cn/ubuntu/ precise-proposed main multiverse restricted universe
-deb http://mirror.bjtu.edu.cn/ubuntu/ precise-security main multiverse restricted universe
-deb http://mirror.bjtu.edu.cn/ubuntu/ precise-updates main multiverse restricted universe
-deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise main multiverse restricted universe
-deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-backports main multiverse restricted universe
-deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-proposed main multiverse restricted universe
-deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-security main multiverse restricted universe
-deb-src http://mirror.bjtu.edu.cn/ubuntu/ precise-updates main multiverse restricted universe
-</code></pre><p>#更新源 apt-get update #添加openstack的源 apt-get install python-software-properties add-apt-repository cloud-archive:havana #更新源，以及更新软件 apt-get update -y apt-get upgrade -y apt-get dist-upgrade -y reboot 1.4. 安装NTP服务器来让计算节点节点同步时间 apt-get install ntp apt-get install rsplib-tools vi /etc/ntp.conf</p>
-<pre><code>server 127.127.1.0
-fudge 127.127.1.0 stratum 10
-</code></pre><p>service ntp restart 1.5. 安装MySQL server apt-get install python-mysqldb mysql-server sed -i ‘s/127.0.0.1/0.0.0.0/g’ /etc/mysql/my.cnf /etc/init.d/mysql restart 1.6. 开启IP转发 sed -i -r ‘s/^\s<em>#(net\.ipv4\.ip_forward=1.</em>)/\1/‘ /etc/sysctl.conf echo 1 &gt; /proc/sys/net/ipv4/ip_forward sysctl -p 1.7. 安装其他服务 apt-get install -y vlan bridge-utils 2.1.安装rabbitmq，是控制器统筹各个部件的软件，并修改用户guest的密码为password apt-get install rabbitmq-server rabbitmqctl change_password guest password #为每一个部件都建立数据库 mysql -u root -p</p>
-<pre><code>CREATE DATABASE keystone;
-G RANT ALL PRIVILEGES ON keystone.* TO &apos;keystone&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON keystone.* TO &apos;keystone&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON keystone.* TO &apos;keystone&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
-
-CREATE DATABASE glance;
-G RANT ALL PRIVILEGES ON glance.* TO &apos;glance&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON glance.* TO &apos;glance&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON glance.* TO &apos;glance&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
-
-CREATE DATABASE nova;
-G RANT ALL PRIVILEGES ON nova.* TO &apos;nova&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON nova.* TO &apos;nova&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON nova.* TO &apos;nova&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
-
-CREATE DATABASE neutron;
-G RANT ALL PRIVILEGES ON neutron.* TO &apos;neutron&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON neutron.* TO &apos;neutron&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON neutron.* TO &apos;neutron&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
-
-CREATE DATABASE cinder;
-G RANT ALL PRIVILEGES ON cinder.* TO &apos;cinder&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON cinder.* TO &apos;cinder&apos;@&apos;controller&apos; IDENTIFIED BY &apos;password&apos;;
-G RANT ALL PRIVILEGES ON cinder.* TO &apos;cinder&apos;@&apos;%&apos; IDENTIFIED BY &apos;password&apos;;
-</code></pre><p>quit;</p>
-<p>2.2. Keystone的安装，是openstack的验证模块 apt-get install keystone #修改对应的数据库连接 vi /etc/keystone/keystone.conf</p>
-<pre><code>connection = mysql://keystone:password@controller/keystone
-</code></pre><p>#删除原始的本地数据库，以免错误调用 rm /var/lib/keystone/keystone.db service keystone restart #同步数据库 keystone-manage db_sync #为各个部件在keystone中添加用户，服务，和后端 vi keystone.sh chmod +x keystone.sh ./keystone.sh #验证keystone unset OS_SERVICE_TOKEN OS_SERVICE_ENDPOINT keystone –os-username=admin –os-password=password –os-auth-url=<a href="http://controller:35357/v2.0" target="_blank" rel="noopener">http://controller:35357/v2.0</a> token-get keystone –os-username=admin –os-password=password –os-tenant-name=admin –os-auth-url=<a href="http://controller:35357/v2.0" target="_blank" rel="noopener">http://controller:35357/v2.0</a> token-get #导入本地变量 vi keystonerc</p>
-<pre><code>export OS\_TENANT\_NAME=admin
-export OS_USERNAME=admin
-export OS_PASSWORD=password
-export OS\_AUTH\_URL=http://controller_ext:35357/v2.0
-</code></pre><p>source keystonerc keystone token-get keystone user-list 2.3. Glance的安装，用于存储镜像 apt-get install glance #修改数据库连接，rabbit的密码，keystone的验证 vi /etc/glance/glance-api.conf</p>
-<pre><code>sql_connection = mysql://glance:password@controller/glance
-
-#rabbit_password = guest
-rabbit_password = password
-
-\[keystone_authtoken\]
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-admin\_tenant\_name = service
-admin_user = glance
-admin_password = password
-
-\[paste_deploy\]
-flavor = keystone
-</code></pre><p>vi /etc/glance/glance-registry.conf</p>
-<pre><code>sql_connection = mysql://glance:password@controller/glance
-
-\[keystone_authtoken\]
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-admin\_tenant\_name = service
-admin_user = glance
-admin_password = password
-
-\[paste_deploy\]
-flavor = keystone
-</code></pre><p>#删除原来的本地数据库，以免错误调用 rm /var/lib/glance/glance.sqlite #修改API调用时的keystone验证信息 vi /etc/glance/glance-api-paste.ini</p>
-<pre><code>\[filter:authtoken\]
-paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
-delay\_auth\_decision = true
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-admin\_tenant\_name = service
-admin_user = glance
-admin_password = password
-</code></pre><p>vi /etc/glance/glance-registry-paste.ini</p>
-<pre><code>\[filter:authtoken\]
-paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-admin\_tenant\_name = service
-admin_user = glance
-admin_password = password
-</code></pre><p>#重启服务 service glance-registry restart service glance-api restart #导入数据库 glance-manage db_sync #验证glance服务 mkdir images cd images/ wget <a href="http://cdn.download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86\_64-disk.img" target="_blank" rel="noopener">http://cdn.download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86\_64-disk.img</a> #导入镜像 glance image-create –name=”CirrOS 0.3.1” –disk-format=qcow2 –container-format=bare –is-public=true &lt; cirros-0.3.1-x86_64-disk.img glance image-list 2.4. 安装Neutron #安装Neutron的主体 apt-get install neutron-server #配置rabbit，keystone和数据库的验证 vi /etc/neutron/neutron.conf</p>
-<pre><code>\[default\]
-auth_strategy = keystone
-
-rpc\_backend = neutron.openstack.common.rpc.impl\_kombu
-rabbit_host = controller
-rabbit_port = 5672
-rabbit_password = password
-
-\[keystone_authtoken\]
-auth_host = controller
-admin\_tenant\_name = service
-admin_user = neutron
-admin_password = password
-#auth_url = http://controller:35357/v2.0
-
-\[database\]
-connection = mysql://neutron:password@controller/neutron
-</code></pre><p>#配置API调用是的验证 vi /etc/neutron/api-paste.ini</p>
-<pre><code>\[filter:authtoken\]
-paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
-admin\_tenant\_name = service
-admin_user = neutron
-admin_password = password
-</code></pre><p>#配置nova部分，之前要先安装nova-api，nova不设置防火墙，只调用neutron的防火墙 vi /etc/nova/nova.conf</p>
-<pre><code>network\_api\_class=nova.network.neutronv2.api.API
-neutron_url=http://controller:9696
-neutron\_auth\_strategy=keystone
-neutron\_admin\_tenant_name=service
-neutron\_admin\_username=neutron
-neutron\_admin\_password=password
-neutron\_admin\_auth_url=http://controller:35357/v2.0
-linuxnet\_interface\_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
-#firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
-firewall_driver=nova.virt.firewall.NoopFirewallDriver
-security\_group\_api=neutron
-</code></pre><p>#安装neutron的插件openvswitch apt-get install neutron-plugin-openvswitch-agent #配置neutron插件，配置GRE模式 vi /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini</p>
-<pre><code>\[DATABASE\]
-#sql_connection = mysql://neutron:password@controller/neutron
-connection = mysql://neutron:password@controller/neutron
-\[OVS\]
-tenant\_network\_type = gre
-tunnel\_id\_ranges = 1:1000
-enable_tunneling = True
-
-\[SECURITYGROUP\]
-firewall\_driver = neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirewallDriver
-</code></pre><p>2.5. 安装Nova apt-get install nova-novncproxy novnc nova-api nova-ajax-console-proxy nova-cert nova-conductor nova-consoleauth nova-doc nova-scheduler python-novaclient #配置rabbit，keystone，metadata，vncserver和数据库的验证 vi /etc/nova/nova.conf</p>
-<pre><code>\[DEFAULT\]
-rpc\_backend = nova.rpc.impl\_kombu
-rabbit_host = controller
-rabbit_userid = guest
-rabbit_password = password           
-
-vncserver\_proxyclient\_address=#management ip
-vncserver_listen=0.0.0.0
-
-auth_strategy=keystone
-
-glance_host=controller
-
-# Network settings
-network\_api\_class=nova.network.neutronv2.api.API
-neutron_url=http://controller:9696
-neutron\_auth\_strategy=keystone
-neutron\_admin\_tenant_name=service
-neutron\_admin\_username=neutron
-neutron\_admin\_password=password
-neutron\_admin\_auth_url=http://controller:35357/v2.0
-linuxnet\_interface\_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
-firewall_driver=nova.virt.firewall.NoopFirewallDriver
-security\_group\_api=neutron
-
-#Metadata
-service\_neutron\_metadata_proxy = True
-neutron\_metadata\_proxy\_shared\_secret = password
-metadata_host = controller
-metadata_listen = 0.0.0.0
-metadata\_listen\_port = 8775
-
-# Auth
-#use\_deprecated\_auth=false
-
-\[database\]
-connection = mysql://nova:password@controller/nova
-\[keystone_authtoken\]
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-admin\_tenant\_name = service
-admin_user = nova
-admin_password = password
-</code></pre><p>#配置提供API的keystone验证 vi /etc/nova/api-paste.ini</p>
-<pre><code>\[filter:authtoken\]
-paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-auth_uri = http://controller:5000/v2.0
-admin\_tenant\_name = service
-admin_user = nova
-admin_password = password
-</code></pre><p>#同步数据库 nova-manage db sync service nova-api restart service nova-cert restart service nova-consoleauth restart service nova-scheduler restart service nova-conductor restart service nova-novncproxy restart #查看服务运行的状态 nova-manage service list #修改默认的quota vi /etc/nova/nova.conf</p>
-<pre><code>quota_instances=100
-quota_cores=1000
-quota_ram=1048576
-</code></pre><p>service nova-api restart service nova-cert restart service nova-consoleauth restart service nova-scheduler restart service nova-conductor restart service nova-novncproxy restart nova-manage db sync nova-manage project quota admin 2.6. 安装horizon界面 apt-get install memcached libapache2-mod-wsgi openstack-dashboard #去掉Ubuntu相关的Openstack主题，bug apt-get remove –purge openstack-dashboard-ubuntu-theme vi /etc/apache2/httpd.conf ServerName controller_ext service apache2 restart service memcached restart 2.7. 安装cinder，用于提供虚拟存储 apt-get install cinder-api cinder-scheduler #配置cinder数据库 vi /etc/cinder/cinder.conf</p>
-<pre><code>\[database\]
-...
-# The SQLAlchemy connection string used to connect to the
-# database (string value)
-connection = mysql://cinder:password@controller/cinder
-</code></pre><p>cinder-manage db sync #配置keystone的验证 vi /etc/cinder/api-paste.ini</p>
-<pre><code>\[filter:authtoken\]
-paste.filter\_factory=keystoneclient.middleware.auth\_token:filter_factory
-auth_host=controller
-auth_port = 35357
-auth_protocol = http
-auth_uri = http://controller:5000/v2.0
-admin\_tenant\_name=service
-admin_user=cinder
-admin_password=password
-#auth_version = v2.0
-</code></pre><p>vi /etc/cinder/cinder.conf</p>
-<pre><code>\[DEFAULT\]
-rpc\_backend = cinder.openstack.common.rpc.impl\_kombu
-rabbit_host = controller
-rabbit_port = 5672
-rabbit_userid = guest
-rabbit_password = password
-
-glance_host=controller
-glance_port=9292
-glance\_api\_servers=controller:9292
-</code></pre><p>service cinder-scheduler restart service cinder-api restart 网络节点： #由于网络节点配置在控制节点上，所以第一部的准备工作就可以去掉 #开启转发 vi /etc/sysctl.conf</p>
-<pre><code>net.ipv4.ip_forward=1
-#小心配错
-net.ipv4.conf.all.rp_filter=0
-net.ipv4.conf.default.rp_filter=0
-</code></pre><p>sysctl -p service networking restart 2.1. 安装neutron的各种网络服务 apt-get install neutron-server neutron-dhcp-agent neutron-plugin-openvswitch-agent neutron-l3-agent #配置验证信息 vi /etc/neutron/neutron.conf</p>
-<pre><code>\[default\]
-auth_strategy = keystone
-
-rpc\_backend = neutron.openstack.common.rpc.impl\_kombu
-rabbit_host = controller
-rabbit_port = 5672
-rabbit_userid = guest
-rabbit_password = password
-
-\[keystone_authtoken\]
-auth_host = controller
-auth_port = 35357
-auth_protocol = http
-admin\_tenant\_name = service
-admin_user = neutron
-admin_password = password
-
-\[database\]
-connection = mysql://neutron:password@controller/neutron
-</code></pre><p>#配置提供API的验证信息 vi /etc/neutron/api-paste.ini</p>
-<pre><code>\[filter:authtoken\]
-paste.filter\_factory = keystoneclient.middleware.auth\_token:filter_factory
-auth_host=controller
-auth_port = 35357
-auth_protocol = http
-auth_uri = http://controller:5000/v2.0
-admin\_tenant\_name = service
-admin_user = neutron
-admin_password = password
-#page 73
-</code></pre><p>#指定提供dhcp的驱动服务 vi /etc/neutron/dhcp_agent.ini</p>
-<pre><code>dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
-</code></pre><p>vi /etc/nova/nova.conf</p>
-<pre><code>\[DEFAULT\]
-service\_neutron\_metadata_proxy = true
-neutron\_metadata\_proxy\_shared\_secret = password
-metadata_host = controller
-metadata_listen = 0.0.0.0
-metadata\_listen\_port = 8775
-</code></pre><p>service nova-api restart #配置meta的验证服务 vi /etc/neutron/metadata_agent.ini</p>
-<pre><code>\[DEFAULT\]
-auth_url = http://controller:5000/v2.0
-auth_region = RegionOne
-admin\_tenant\_name = service
-admin_user = neutron
-admin_password = password
-nova\_metadata\_ip = controller
-metadata\_proxy\_shared_secret = password
-</code></pre><p>service neutron-server restart service neutron-dhcp-agent restart service neutron-l3-agent restart service neutron-metadata-agent restart service neutron-plugin-openvswitch-agent restart #安装neutron的插件openvswtich apt-get install neutron-plugin-openvswitch-agent openvswitch-switch service openvswitch-switch restart ovs-vsctl add-br br-int ovs-vsctl add-br br-ex #把提供外部API的网口桥接到br-ex上 ovs-vsctl add-port br-ex eth0 #修改网卡配置，把eth0改成混杂模式，把br-ex改成eth0的ip配置 vi /etc/network/interfaces</p>
-<pre><code>#For Exposing OpenStack API over the internet
-auto eth0
-iface eth0 inet manual
-up ifconfig eth0 0.0.0.0 up
-up ip link set eth0 promisc on
-down ip link set eth0 promisc off
-down ifconfig eth0 down
-
-auto br-ex
-iface br-ex inet static
-address 192.168.1.10
-netmask 255.255.255.0
-gateway 192.168.1.1
-</code></pre><p>/etc/init.d/networking restart #配置l3_agent和dhcp_agent vi /etc/neutron/l3_agent.ini</p>
-<pre><code>interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
-use_namespaces = True
-</code></pre><p>vi /etc/neutron/dhcp_agent.ini</p>
-<pre><code>interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
-use_namespaces = True
-</code></pre><p>#配置neutron的插件为openvswitch vi /etc/neutron/neutron.conf</p>
-<pre><code>core\_plugin = neutron.plugins.openvswitch.ovs\_neutron_plugin.OVSNeutronPluginV2
-</code></pre><p>service neutron-plugin-openvswitch-agent restart #配置插件为GRE模式 vi /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini</p>
-<pre><code>\[OVS\]
-tenant\_network\_type = gre
-tunnel\_id\_ranges = 1:1000
-enable_tunneling = True
-integration_bridge = br-int
-tunnel_bridge = br-tun
-local_ip = #tunnel ip
-
-\[securitygroup\]
-# Firewall driver for realizing neutron security group function.
-firewall\_driver = neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirewallDriver
-</code></pre><p>service neutron-plugin-openvswitch-agent restart</p>
+        <p>控制节点：</p>
+<ol>
+<li><p>准备工作</p>
+<ol>
+<li>配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。 第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。 第三个网卡是负责openstack数据层面的连接，使用192.168.200.xx网段，内部网络不用配置网关。10是controller，11是compute1，12是compute2，如此类推。注意区分eth是千兆口还是万兆口。<a id="more"></a>
+<code>vi /etc/network/interfaces</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#For Exposing OpenStack API over the internet</span><br><span class="line">auto eth0</span><br><span class="line">iface eth0 inet static</span><br><span class="line">address 192.168.1.10</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.1.1</span><br><span class="line"></span><br><span class="line">#Not internet connected(used for OpenStack management)</span><br><span class="line">auto eth1</span><br><span class="line">iface eth1 inet static</span><br><span class="line">	address 192.168.100.10</span><br><span class="line">	netmask 255.255.255.0</span><br><span class="line"></span><br><span class="line">#DATA_INTERFACE</span><br><span class="line">auto eth3</span><br><span class="line">iface eth3 inet static</span><br><span class="line">	address 192.168.200.10</span><br><span class="line">	netmask 255.255.255.0</span><br></pre></td></tr></table></figure>
+<code>service networking restart</code></li>
+<li>配置本机的hostname hostname controller #更改hosts文件<code>vi /etc/hosts</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 localhost</span><br><span class="line">192.168.100.10 controller</span><br><span class="line">192.168.100.11 compute1</span><br><span class="line">192.168.100.12 compute2</span><br><span class="line">192.168.100.13 compute3</span><br><span class="line">192.168.1.12 controller_ext</span><br></pre></td></tr></table></figure></li>
+<li>更新教育网的源<code>vi /etc/apt/sources.list</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">deb http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise main multiverse restricted universe</span><br><span class="line">deb http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-backports main multiverse restricted universe</span><br><span class="line">deb http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-proposed main multiverse restricted universe</span><br><span class="line">deb http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-security main multiverse restricted universe</span><br><span class="line">deb http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-updates main multiverse restricted universe</span><br><span class="line">deb-src http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise main multiverse restricted universe</span><br><span class="line">deb-src http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-backports main multiverse restricted universe</span><br><span class="line">deb-src http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-proposed main multiverse restricted universe</span><br><span class="line">deb-src http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-security main multiverse restricted universe</span><br><span class="line">deb-src http:&#x2F;&#x2F;mirror.bjtu.edu.cn&#x2F;ubuntu&#x2F; precise-updates main multiverse restricted universe</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#更新源</span><br><span class="line">apt-get update</span><br><span class="line">#添加openstack的源</span><br><span class="line">apt-get install python-software-properties add-apt-repository cloud-archive:havana</span><br><span class="line">#更新源，以及更新软件</span><br><span class="line">apt-get update -y apt-get upgrade -y apt-get dist-upgrade -y</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure></li>
+<li>安装NTP服务器来让计算节点节点同步时间<code>apt-get install ntp``apt-get install rsplib-tools``vi /etc/ntp.conf</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server 127.127.1.0</span><br><span class="line">fudge 127.127.1.0 stratum 10</span><br></pre></td></tr></table></figure>
+<code>service ntp restart</code></li>
+<li>安装MySQL server <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt-get install python-mysqldb mysql-server</span><br><span class="line">sed -i &#39;s&#x2F;127.0.0.1&#x2F;0.0.0.0&#x2F;g&#39; &#x2F;etc&#x2F;mysql&#x2F;my.cnf</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;mysql restart</span><br></pre></td></tr></table></figure></li>
+<li>开启IP转发<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i -r &#39;s&#x2F;^\\s*#(net\\.ipv4\\.ip\_forward&#x3D;1.*)&#x2F;\\1&#x2F;&#39; &#x2F;etc&#x2F;sysctl.conf</span><br><span class="line">echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip\_forward sysctl -p</span><br></pre></td></tr></table></figure></li>
+<li>安装其他服务<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install -y vlan bridge-utils</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>配置</p>
+<ol>
+<li>安装rabbitmq，是控制器统筹各个部件的软件，并修改用户guest的密码为password <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt-get install rabbitmq-server rabbitmqctl change_password guest password</span><br><span class="line">#为每一个部件都建立数据库</span><br><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">	CREATE DATABASE keystone;</span><br><span class="line">	G RANT ALL PRIVILEGES ON keystone.* TO &#39;keystone&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON keystone.* TO &#39;keystone&#39;@&#39;controller&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON keystone.* TO &#39;keystone&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	</span><br><span class="line">	CREATE DATABASE glance;</span><br><span class="line">	G RANT ALL PRIVILEGES ON glance.* TO &#39;glance&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON glance.* TO &#39;glance&#39;@&#39;controller&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON glance.* TO &#39;glance&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	</span><br><span class="line">	CREATE DATABASE nova;</span><br><span class="line">	G RANT ALL PRIVILEGES ON nova.* TO &#39;nova&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON nova.* TO &#39;nova&#39;@&#39;controller&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON nova.* TO &#39;nova&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	</span><br><span class="line">	CREATE DATABASE neutron;</span><br><span class="line">	G RANT ALL PRIVILEGES ON neutron.* TO &#39;neutron&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON neutron.* TO &#39;neutron&#39;@&#39;controller&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON neutron.* TO &#39;neutron&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	</span><br><span class="line">	CREATE DATABASE cinder;</span><br><span class="line">	G RANT ALL PRIVILEGES ON cinder.* TO &#39;cinder&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON cinder.* TO &#39;cinder&#39;@&#39;controller&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">	G RANT ALL PRIVILEGES ON cinder.* TO &#39;cinder&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">quit;</span><br></pre></td></tr></table></figure></li>
+<li>Keystone的安装，是openstack的验证模块<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apt-get install keystone</span><br><span class="line">#修改对应的数据库连接</span><br><span class="line">vi &#x2F;etc&#x2F;keystone&#x2F;keystone.conf</span><br><span class="line"></span><br><span class="line">	connection &#x3D; mysql:&#x2F;&#x2F;keystone:password@controller&#x2F;keystone</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#删除原始的本地数据库，以免错误调用</span><br><span class="line">rm &#x2F;var&#x2F;lib&#x2F;keystone&#x2F;keystone.db</span><br><span class="line">service keystone restart</span><br><span class="line">#同步数据库 keystone-manage db\_sync</span><br><span class="line">#为各个部件在keystone中添加用户，服务，和后端</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi keystone.sh</span><br><span class="line">chmod +x keystone.sh</span><br><span class="line">.&#x2F;keystone.sh</span><br><span class="line">#验证keystone unset OS\_SERVICE\_TOKEN OS\_SERVICE_ENDPOINT keystone --os-username&#x3D;admin --os-password&#x3D;password --os-auth-url&#x3D;http:&#x2F;&#x2F;controller:35357&#x2F;v2.0 token-get keystone --os-username&#x3D;admin --os-password&#x3D;password --os-tenant-name&#x3D;admin --os-auth-url&#x3D;http:&#x2F;&#x2F;controller:35357&#x2F;v2.0 token-get</span><br><span class="line">#导入本地变量</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi keystonerc</span><br><span class="line"></span><br><span class="line">	export OS\_TENANT\_NAME&#x3D;admin</span><br><span class="line">	export OS_USERNAME&#x3D;admin</span><br><span class="line">	export OS_PASSWORD&#x3D;password</span><br><span class="line">	export OS\_AUTH\_URL&#x3D;http:&#x2F;&#x2F;controller_ext:35357&#x2F;v2.0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">source keystonerc</span><br><span class="line">keystone token-get</span><br><span class="line">keystone user-list</span><br></pre></td></tr></table></figure></li>
+<li>Glance的安装，用于存储镜像<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install glance</span><br><span class="line">#修改数据库连接，rabbit的密码，keystone的验证</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;glance&#x2F;glance-api.conf</span><br><span class="line"></span><br><span class="line">	sql_connection &#x3D; mysql:&#x2F;&#x2F;glance:password@controller&#x2F;glance</span><br><span class="line">	</span><br><span class="line">	#rabbit_password &#x3D; guest</span><br><span class="line">	rabbit_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	\[keystone_authtoken\]</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; glance</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	\[paste_deploy\]</span><br><span class="line">	flavor &#x3D; keystone</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;glance&#x2F;glance-registry.conf</span><br><span class="line"></span><br><span class="line">	sql_connection &#x3D; mysql:&#x2F;&#x2F;glance:password@controller&#x2F;glance</span><br><span class="line">	</span><br><span class="line">	\[keystone_authtoken\]</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; glance</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	\[paste_deploy\]</span><br><span class="line">	flavor &#x3D; keystone</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#删除原来的本地数据库，以免错误调用</span><br><span class="line">rm &#x2F;var&#x2F;lib&#x2F;glance&#x2F;glance.sqlite</span><br><span class="line">#修改API调用时的keystone验证信息</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;glance&#x2F;glance-api-paste.ini</span><br><span class="line"></span><br><span class="line">	\[filter:authtoken\]</span><br><span class="line">	paste.filter\_factory &#x3D; keystoneclient.middleware.auth\_token:filter_factory</span><br><span class="line">	delay\_auth\_decision &#x3D; true</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; glance</span><br><span class="line">	admin_password &#x3D; password</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;glance&#x2F;glance-registry-paste.ini</span><br><span class="line"></span><br><span class="line">	\[filter:authtoken\]</span><br><span class="line">	paste.filter\_factory &#x3D; keystoneclient.middleware.auth\_token:filter_factory</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; glance</span><br><span class="line">	admin_password &#x3D; password</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#重启服务</span><br><span class="line">service glance-registry restart</span><br><span class="line">service glance-api restart</span><br><span class="line">#导入数据库</span><br><span class="line">glance-manage db_sync</span><br><span class="line">#验证glance服务</span><br><span class="line">mkdir images</span><br><span class="line">cd images</span><br><span class="line">wget http:&#x2F;&#x2F;cdn.download.cirros-cloud.net&#x2F;0.3.1&#x2F;cirros-0.3.1-x86\_64-disk.img</span><br><span class="line">#导入镜像</span><br><span class="line">glance image-create --name&#x3D;&quot;CirrOS 0.3.1&quot; --disk-format&#x3D;qcow2 --container-format&#x3D;bare --is-public&#x3D;true &lt; cirros-0.3.1-x86_64-disk.img glance image-list</span><br></pre></td></tr></table></figure></li>
+<li>安装Neutron<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#安装Neutron的主体</span><br><span class="line">apt-get install neutron-server</span><br><span class="line">#配置rabbit，keystone和数据库的验证</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;neutron.conf</span><br><span class="line"></span><br><span class="line">	\[default\]</span><br><span class="line">	auth_strategy &#x3D; keystone</span><br><span class="line">	</span><br><span class="line">	rpc\_backend &#x3D; neutron.openstack.common.rpc.impl\_kombu</span><br><span class="line">	rabbit_host &#x3D; controller</span><br><span class="line">	rabbit_port &#x3D; 5672</span><br><span class="line">	rabbit_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	\[keystone_authtoken\]</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; neutron</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line">	#auth_url &#x3D; http:&#x2F;&#x2F;controller:35357&#x2F;v2.0</span><br><span class="line">	</span><br><span class="line">	\[database\]</span><br><span class="line">	connection &#x3D; mysql:&#x2F;&#x2F;neutron:password@controller&#x2F;neutron</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#配置API调用是的验证 </span><br><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;api-paste.ini</span><br><span class="line"></span><br><span class="line">	\[filter:authtoken\]</span><br><span class="line">	paste.filter\_factory &#x3D; keystoneclient.middleware.auth\_token:filter_factory</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; neutron</span><br><span class="line">	admin_password &#x3D; password</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#配置nova部分，之前要先安装nova-api，nova不设置防火墙，只调用neutron的防火墙</span><br><span class="line">vi &#x2F;etc&#x2F;nova&#x2F;nova.conf</span><br><span class="line"></span><br><span class="line">	network\_api\_class&#x3D;nova.network.neutronv2.api.API</span><br><span class="line">	neutron_url&#x3D;http:&#x2F;&#x2F;controller:9696</span><br><span class="line">	neutron\_auth\_strategy&#x3D;keystone</span><br><span class="line">	neutron\_admin\_tenant_name&#x3D;service</span><br><span class="line">	neutron\_admin\_username&#x3D;neutron</span><br><span class="line">	neutron\_admin\_password&#x3D;password</span><br><span class="line">	neutron\_admin\_auth_url&#x3D;http:&#x2F;&#x2F;controller:35357&#x2F;v2.0</span><br><span class="line">	linuxnet\_interface\_driver &#x3D; nova.network.linux_net.LinuxOVSInterfaceDriver</span><br><span class="line">	#firewall_driver&#x3D;nova.virt.libvirt.firewall.IptablesFirewallDriver</span><br><span class="line">	firewall_driver&#x3D;nova.virt.firewall.NoopFirewallDriver</span><br><span class="line">	security\_group\_api&#x3D;neutron</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#安装neutron的插件openvswitch</span><br><span class="line">apt-get install neutron-plugin-openvswitch-agent</span><br><span class="line">#配置neutron插件，配置GRE模式</span><br><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;plugins&#x2F;openvswitch&#x2F;ovs\_neutron\_plugin.ini</span><br><span class="line"></span><br><span class="line">	\[DATABASE\]</span><br><span class="line">	#sql_connection &#x3D; mysql:&#x2F;&#x2F;neutron:password@controller&#x2F;neutron</span><br><span class="line">	connection &#x3D; mysql:&#x2F;&#x2F;neutron:password@controller&#x2F;neutron</span><br><span class="line">	\[OVS\]</span><br><span class="line">	tenant\_network\_type &#x3D; gre</span><br><span class="line">	tunnel\_id\_ranges &#x3D; 1:1000</span><br><span class="line">	enable_tunneling &#x3D; True</span><br><span class="line">	</span><br><span class="line">	\[SECURITYGROUP\]</span><br><span class="line">	firewall\_driver &#x3D; neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirewallDriver</span><br></pre></td></tr></table></figure></li>
+<li>安装Nova<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">apt-get install nova-novncproxy novnc nova-api nova-ajax-console-proxy nova-cert nova-conductor nova-consoleauth nova-doc nova-scheduler python-novaclient</span><br><span class="line">#配置rabbit，keystone，metadata，vncserver和数据库的验证</span><br><span class="line">vi &#x2F;etc&#x2F;nova&#x2F;nova.conf</span><br><span class="line"></span><br><span class="line">	\[DEFAULT\]</span><br><span class="line">	rpc\_backend &#x3D; nova.rpc.impl\_kombu</span><br><span class="line">	rabbit_host &#x3D; controller</span><br><span class="line">	rabbit_userid &#x3D; guest</span><br><span class="line">	rabbit_password &#x3D; password           </span><br><span class="line">	</span><br><span class="line">	vncserver\_proxyclient\_address&#x3D;#management ip</span><br><span class="line">	vncserver_listen&#x3D;0.0.0.0</span><br><span class="line">	</span><br><span class="line">	auth_strategy&#x3D;keystone</span><br><span class="line">	</span><br><span class="line">	glance_host&#x3D;controller</span><br><span class="line">	</span><br><span class="line">	# Network settings</span><br><span class="line">	network\_api\_class&#x3D;nova.network.neutronv2.api.API</span><br><span class="line">	neutron_url&#x3D;http:&#x2F;&#x2F;controller:9696</span><br><span class="line">	neutron\_auth\_strategy&#x3D;keystone</span><br><span class="line">	neutron\_admin\_tenant_name&#x3D;service</span><br><span class="line">	neutron\_admin\_username&#x3D;neutron</span><br><span class="line">	neutron\_admin\_password&#x3D;password</span><br><span class="line">	neutron\_admin\_auth_url&#x3D;http:&#x2F;&#x2F;controller:35357&#x2F;v2.0</span><br><span class="line">	linuxnet\_interface\_driver &#x3D; nova.network.linux_net.LinuxOVSInterfaceDriver</span><br><span class="line">	firewall_driver&#x3D;nova.virt.firewall.NoopFirewallDriver</span><br><span class="line">	security\_group\_api&#x3D;neutron</span><br><span class="line">	</span><br><span class="line">	#Metadata</span><br><span class="line">	service\_neutron\_metadata_proxy &#x3D; True</span><br><span class="line">	neutron\_metadata\_proxy\_shared\_secret &#x3D; password</span><br><span class="line">	metadata_host &#x3D; controller</span><br><span class="line">	metadata_listen &#x3D; 0.0.0.0</span><br><span class="line">	metadata\_listen\_port &#x3D; 8775</span><br><span class="line">	</span><br><span class="line">	# Auth</span><br><span class="line">	#use\_deprecated\_auth&#x3D;false</span><br><span class="line">	</span><br><span class="line">	\[database\]</span><br><span class="line">	connection &#x3D; mysql:&#x2F;&#x2F;nova:password@controller&#x2F;nova</span><br><span class="line">	\[keystone_authtoken\]</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; nova</span><br><span class="line">	admin_password &#x3D; password</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#配置提供API的keystone验证</span><br><span class="line">vi &#x2F;etc&#x2F;nova&#x2F;api-paste.ini</span><br><span class="line"></span><br><span class="line">	\[filter:authtoken\]</span><br><span class="line">	paste.filter\_factory &#x3D; keystoneclient.middleware.auth\_token:filter_factory</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	auth_uri &#x3D; http:&#x2F;&#x2F;controller:5000&#x2F;v2.0</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; nova</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line"></span><br><span class="line">#同步数据库 nova-manage db sync service nova-api restart service nova-cert restart service nova-consoleauth restart service nova-scheduler restart service nova-conductor restart service nova-novncproxy restart #查看服务运行的状态 nova-manage service list #修改默认的quota vi &#x2F;etc&#x2F;nova&#x2F;nova.conf</span><br><span class="line"></span><br><span class="line">	quota_instances&#x3D;100</span><br><span class="line">	quota_cores&#x3D;1000</span><br><span class="line">	quota_ram&#x3D;1048576</span><br><span class="line"></span><br><span class="line">service nova-api restart service nova-cert restart service nova-consoleauth restart service nova-scheduler restart service nova-conductor restart service nova-novncproxy restart nova-manage db sync nova-manage project quota admin 2.6. 安装horizon界面 apt-get install memcached libapache2-mod-wsgi openstack-dashboard #去掉Ubuntu相关的Openstack主题，bug apt-get remove --purge openstack-dashboard-ubuntu-theme vi &#x2F;etc&#x2F;apache2&#x2F;httpd.conf ServerName controller_ext service apache2 restart service memcached restart 2.7. 安装cinder，用于提供虚拟存储 apt-get install cinder-api cinder-scheduler #配置cinder数据库 vi &#x2F;etc&#x2F;cinder&#x2F;cinder.conf</span><br><span class="line"></span><br><span class="line">	\[database\]</span><br><span class="line">	...</span><br><span class="line">	# The SQLAlchemy connection string used to connect to the</span><br><span class="line">	# database (string value)</span><br><span class="line">	connection &#x3D; mysql:&#x2F;&#x2F;cinder:password@controller&#x2F;cinder</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cinder-manage db sync</span><br><span class="line">#配置keystone的验证</span><br><span class="line">vi &#x2F;etc&#x2F;cinder&#x2F;api-paste.ini</span><br><span class="line"></span><br><span class="line">	\[filter:authtoken\]</span><br><span class="line">	paste.filter\_factory&#x3D;keystoneclient.middleware.auth\_token:filter_factory</span><br><span class="line">	auth_host&#x3D;controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	auth_uri &#x3D; http:&#x2F;&#x2F;controller:5000&#x2F;v2.0</span><br><span class="line">	admin\_tenant\_name&#x3D;service</span><br><span class="line">	admin_user&#x3D;cinder</span><br><span class="line">	admin_password&#x3D;password</span><br><span class="line">	#auth_version &#x3D; v2.0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;cinder&#x2F;cinder.conf</span><br><span class="line"></span><br><span class="line">	\[DEFAULT\]</span><br><span class="line">	rpc\_backend &#x3D; cinder.openstack.common.rpc.impl\_kombu</span><br><span class="line">	rabbit_host &#x3D; controller</span><br><span class="line">	rabbit_port &#x3D; 5672</span><br><span class="line">	rabbit_userid &#x3D; guest</span><br><span class="line">	rabbit_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	glance_host&#x3D;controller</span><br><span class="line">	glance_port&#x3D;9292</span><br><span class="line">	glance\_api\_servers&#x3D;controller:9292</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">service cinder-scheduler restart</span><br><span class="line">service cinder-api restart</span><br><span class="line">网络节点： #由于网络节点配置在控制节点上，所以第一部的准备工作就可以去掉 </span><br><span class="line">#开启转发</span><br><span class="line"></span><br><span class="line">vi &#x2F;etc&#x2F;sysctl.conf</span><br><span class="line"></span><br><span class="line">	net.ipv4.ip_forward&#x3D;1</span><br><span class="line">	#小心配错</span><br><span class="line">	net.ipv4.conf.all.rp_filter&#x3D;0</span><br><span class="line">	net.ipv4.conf.default.rp_filter&#x3D;0</span><br><span class="line"></span><br><span class="line">sysctl -p service networking restart 2.1. 安装neutron的各种网络服务 apt-get install neutron-server neutron-dhcp-agent neutron-plugin-openvswitch-agent neutron-l3-agent #配置验证信息 vi &#x2F;etc&#x2F;neutron&#x2F;neutron.conf</span><br><span class="line"></span><br><span class="line">	\[default\]</span><br><span class="line">	auth_strategy &#x3D; keystone</span><br><span class="line">	</span><br><span class="line">	rpc\_backend &#x3D; neutron.openstack.common.rpc.impl\_kombu</span><br><span class="line">	rabbit_host &#x3D; controller</span><br><span class="line">	rabbit_port &#x3D; 5672</span><br><span class="line">	rabbit_userid &#x3D; guest</span><br><span class="line">	rabbit_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	\[keystone_authtoken\]</span><br><span class="line">	auth_host &#x3D; controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; neutron</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line">	</span><br><span class="line">	\[database\]</span><br><span class="line">	connection &#x3D; mysql:&#x2F;&#x2F;neutron:password@controller&#x2F;neutron</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#配置提供API的验证信息</span><br><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;api-paste.ini</span><br><span class="line"></span><br><span class="line">	\[filter:authtoken\]</span><br><span class="line">	paste.filter\_factory &#x3D; keystoneclient.middleware.auth\_token:filter_factory</span><br><span class="line">	auth_host&#x3D;controller</span><br><span class="line">	auth_port &#x3D; 35357</span><br><span class="line">	auth_protocol &#x3D; http</span><br><span class="line">	auth_uri &#x3D; http:&#x2F;&#x2F;controller:5000&#x2F;v2.0</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; neutron</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line">	#page 73</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#指定提供dhcp的驱动服务</span><br><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;dhcp_agent.ini</span><br><span class="line"></span><br><span class="line">	dhcp_driver &#x3D; neutron.agent.linux.dhcp.Dnsmasq</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;nova&#x2F;nova.conf</span><br><span class="line"></span><br><span class="line">	\[DEFAULT\]</span><br><span class="line">	service\_neutron\_metadata_proxy &#x3D; true</span><br><span class="line">	neutron\_metadata\_proxy\_shared\_secret &#x3D; password</span><br><span class="line">	metadata_host &#x3D; controller</span><br><span class="line">	metadata_listen &#x3D; 0.0.0.0</span><br><span class="line">	metadata\_listen\_port &#x3D; 8775</span><br><span class="line"></span><br><span class="line">service nova-api restart #配置meta的验证服务 vi &#x2F;etc&#x2F;neutron&#x2F;metadata_agent.ini</span><br><span class="line"></span><br><span class="line">	\[DEFAULT\]</span><br><span class="line">	auth_url &#x3D; http:&#x2F;&#x2F;controller:5000&#x2F;v2.0</span><br><span class="line">	auth_region &#x3D; RegionOne</span><br><span class="line">	admin\_tenant\_name &#x3D; service</span><br><span class="line">	admin_user &#x3D; neutron</span><br><span class="line">	admin_password &#x3D; password</span><br><span class="line">	nova\_metadata\_ip &#x3D; controller</span><br><span class="line">	metadata\_proxy\_shared_secret &#x3D; password</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">service neutron-server restart</span><br><span class="line">service neutron-dhcp-agent restart</span><br><span class="line">service neutron-l3-agent restart</span><br><span class="line">service neutron-metadata-agent restart</span><br><span class="line">service neutron-plugin-openvswitch-agent restart</span><br><span class="line">#安装neutron的插件openvswtich</span><br><span class="line">apt-get install neutron-plugin-openvswitch-agent openvswitch-switch</span><br><span class="line">service openvswitch-switch restart</span><br><span class="line">ovs-vsctl add-br br-int</span><br><span class="line">ovs-vsctl add-br br-ex</span><br><span class="line">#把提供外部API的网口桥接到br-ex上</span><br><span class="line">ovs-vsctl add-port br-ex eth0</span><br><span class="line">#修改网卡配置，把eth0改成混杂模式，把br-ex改成eth0的ip配置</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;network&#x2F;interfaces</span><br><span class="line"></span><br><span class="line">	#For Exposing OpenStack API over the internet</span><br><span class="line">	auto eth0</span><br><span class="line">	iface eth0 inet manual</span><br><span class="line">	up ifconfig eth0 0.0.0.0 up</span><br><span class="line">	up ip link set eth0 promisc on</span><br><span class="line">	down ip link set eth0 promisc off</span><br><span class="line">	down ifconfig eth0 down</span><br><span class="line">	</span><br><span class="line">	auto br-ex</span><br><span class="line">	iface br-ex inet static</span><br><span class="line">	address 192.168.1.10</span><br><span class="line">	netmask 255.255.255.0</span><br><span class="line">	gateway 192.168.1.1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;etc&#x2F;init.d&#x2F;networking restart</span><br><span class="line">#配置l3\_agent和dhcp\_agent</span><br><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;l3_agent.ini</span><br><span class="line"></span><br><span class="line">	interface_driver &#x3D; neutron.agent.linux.interface.OVSInterfaceDriver</span><br><span class="line">	use_namespaces &#x3D; True</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;dhcp_agent.ini</span><br><span class="line"></span><br><span class="line">	interface_driver &#x3D; neutron.agent.linux.interface.OVSInterfaceDriver</span><br><span class="line">	use_namespaces &#x3D; True</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">#配置neutron的插件为openvswitch</span><br><span class="line">vi &#x2F;etc&#x2F;neutron&#x2F;neutron.conf</span><br><span class="line"></span><br><span class="line">	core\_plugin &#x3D; neutron.plugins.openvswitch.ovs\_neutron_plugin.OVSNeutronPluginV2</span><br><span class="line"></span><br><span class="line">service neutron-plugin-openvswitch-agent restart #配置插件为GRE模式 vi &#x2F;etc&#x2F;neutron&#x2F;plugins&#x2F;openvswitch&#x2F;ovs\_neutron\_plugin.ini</span><br><span class="line"></span><br><span class="line">	\[OVS\]</span><br><span class="line">	tenant\_network\_type &#x3D; gre</span><br><span class="line">	tunnel\_id\_ranges &#x3D; 1:1000</span><br><span class="line">	enable_tunneling &#x3D; True</span><br><span class="line">	integration_bridge &#x3D; br-int</span><br><span class="line">	tunnel_bridge &#x3D; br-tun</span><br><span class="line">	local_ip &#x3D; #tunnel ip</span><br><span class="line">	</span><br><span class="line">	\[securitygroup\]</span><br><span class="line">	# Firewall driver for realizing neutron security group function.</span><br><span class="line">	firewall\_driver &#x3D; neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirewallDriver</span><br><span class="line"></span><br><span class="line">service neutron-plugin-openvswitch-agent restart</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ol>
 
     </div>
 
@@ -655,7 +366,7 @@ firewall\_driver = neutron.agent.linux.iptables\_firewall.OVSHybridIptablesFirew
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

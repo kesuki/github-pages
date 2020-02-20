@@ -20,14 +20,14 @@
     var CONFIG = {"hostname":"www.mak-blog.com","root":"/","scheme":"Muse","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="最近又折腾回嵌入式，上次折腾嵌入式已经是几年前玩弄2440核心板，这次换了6410核心板，想必大同小异，但是没想到并不是这样，这次的板是一个师姐买的，是友善出品的开发板。 1、一开始，先装上一个ubuntu 12.04的desktop版，首先配置终端，根据我之前的步骤ubuntu使用kermit代替超级终端，由于已经出了ubuntu 12.10，所以说编译kermit的openssl版本与我本机的">
+  <meta name="description" content="最近又折腾回嵌入式，上次折腾嵌入式已经是几年前玩弄2440核心板，这次换了6410核心板，想必大同小异，但是没想到并不是这样，这次的板是一个师姐买的，是友善出品的开发板。  一开始，先装上一个ubuntu 12.04的desktop版，首先配置终端，根据我之前的步骤ubuntu使用kermit代替超级终端，由于已经出了ubuntu 12.10，所以说编译kermit的openssl版本与我本机的o">
 <meta property="og:type" content="article">
 <meta property="og:title" content="折腾6410核心板--配置环境">
 <meta property="og:url" content="http://www.mak-blog.com/arm-linux-6410-ubuntu.html">
 <meta property="og:site_name" content="Songtao Mai">
-<meta property="og:description" content="最近又折腾回嵌入式，上次折腾嵌入式已经是几年前玩弄2440核心板，这次换了6410核心板，想必大同小异，但是没想到并不是这样，这次的板是一个师姐买的，是友善出品的开发板。 1、一开始，先装上一个ubuntu 12.04的desktop版，首先配置终端，根据我之前的步骤ubuntu使用kermit代替超级终端，由于已经出了ubuntu 12.10，所以说编译kermit的openssl版本与我本机的">
+<meta property="og:description" content="最近又折腾回嵌入式，上次折腾嵌入式已经是几年前玩弄2440核心板，这次换了6410核心板，想必大同小异，但是没想到并不是这样，这次的板是一个师姐买的，是友善出品的开发板。  一开始，先装上一个ubuntu 12.04的desktop版，首先配置终端，根据我之前的步骤ubuntu使用kermit代替超级终端，由于已经出了ubuntu 12.10，所以说编译kermit的openssl版本与我本机的o">
 <meta property="article:published_time" content="2012-12-11T05:31:17.000Z">
-<meta property="article:modified_time" content="2020-02-19T14:08:09.442Z">
+<meta property="article:modified_time" content="2020-02-20T07:49:55.598Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="kermit">
 <meta property="article:tag" content="minicom">
@@ -177,7 +177,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-19 22:08:09" itemprop="dateModified" datetime="2020-02-19T22:08:09+08:00">2020-02-19</time>
+                <time title="Modified: 2020-02-20 15:49:55" itemprop="dateModified" datetime="2020-02-20T15:49:55+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,136 +202,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>最近又折腾回嵌入式，上次折腾嵌入式已经是几年前玩弄2440核心板，这次换了6410核心板，想必大同小异，但是没想到并不是这样，这次的板是一个师姐买的，是友善出品的开发板。 1、一开始，先装上一个ubuntu 12.04的desktop版，首先配置终端，根据我之前的步骤<a href="https://www.mak-blog.com/ubuntu-kermit.html" title="ubuntu使用kermit代替超级终端">ubuntu使用kermit代替超级终端</a>，由于已经出了ubuntu 12.10，所以说编译kermit的openssl版本与我本机的openssl版本不相符，叫我重新编译，编译你妹呀，这不是想逼我升级么，我果断不鸟它，换了几行命令</p>
-<p>sudo apt-get install minicom<br>//配置minicom，配置比特率，把流控制等yes的都选no，并save as dfl<br>sudo minicom -s</p>
-<p>大不了换一个终端。 2、配置dnw，根据我之前的文章<a href="https://www.mak-blog.com/linux-dnw.html" title="linux下利用dnw烧写文件">linux下利用dnw烧写文件</a>，又死活都配置不了，说我传输的文件太大，你妹，bootloader才一百k左右，这样都算大？换一个dnw2的神器。</p>
-<p>/* dnw2 linux main file. This depends on libusb.<br>*<br>* You should use lsusb to find out the actual vender ID &amp; product ID of board.<br>*<br>* Author:     Fox *             Ace Strong * License:    GPL<br><em>
-</em>/</p>
-<p>#include #include #include #include #include #include #define QQ2440_VENDOR_ID        0x5345</p>
-<p>#define QQ2440_PRODUCT_ID       0x1234</p>
-<p>#define FS2410_VENDOR_ID        0x5345</p>
-<p>#define FS2410_PRODUCT_ID       0x1234</p>
-<p>#define EZ6410_VENDOR_ID        0x04e8</p>
-<p>#define EZ6410_PRODUCT_ID       0x1234</p>
-<p>#define EZ6410_RAM_BASE         0x50200000</p>
-<p>#define FS2410_RAM_BASE         0x30200000</p>
-<p>/*<br>// FS2410</p>
-<p>#define RAM_BASE            FS2410_RAM_BASE</p>
-<p>#define VENDOR_ID           FS2410_VENDOR_ID</p>
-<p>#define PRODUCT_ID          FS2410_PRODUCT_ID<br>*/<br>// EZ6410</p>
-<p>#define RAM_BASE            EZ6410_RAM_BASE</p>
-<p>#define VENDOR_ID           EZ6410_VENDOR_ID</p>
-<p>#define PRODUCT_ID          EZ6410_PRODUCT_ID</p>
-<p>struct usb_dev_handle <em> open_port()<br>{<br>    struct usb_bus \</em>busses, *bus;</p>
-<pre><code>usb_init();
-usb\_find\_busses();
-usb\_find\_devices();
-
-busses = usb\_get\_busses();
-for(bus=busses;bus;bus=bus-&gt;next)
-{
-    struct usb_device *dev;
-    for(dev=bus-&gt;devices;dev;dev=dev-&gt;next)
-    {
-        if( VENDOR_ID==dev-&gt;descriptor.idVendor
-        &amp;&amp;  PRODUCT_ID==dev-&gt;descriptor.idProduct)
-        {
-            printf(&quot;Target usb device found!\\n&quot;);
-            struct usb\_dev\_handle *hdev = usb_open(dev);
-            if(!hdev)
-            {
-                perror(&quot;Cannot open device&quot;);   
-            }
-            else
-            {
-                if(0!=usb\_claim\_interface(hdev, 0))
-                {
-                    perror(&quot;Cannot claim interface&quot;);
-                    usb_close(hdev);
-                    hdev = NULL;
-                }
-            }
-            return hdev;
-        }
-    }
-}
-
-printf(&quot;Target usb device not found!\\n&quot;);
-
-return NULL;
-</code></pre><p>}</p>
-<p>void usage()<br>{<br>    printf(“Usage: dnw2 \n\n”);<br>}</p>
-<p>unsigned char<em> prepare_write_buf(char \</em>filename, unsigned int *len)<br>{<br>    unsigned char *write_buf = NULL;<br>    struct stat fs;</p>
-<pre><code>int fd = open(filename, O_RDONLY);
-if(-1==fd)
-{
-    perror(&quot;Cannot open file&quot;);
-    return NULL;
-}
-if(-1==fstat(fd, &amp;fs))
-{
-    perror(&quot;Cannot get file size&quot;);
-    goto error;
-}
-write\_buf = (unsigned char*)malloc(fs.st\_size+10);
-if(NULL==write_buf)
-{
-    perror(&quot;malloc failed&quot;);
-    goto error;
-}
-
-if(fs.st\_size != read(fd, write\_buf+8, fs.st_size))
-{
-    perror(&quot;Reading file failed&quot;);
-    goto error;
-}
-
-printf(&quot;Filename : %s\\n&quot;, filename);
-printf(&quot;Filesize : %d bytes\\n&quot;, fs.st_size);
-
-*((u\_int32\_t*)write\_buf) = RAM\_BASE;        //download address
-*((u\_int32\_t*)write\_buf+1) = fs.st\_size + 10;    //download size;
-
-*len = fs.st_size + 10;
-return write_buf;
-</code></pre><p>error:<br>    if(fd!=-1) close(fd);<br>    if(NULL!=write_buf) free(write_buf);<br>    fs.st_size = 0;<br>    return NULL;</p>
-<p>}</p>
-<p>int main(int argc, char *argv[])<br>{<br>    if(2!=argc)<br>    {<br>        usage();<br>        return 1;<br>    }</p>
-<pre><code>struct usb\_dev\_handle *hdev = open_port();
-if(!hdev)
-{
-    return 1;
-}
-
-unsigned int len = 0;
-unsigned char* write\_buf = prepare\_write_buf(argv\[1\], &amp;len);
-if(NULL==write_buf) return 1;
-
-unsigned int remain = len;
-unsigned int towrite;
-printf(&quot;Writing data ...\\n&quot;);
-while(remain)
-{
-    towrite = remain&gt;512 ? 512 : remain;
-    if(towrite != usb\_bulk\_write(hdev, 0x02, write_buf+(len-remain), towrite, 3000))
-    {
-        perror(&quot;usb\_bulk\_write failed&quot;);
-        break;
-    }
-    remain-=towrite;
-    printf(&quot;\\r%d%\\t %d bytes     &quot;, (len-remain)*100/len, len-remain);
-    fflush(stdout);
-}
-if(0==remain) printf(&quot;Done!\\n&quot;);
-return 0;
-</code></pre><p>} </p>
-<p>只需要安装libusb-dev</p>
-<p>sudo apt-get install libusb-dev<br>gcc -lm -o dnw2 dnw2.c -lusb</p>
-<p>这样就可以编译通过，要支持更多的开发板，只需要用lsusb查看新的USB设备的venderID和productID，然后添加相应的宏定义即可。反正我的6410在宏定义中已经有了，我就没有改动。 3、配置好这两样东西后，就可以往板里烧程序，成功后，我就想怎么拿它的内核编译一下，还有编译一下busybox，注意，我这里只是拿它光盘中的内核和busybox来编译，没有什么技术含量，坑爹的是，建立交叉编译环境，我修改了/etc/environment的参数，然后arm-linux-gcc -v，提示找不相应的文件或目录，我擦，经过无数次重启和不断修改后，问题依旧，所以我敲了which arm-linux-gcc，发现返回了我配置的路径，证明环境变量修改已经成功了，为什么还找不到呢，原因只有一个，友善提供的交叉编译器是32位的，我忍。</p>
-<p>sudo apt-get install ia32-libs</p>
-<p>敲了上面的命令后，兼容32位的程序，这样就可以找到arm-linux-gcc，然后编译好内核，编译好busybox，把内核也拷进入板子上了，准备打包镜像。 4、坑爹的事情还没有完，因为友善那个坑爹的superboot，只要配置一下sd卡，可以从sd卡中烧bootloader、内核、根文件系统到nand flash中，这个也没什么，你的根文件系统100多M用sd卡烧快，那你就用呗，反正我烧几M的根文件系统用dnw就行了，坑爹的是superboot不支持yaffs的根文件系统，支持ubi格式的，这也没什么，那我用mkubimage来打包文件，不用mkyaffsimage而已，坑爹的是提示</p>
-<p>error while loading shared libraries: liblzo2.so.2:<br>cannot open shared object file: No such file or directory</p>
-<p>那也没什么sudo apt-get install liblzo2-dev就行了 我的是64位系统，你apt-get的lib也是64位的，怎么用，那也没什么，直接上网找一个liblzo2的库，32位的。 感受：以后面对友善这些厂家，还是装32位的系统吧。</p>
+        <p>最近又折腾回嵌入式，上次折腾嵌入式已经是几年前玩弄2440核心板，这次换了6410核心板，想必大同小异，但是没想到并不是这样，这次的板是一个师姐买的，是友善出品的开发板。</p>
+<ol>
+<li>一开始，先装上一个ubuntu 12.04的desktop版，首先配置终端，根据我之前的步骤<a href="https://www.mak-blog.com/ubuntu-kermit.html" title="ubuntu使用kermit代替超级终端">ubuntu使用kermit代替超级终端</a>，由于已经出了ubuntu 12.10，所以说编译kermit的openssl版本与我本机的openssl版本不相符，叫我重新编译，编译你妹呀，这不是想逼我升级么，我果断不鸟它，换了几行命令<a id="more"></a>
+<code>sudo apt-get install minicom</code><br>配置minicom，配置比特率，把流控制等yes的都选no，并save as dfl<br><code>sudo minicom -s</code><br>大不了换一个终端。</li>
+<li>配置dnw，根据我之前的文章<a href="https://www.mak-blog.com/linux-dnw.html" title="linux下利用dnw烧写文件">linux下利用dnw烧写文件</a>，又死活都配置不了，说我传输的文件太大，你妹，bootloader才一百k左右，这样都算大？换一个dnw2的神器。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;\* dnw2 linux main file. This depends on libusb.</span><br><span class="line">\*</span><br><span class="line">\* You should use lsusb to find out the actual vender ID &amp; product ID of board.</span><br><span class="line">\*</span><br><span class="line">\* Author:     Fox \*             Ace Strong \* License:    GPL</span><br><span class="line">*</span><br><span class="line">*&#x2F;</span><br><span class="line"></span><br><span class="line">#include #include #include #include #include #include #define QQ2440\_VENDOR\_ID        0x5345</span><br><span class="line">#define QQ2440\_PRODUCT\_ID       0x1234</span><br><span class="line">#define FS2410\_VENDOR\_ID        0x5345</span><br><span class="line">#define FS2410\_PRODUCT\_ID       0x1234</span><br><span class="line">#define EZ6410\_VENDOR\_ID        0x04e8</span><br><span class="line">#define EZ6410\_PRODUCT\_ID       0x1234</span><br><span class="line"></span><br><span class="line">#define EZ6410\_RAM\_BASE         0x50200000</span><br><span class="line">#define FS2410\_RAM\_BASE         0x30200000</span><br><span class="line"></span><br><span class="line">&#x2F;*</span><br><span class="line">&#x2F;&#x2F; FS2410</span><br><span class="line">#define RAM\_BASE            FS2410\_RAM_BASE</span><br><span class="line">#define VENDOR\_ID           FS2410\_VENDOR_ID</span><br><span class="line">#define PRODUCT\_ID          FS2410\_PRODUCT_ID</span><br><span class="line">*&#x2F;</span><br><span class="line">&#x2F;&#x2F; EZ6410</span><br><span class="line">#define RAM\_BASE            EZ6410\_RAM_BASE</span><br><span class="line">#define VENDOR\_ID           EZ6410\_VENDOR_ID</span><br><span class="line">#define PRODUCT\_ID          EZ6410\_PRODUCT_ID</span><br><span class="line"></span><br><span class="line">struct usb\_dev\_handle * open_port()</span><br><span class="line">&#123;</span><br><span class="line">    struct usb_bus \*busses, \*bus;</span><br><span class="line"></span><br><span class="line">    usb_init();</span><br><span class="line">    usb\_find\_busses();</span><br><span class="line">    usb\_find\_devices();</span><br><span class="line">    </span><br><span class="line">    busses &#x3D; usb\_get\_busses();</span><br><span class="line">    for(bus&#x3D;busses;bus;bus&#x3D;bus-&gt;next)</span><br><span class="line">    &#123;</span><br><span class="line">        struct usb_device *dev;</span><br><span class="line">        for(dev&#x3D;bus-&gt;devices;dev;dev&#x3D;dev-&gt;next)</span><br><span class="line">        &#123;</span><br><span class="line">            if( VENDOR_ID&#x3D;&#x3D;dev-&gt;descriptor.idVendor</span><br><span class="line">            &amp;&amp;  PRODUCT_ID&#x3D;&#x3D;dev-&gt;descriptor.idProduct)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;Target usb device found!\\n&quot;);</span><br><span class="line">                struct usb\_dev\_handle *hdev &#x3D; usb_open(dev);</span><br><span class="line">                if(!hdev)</span><br><span class="line">                &#123;</span><br><span class="line">                    perror(&quot;Cannot open device&quot;);   </span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    if(0!&#x3D;usb\_claim\_interface(hdev, 0))</span><br><span class="line">                    &#123;</span><br><span class="line">                        perror(&quot;Cannot claim interface&quot;);</span><br><span class="line">                        usb_close(hdev);</span><br><span class="line">                        hdev &#x3D; NULL;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                return hdev;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    printf(&quot;Target usb device not found!\\n&quot;);</span><br><span class="line">    </span><br><span class="line">    return NULL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void usage()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;Usage: dnw2 \\n\\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">unsigned char* prepare\_write\_buf(char \*filename, unsigned int \*len)</span><br><span class="line">&#123;</span><br><span class="line">    unsigned char *write_buf &#x3D; NULL;</span><br><span class="line">    struct stat fs;</span><br><span class="line"></span><br><span class="line">    int fd &#x3D; open(filename, O_RDONLY);</span><br><span class="line">    if(-1&#x3D;&#x3D;fd)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;Cannot open file&quot;);</span><br><span class="line">        return NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    if(-1&#x3D;&#x3D;fstat(fd, &amp;fs))</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;Cannot get file size&quot;);</span><br><span class="line">        goto error;</span><br><span class="line">    &#125;</span><br><span class="line">    write\_buf &#x3D; (unsigned char*)malloc(fs.st\_size+10);</span><br><span class="line">    if(NULL&#x3D;&#x3D;write_buf)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;malloc failed&quot;);</span><br><span class="line">        goto error;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if(fs.st\_size !&#x3D; read(fd, write\_buf+8, fs.st_size))</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;Reading file failed&quot;);</span><br><span class="line">        goto error;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    printf(&quot;Filename : %s\\n&quot;, filename);</span><br><span class="line">    printf(&quot;Filesize : %d bytes\\n&quot;, fs.st_size);</span><br><span class="line">    </span><br><span class="line">    *((u\_int32\_t*)write\_buf) &#x3D; RAM\_BASE;        &#x2F;&#x2F;download address</span><br><span class="line">    *((u\_int32\_t*)write\_buf+1) &#x3D; fs.st\_size + 10;    &#x2F;&#x2F;download size;</span><br><span class="line">    </span><br><span class="line">    *len &#x3D; fs.st_size + 10;</span><br><span class="line">    return write_buf;</span><br><span class="line"></span><br><span class="line">error:</span><br><span class="line">    if(fd!&#x3D;-1) close(fd);</span><br><span class="line">    if(NULL!&#x3D;write\_buf) free(write\_buf);</span><br><span class="line">    fs.st_size &#x3D; 0;</span><br><span class="line">    return NULL;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv\[\])</span><br><span class="line">&#123;</span><br><span class="line">    if(2!&#x3D;argc)</span><br><span class="line">    &#123;</span><br><span class="line">        usage();</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    struct usb\_dev\_handle *hdev &#x3D; open_port();</span><br><span class="line">    if(!hdev)</span><br><span class="line">    &#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    unsigned int len &#x3D; 0;</span><br><span class="line">    unsigned char* write\_buf &#x3D; prepare\_write_buf(argv\[1\], &amp;len);</span><br><span class="line">    if(NULL&#x3D;&#x3D;write_buf) return 1;</span><br><span class="line">    </span><br><span class="line">    unsigned int remain &#x3D; len;</span><br><span class="line">    unsigned int towrite;</span><br><span class="line">    printf(&quot;Writing data ...\\n&quot;);</span><br><span class="line">    while(remain)</span><br><span class="line">    &#123;</span><br><span class="line">        towrite &#x3D; remain&gt;512 ? 512 : remain;</span><br><span class="line">        if(towrite !&#x3D; usb\_bulk\_write(hdev, 0x02, write_buf+(len-remain), towrite, 3000))</span><br><span class="line">        &#123;</span><br><span class="line">            perror(&quot;usb\_bulk\_write failed&quot;);</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        remain-&#x3D;towrite;</span><br><span class="line">        printf(&quot;\\r%d%\\t %d bytes     &quot;, (len-remain)*100&#x2F;len, len-remain);</span><br><span class="line">        fflush(stdout);</span><br><span class="line">    &#125;</span><br><span class="line">    if(0&#x3D;&#x3D;remain) printf(&quot;Done!\\n&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+只需要安装libusb-dev<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libusb-dev</span><br><span class="line">gcc -lm -o dnw2 dnw2.c -lusb</span><br></pre></td></tr></table></figure>
+这样就可以编译通过，要支持更多的开发板，只需要用lsusb查看新的USB设备的venderID和productID，然后添加相应的宏定义即可。反正我的6410在宏定义中已经有了，我就没有改动。 </li>
+<li>配置好这两样东西后，就可以往板里烧程序，成功后，我就想怎么拿它的内核编译一下，还有编译一下busybox，注意，我这里只是拿它光盘中的内核和busybox来编译，没有什么技术含量，坑爹的是，建立交叉编译环境，我修改了/etc/environment的参数，然后arm-linux-gcc -v，提示找不相应的文件或目录，我擦，经过无数次重启和不断修改后，问题依旧，所以我敲了which arm-linux-gcc，发现返回了我配置的路径，证明环境变量修改已经成功了，为什么还找不到呢，原因只有一个，友善提供的交叉编译器是32位的，我忍。<br><code>sudo apt-get install ia32-libs</code><br>敲了上面的命令后，兼容32位的程序，这样就可以找到arm-linux-gcc，然后编译好内核，编译好busybox，把内核也拷进入板子上了，准备打包镜像。</li>
+<li>坑爹的事情还没有完，因为友善那个坑爹的superboot，只要配置一下sd卡，可以从sd卡中烧bootloader、内核、根文件系统到nand flash中，这个也没什么，你的根文件系统100多M用sd卡烧快，那你就用呗，反正我烧几M的根文件系统用dnw就行了，坑爹的是superboot不支持yaffs的根文件系统，支持ubi格式的，这也没什么，那我用mkubimage来打包文件，不用mkyaffsimage而已，坑爹的是提示<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">error while loading shared libraries: liblzo2.so.2: </span><br><span class="line">cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
+那也没什么sudo apt-get install liblzo2-dev就行了 我的是64位系统，你apt-get的lib也是64位的，怎么用，那也没什么，直接上网找一个liblzo2的库，32位的。 感受：以后面对友善这些厂家，还是装32位的系统吧。</li>
+</ol>
 
     </div>
 
@@ -441,7 +322,7 @@ return 0;
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

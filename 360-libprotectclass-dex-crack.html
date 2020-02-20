@@ -28,7 +28,7 @@
 <meta property="og:description" content="首先这篇文章是具体参考【原创】**应用加固的脱壳分析和修复，上文作者在今年2月12号发了一篇文章详细分析了整个过程，由于腾讯加固的技术也不断演进，所以我在上文的基础，分析现在7月份腾讯加固采用的新方法。与上文重复的部分就不再过多说明，所以阅读本文之前，要首先看懂上文的大致思路。">
 <meta property="og:image" content="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg">
 <meta property="article:published_time" content="2015-10-13T08:41:12.000Z">
-<meta property="article:modified_time" content="2020-02-19T14:08:09.421Z">
+<meta property="article:modified_time" content="2020-02-20T09:58:40.072Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="360">
 <meta property="article:tag" content="DEX">
@@ -180,7 +180,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-19 22:08:09" itemprop="dateModified" datetime="2020-02-19T22:08:09+08:00">2020-02-19</time>
+                <time title="Modified: 2020-02-20 17:58:40" itemprop="dateModified" datetime="2020-02-20T17:58:40+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -205,10 +205,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>首先这篇文章是具体参考<a href="http://bbs.pediy.com/showthread.php?p=1353353" title="【原创】**应用加固的脱壳分析和修复" target="_blank" rel="noopener">【原创】**应用加固的脱壳分析和修复</a>，上文作者在今年2月12号发了一篇文章详细分析了整个过程，由于腾讯加固的技术也不断演进，所以我在上文的基础，分析现在7月份腾讯加固采用的新方法。与上文重复的部分就不再过多说明，所以阅读本文之前，要首先看懂上文的大致思路。</p>
-<h3 id="1-查看加固的DEX"><a href="#1-查看加固的DEX" class="headerlink" title="1.查看加固的DEX"></a>1.查看加固的DEX</h3><p>首先，用010 Editor来分析一下该加固后的DEX文件，在文件的尾部明显看到injected_data，injected_data的偏移地址为0x415C，大小为0x1310BF，选中这一部分数据，可以看到明显的qihoo文件头，黑色下划线的部分：0x71, 0x68, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00。在libprotectClass.so加固的版本中，最初的版本文件头的后四位均为0，后面的升级版本后四位可能为数据大小。 <a href="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg"><img src="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg" alt="DEX文件"></a> </p>
-<h3 id="2-关键部分数据分析"><a href="#2-关键部分数据分析" class="headerlink" title="2.关键部分数据分析"></a>2.关键部分数据分析</h3><p>在injected_data数据部分，偏移0x10c开始的数据，长度为0x10，图中的红色下划线部分，为标准RC4加密的KEY，16字节，128bit的KEY。 然后紧随其后偏移量为0x11c的5个比特，白色下划线的部分为lzma的压缩级别：0x5D, 0x00, 0x00, 0x00, 0x01。 接着偏移量为0x121的4个比特，灰色下划线的部分为解压缩后的DEX文件大小：0xBC, 0x4B, 0x4D, 0x00。 最后偏移量为0x125的4个比特，绿色下划线部分为加密的DEX文件大小：0x96, 0x0F, 0x13, 0x00。 加密的数据部分就是从偏移量0x129开始，长度为0x130F96的部分。</p>
-<h3 id="3-代码的思路"><a href="#3-代码的思路" class="headerlink" title="3.代码的思路"></a>3.代码的思路</h3><p>具体的代码可以参考<a href="https://github.com/yangwenbo/fxxk360" title="Recover origin DEX from protected one" target="_blank" rel="noopener">Recover origin DEX from protected one</a> 1.首先定位到injected_data，用KEY来对加密的数据进行RC4解密 2.解密后数据进行标准的lzma解压缩，就可以得到DEX文件 3.对DEX文件的header进行恢复，用8bit的数，对DEX Header，即头部大小0x70的数据进行异或处理，这样就得到原始的DEX Header，而这个8bit的数，就是偏移0x108那个8bit的数：0x9a。</p>
+        <p>首先这篇文章是具体参考<a href="http://bbs.pediy.com/showthread.php?p=1353353" target="_blank" rel="noopener" title="【原创】**应用加固的脱壳分析和修复">【原创】**应用加固的脱壳分析和修复</a>，上文作者在今年2月12号发了一篇文章详细分析了整个过程，由于腾讯加固的技术也不断演进，所以我在上文的基础，分析现在7月份腾讯加固采用的新方法。与上文重复的部分就不再过多说明，所以阅读本文之前，要首先看懂上文的大致思路。</p>
+<a id="more"></a>
+
+<h3 id="查看加固的DEX"><a href="#查看加固的DEX" class="headerlink" title="查看加固的DEX"></a>查看加固的DEX</h3><p>首先，用010 Editor来分析一下该加固后的DEX文件，在文件的尾部明显看到injected_data，injected_data的偏移地址为0x415C，大小为0x1310BF，选中这一部分数据，可以看到明显的qihoo文件头，黑色下划线的部分：0x71, 0x68, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00。在libprotectClass.so加固的版本中，最初的版本文件头的后四位均为0，后面的升级版本后四位可能为数据大小。 <a href="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg"><img src="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg" alt="DEX文件"></a> </p>
+<h3 id="关键部分数据分析"><a href="#关键部分数据分析" class="headerlink" title="关键部分数据分析"></a>关键部分数据分析</h3><p>在injected_data数据部分，偏移0x10c开始的数据，长度为0x10，图中的红色下划线部分，为标准RC4加密的KEY，16字节，128bit的KEY。 然后紧随其后偏移量为0x11c的5个比特，白色下划线的部分为lzma的压缩级别：0x5D, 0x00, 0x00, 0x00, 0x01。 接着偏移量为0x121的4个比特，灰色下划线的部分为解压缩后的DEX文件大小：0xBC, 0x4B, 0x4D, 0x00。 最后偏移量为0x125的4个比特，绿色下划线部分为加密的DEX文件大小：0x96, 0x0F, 0x13, 0x00。 加密的数据部分就是从偏移量0x129开始，长度为0x130F96的部分。</p>
+<h3 id="代码的思路"><a href="#代码的思路" class="headerlink" title="代码的思路"></a>代码的思路</h3><p>具体的代码可以参考<a href="https://github.com/yangwenbo/fxxk360" target="_blank" rel="noopener" title="Recover origin DEX from protected one">Recover origin DEX from protected one</a> 1.首先定位到injected_data，用KEY来对加密的数据进行RC4解密 2.解密后数据进行标准的lzma解压缩，就可以得到DEX文件 3.对DEX文件的header进行恢复，用8bit的数，对DEX Header，即头部大小0x70的数据进行异或处理，这样就得到原始的DEX Header，而这个8bit的数，就是偏移0x108那个8bit的数：0x9a。</p>
 
     </div>
 
@@ -296,7 +298,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-查看加固的DEX"><span class="nav-number">1.</span> <span class="nav-text">1.查看加固的DEX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-关键部分数据分析"><span class="nav-number">2.</span> <span class="nav-text">2.关键部分数据分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-代码的思路"><span class="nav-number">3.</span> <span class="nav-text">3.代码的思路</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看加固的DEX"><span class="nav-number">1.</span> <span class="nav-text">查看加固的DEX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键部分数据分析"><span class="nav-number">2.</span> <span class="nav-text">关键部分数据分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码的思路"><span class="nav-number">3.</span> <span class="nav-text">代码的思路</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -320,7 +322,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

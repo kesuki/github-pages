@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了">
 <meta property="article:published_time" content="2015-03-09T17:31:01.000Z">
-<meta property="article:modified_time" content="2019-05-07T06:35:10.000Z">
+<meta property="article:modified_time" content="2020-02-20T09:14:51.559Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="spark">
 <meta property="article:tag" content="YARN">
@@ -177,7 +177,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-05-07 14:35:10" itemprop="dateModified" datetime="2019-05-07T14:35:10+08:00">2019-05-07</time>
+                <time title="Modified: 2020-02-20 17:14:51" itemprop="dateModified" datetime="2020-02-20T17:14:51+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -203,90 +203,42 @@
 
       
         <p>环境：Ubuntu 12.04 LTS Desktop 64bit 提示：这里只用了一台机器同时做master节点和slave节点，如果想要分布式部署，即多个slave节点，准备环境部分一样，然后配置文档做一些修改增加slave节点就行，看完这份文档就知道怎么修改了</p>
-<h3 id="0-准备环境"><a href="#0-准备环境" class="headerlink" title="0.准备环境"></a>0.准备环境</h3><p>我这里全程都是不用root模式的。 0.1 设置用户名 我这里设成master 0.2 配置hosts文档 vi /etc/hosts</p>
-<p>10.1.1.107      master<br>10.1.1.108      slave1<br>10.1.1.109      slave2</p>
-<p>配置之后ping一下用户名看是否生效</p>
-<p>ping master</p>
-<p>0.3 关闭防火墙</p>
-<p>sudo ufw disable</p>
-<p>0.4 安装JAVA 提示：最好建一个目录，把需要用到的东西都装在这一个目录里面，这样比较方便，我用的是~/work，从官网下载最新版JAVA就可以，Spark官方说明JAVA只要是6以上的版本都可以，我下的是jdk-7u75-linux-x64.gz 在~/work这目录下直接解压</p>
-<p>tar xvzf jdk-7u75-linux-x64.gz</p>
-<p>修改环境变量 vi /etc/profile 添加下列内容：</p>
-<p>export JAVA_HOME=/home/administrator/work/jdk1.7.0_75<br>export JRE_HOME=/home/administrator/work/jdk1.7.0_75/jre<br>export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH<br>export CLASSPATH=$CLASSPATH:.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib</p>
-<p>使环境变量生效</p>
-<p>source /etc/profile</p>
-<p>验证一下JAVA是否成功安装</p>
-<p>java -version</p>
-<p>如果打印出版本信息，说明安装成功 <a href="http://www.windowskeys.net" target="_blank" rel="noopener">windowskeys.net</a> <a href="http://www.windowskeys.net" target="_blank" rel="noopener">buy windows 10 key</a> 0.5 安装配置Scala Spark官方说明Scala要求为2.10.x版本，注意不要下错版本，我这里下了2.10.3 同样放在/usr/java目录下然后解压</p>
-<p>tar xvzf scala-2.10.3.tgz</p>
-<p>修改环境变量 vi /etc/profile 添加下列内容：</p>
-<p>export SCALA_HOME=/usr/java/scala-2.10.3<br>export PATH=$PATH:$SCALA_HOME/bin</p>
-<p>使环境变量生效</p>
-<p>source /etc/profile</p>
-<p>验证Scala是否安装成功</p>
-<p>scala -version</p>
-<p>如果打印出来版本信息，说明安装成功 0.6 配置SSH无密码通信 安装Openssh server</p>
-<p>apt-get install openssh-server</p>
-<p>我这里没联网，所以就在<a href="http://www.openssl.org/source/openssl-1.0.1e.tar.gz下安装包编译。" target="_blank" rel="noopener">http://www.openssl.org/source/openssl-1.0.1e.tar.gz下安装包编译。</a></p>
-<p>tar xvzf openssl-1.0.1e.tar.gz<br>cd openssl-1.0.1e<br>./config shared –prefix=/usr/local<br>make &amp;&amp; make install</p>
-<p>在所有机器上都生成私钥和公钥</p>
-<p>ssh-keygen -t rsa （然后一直按回车）</p>
-<p>如果要机器间都能相互访问，要把所有机器都公钥都拷到authorized_keys，传输公钥可以用scp来传输。</p>
-<p>scp .ssh/id_rsa.pub administrator@slave1:/home/administrator/.ssh/id_rsa_master.pub</p>
-<p>注意提示的密钥所在的目录，然后切换到那个目录里面，然后把所有的公钥都添加进authorized_keys</p>
-<p>cat .ssh/id_rsa.pub &gt;&gt; .ssh/authorized_keys</p>
-<p>验证SSH无密码通信</p>
-<p>ssh master<br>ssh slave1<br>ssh slave2</p>
-<h3 id="1-hadoop-YARN安装"><a href="#1-hadoop-YARN安装" class="headerlink" title="1.hadoop YARN安装"></a>1.hadoop YARN安装</h3><p>1.1 安装hadoop 从官网下载hadoop2.6.0版本 解压</p>
-<p>tar xvzf hadoop-2.6.0.tar.gz</p>
-<p>hadoop-2.6.0不应该解压到/usr/java，因为/usr/java需要root权限才能访问，最好不要用到root权限。 解压之后会在~/work目录下，看到hadoop的文档：hadoop-2.6.0 1.2 配置hadoop 在hadoop-2.6.0/etc/hadoop/hadoop-env.sh中，添加JAVA安装目录</p>
-<p>export JAVA_HOME=//home/administrator/work/jdk1.7.0_75</p>
-<p>在hadoop-2.6.0/etc/hadoop下，将mapred-site.xml.templat重命名成mapred-site.xml，并添加以下内容：</p>
-<configuration><br><property><br><name>mapreduce.framework.name</name><br><value>yarn</value><br></property><br></configuration>
+<a id="more"></a>
 
-<p>在hadoop-2.6.0/etc/hadoop/中，修改core-site.xml</p>
-<configuration><br><property><br><name>fs.default.name</name><br><value>hdfs://master:8020</value><br><final>true</final><br></property><br></configuration>
+<h3 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h3><p>我这里全程都是不用root模式的。</p>
+<ol>
+<li>设置用户名 我这里设成master</li>
+<li>配置hosts文档 <code>vi /etc/hosts</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">10.1.1.107      master</span><br><span class="line">10.1.1.108      slave1</span><br><span class="line">10.1.1.109      slave2</span><br></pre></td></tr></table></figure>
+配置之后ping一下用户名看是否生效<br><code>ping master</code></li>
+<li>关闭防火墙<br><code>sudo ufw disable</code></li>
+<li>安装JAVA 提示：最好建一个目录，把需要用到的东西都装在这一个目录里面，这样比较方便，我用的是/work，从官网下载最新版JAVA就可以，Spark官方说明JAVA只要是6以上的版本都可以，我下的是jdk-7u75-linux-x64.gz 在/work这目录下直接解压<br><code>tar xvzf jdk-7u75-linux-x64.gz</code><br>修改环境变量 vi /etc/profile 添加下列内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA\_HOME&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;jdk1.7.0\_75</span><br><span class="line">export JRE\_HOME&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;jdk1.7.0\_75&#x2F;jre</span><br><span class="line">export PATH&#x3D;$JAVA\_HOME&#x2F;bin:$JAVA\_HOME&#x2F;jre&#x2F;bin:$PATH</span><br><span class="line">export CLASSPATH&#x3D;$CLASSPATH:.:$JAVA\_HOME&#x2F;lib:$JAVA\_HOME&#x2F;jre&#x2F;lib</span><br></pre></td></tr></table></figure>
+使环境变量生效<br><code>source /etc/profile</code><br>验证一下JAVA是否成功安装<br><code>java -version</code><br>如果打印出版本信息，说明安装成功 <a href="http://www.windowskeys.net" target="_blank" rel="noopener">windowskeys.net</a> <a href="http://www.windowskeys.net" target="_blank" rel="noopener">buy windows 10 key</a></li>
+<li>安装配置Scala Spark官方说明Scala要求为2.10.x版本，注意不要下错版本，我这里下了2.10.3 同样放在/usr/java目录下然后解压<br><code>tar xvzf scala-2.10.3.tgz</code><br>修改环境变量 vi /etc/profile 添加下列内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SCALA_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;scala-2.10.3</span><br><span class="line">export PATH&#x3D;$PATH:$SCALA_HOME&#x2F;bin</span><br></pre></td></tr></table></figure>
+使环境变量生效<br><code>source /etc/profile</code><br>验证Scala是否安装成功<br><code>scala -version</code><br>如果打印出来版本信息，说明安装成功 0.6 配置SSH无密码通信 安装Openssh server<br><code>apt-get install openssh-server</code><br>我这里没联网，所以就在<code>http://www.openssl.org/source/openssl-1.0.1e.tar.gz</code>下安装包编译。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf openssl-1.0.1e.tar.gz</span><br><span class="line">cd openssl-1.0.1e</span><br><span class="line">.&#x2F;config shared --prefix&#x3D;&#x2F;usr&#x2F;local</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+在所有机器上都生成私钥和公钥<br><code>ssh-keygen -t rsa （然后一直按回车）</code><br>如果要机器间都能相互访问，要把所有机器都公钥都拷到authorized_keys，传输公钥可以用scp来传输。<br><code>scp .ssh/id\_rsa.pub administrator@slave1:/home/administrator/.ssh/id\_rsa_master.pub</code><br>注意提示的密钥所在的目录，然后切换到那个目录里面，然后把所有的公钥都添加进authorized_keys<br><code>cat .ssh/id\_rsa.pub &gt;&gt; .ssh/authorized\_keys</code><br>验证SSH无密码通信<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh master</span><br><span class="line">ssh slave1</span><br><span class="line">ssh slave2</span><br></pre></td></tr></table></figure>
 
-<p>在hadoop-2.6.0/etc/hadoop/中，修改yarn-site.xml：</p>
-<configuration><br><property><br><name>yarn.nodemanager.aux-services</name><br><value>mapreduce_shuffle</value><br></property><br><property><br><name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name><br><value>org.apache.hadoop.mapred.ShuffleHandler</value><br></property><br><property><br><name>yarn.resourcemanager.scheduler.address</name><br><value>master:8030</value><br></property><br><property><br><name>yarn.resourcemanager.resource-tracker.address</name><br><value>master:8031</value><br></property><br><property><br><name>yarn.resourcemanager.address</name><br><value>master:8032</value><br></property><br><property><br><name>yarn.resourcemanager.admin.address</name><br><value>master:8033</value><br></property><br></configuration>
-
-<p>注：之前从网上看到的配置文档都是mapreduce.shuffle，然后起yarn的时候yarn就一直没起起来，运行jps命令，可以看到yarn起起来，而且有进程号，但是其实已经挂了，去看log文档发现有错，具体错误忘记截图留念了 修改hdfs-site.xml</p>
-<configuration><br><property><br><name>dfs.namenode.name.dir</name><br><value>/home/administrator/work/mnt/disk1/yarn/dfs/name</value><br></property><br><property><br><name>dfs.datanode.data.dir</name><br><value>/home/administrator/work/mnt/disk1/yarn/dfs/data</value><br></property><br><property><br><name>dfs.replication</name><br><value>1</value><br></property><br><property><br><name>dfs.permissions</name><br><value>false</value><br></property><br></configuration>
-
-<p>在hadoop-2.6.0/etc/hadoop/slaves文件中添加你的节点ip或者host：</p>
-<p>slave1<br>slave2</p>
-<p>修改bashrc文件 vi /home/administrator/.bashrc 添加以下内容：</p>
-<p>export HADOOP_COMMON_LIB_NATIVE_DIR=/home/administrator/work/hadoop-2.6.0/lib/native<br>export HADOOP_OPTS=”-Djava.library.path=/home/administrator/work/hadoop-2.6.0/lib”<br>export HADOOP_ROOT_LOGGER=DEBUG,console<br>//开启debug调试</p>
-<p>source /home/administrator/.bashrc</p>
-<p>通常编译好的hadoop库是在lib中，如果你不想编译，可以用lib/native里面的预编译库，然后把native的库移动到lib文件夹中。</p>
-<p>cp hadoop-2.6.0/lib/native/* hadoop-2.6.0/lib/</p>
-<p>1.3 验证hadoop是否安装成功 启动HDFS 首次启动集群时，做如下操作【主名字节点上执行】</p>
-<p>bin/hadoop namenode -format</p>
-<p>进入hadoop所在目录</p>
-<p>sbin/start-dfs.sh</p>
-<p>启动YARN</p>
-<p>sbin/start-yarn.sh</p>
-<p>打开浏览器，输入<a href="http://master:8088" target="_blank" rel="noopener">http://master:8088</a> 这里有一个大坑，如果运行上面的format命令时，会问要不要清空原来的文件，如果清空的话，第二次启动是datanode死活都启动不起来，因为那时候slave节点的文件id是从master节点复制过来的，要保持一致才能打开datanode节点，如果format之后，master节点的文件id就回重新生成，所以这时候要不就不清空文件；如果清空文件就要把datanode的文件也顺便手动删除一下。 1.4 在YARN下尝试运行MapReduce例子程序 搭好hadoop之后，想尝试跑一下例子程序，发现遇到8020端口连接失败错误 网上各种方法都尝试了，包括更改core_site.xml里面的端口为8020，检查防火墙，网络配置都没有问题 后来一个一个log看，发现是/mnt/disk1/yarn/dfs/name 文件有问题 把hdfs格式化久可以了</p>
-<p>bin/hadoop namenode -format</p>
-<p>运行pi例子程序</p>
-<p>bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar pi 20 10</p>
-<p>命令里的20 10分别指20个map10个reduce</p>
-<h3 id="2-Spark安装"><a href="#2-Spark安装" class="headerlink" title="2.Spark安装"></a>2.Spark安装</h3><p>2.1 安装Spark 从官网下载最新版Spark 我下的是spark-1.2.1-bin-hadoop2.4.tgz 解压 tar xvzf spark-1.2.1-bin-hadoop2.4.tgz 2.2 配置Spark vi conf/spark-env.sh 添加一下内容</p>
-<p>export SPARK_LOCAL_IP=根据实际情况填写<br>export SCALA_HOME=/home/administrator/work/scala-2.10.3<br>export JAVA_HOME=/home/administrator/work/jdk1.7.0_75<br>export HADOOP_HOME=/home/administrator/work/hadoop-2.6.0<br>export SPARK_LOCAL_DIR=/home/administrator/work/spark-1.2.1-bin-hadoop2.4<br>export SPARK_JAVA_OPTS=”-Dspark.storage.blockManagerHeartBeatMs=60000 -Dspark.local.dir=$SPARK_LOCAL_DIR -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:$SPARK_HOME/logs/gc.log -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=60 -Xms256m -Xmx256m -XX:MaxPermSize=128m”<br>export SPARK_MASTER_IP=master<br>export SPARK_MASTER_PORT=7077<br>export SPARK_WORKER_CORES=1<br>export SPARK_WORKER_MEMORY=2g<br>export SPARK_WORKER_PORT=9090<br>export SPARK_WORKER_WEBUI_PORT=9099<br>export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop</p>
-<p>在slave文件下填上slave主机名：</p>
-<p>slave1<br>slave2</p>
-<p>2.3 启动Spark</p>
-<p>sbin/start-all.sh</p>
-<p>2.4 验证Spark 输入命令jps，可以看到打出的JVM程序</p>
-<p>8566 SecondaryNameNode<br>8955 NodeManager<br>8082 NameNode<br>17022 Jps<br>8733 ResourceManager<br>8296 DataNode</p>
-<p>进入Spark的Web管理页面：</p>
-<p>master:8080</p>
-<p>运行命令</p>
-<p>#本地模式两线程运行<br>./bin/run-example SparkPi 10 –master local[2]</p>
-<p># Run application locally on 8 cores<br>./bin/spark-submit \<br>  –class org.apache.spark.examples.SparkPi \<br>  –master local[6] \<br>  lib/spark-examples-1.2.1-hadoop2.4.0.jar \<br>  100</p>
-<p># Run on a Spark Standalone cluster in client deploy mode<br>./bin/spark-submit \<br>  –class org.apache.spark.examples.SparkPi \<br>  –master spark://master:7077 \<br>  –executor-memory 8G \<br>  –total-executor-cores 4 \<br>  lib/spark-examples-1.2.1-hadoop2.4.0.jar \<br>  100</p>
-<p># Run on a Spark Standalone cluster in cluster deploy mode with supervise<br>./bin/spark-submit \<br>  –class org.apache.spark.examples.SparkPi \<br>  –master spark://master:7077 \<br>  –deploy-mode cluster \<br>  –supervise \<br>  –executor-memory 8G \<br>  –total-executor-cores 8 \<br>  lib/spark-examples-1.2.1-hadoop2.4.0.jar \<br>  100</p>
-<p># Run on a YARN cluster<br>./bin/spark-submit \<br>  –class org.apache.spark.examples.SparkPi \<br>  –master yarn-cluster \  # can also be `yarn-client` for client mode<br>  –executor-memory 8G \<br>  –num-executors 8 \<br>  /path/to/examples.jar \<br>  100</p>
+</li>
+</ol>
+<h3 id="hadoop-YARN安装"><a href="#hadoop-YARN安装" class="headerlink" title="hadoop YARN安装"></a>hadoop YARN安装</h3><ol>
+<li>安装hadoop 从官网下载hadoop2.6.0版本 解压<br><code>tar xvzf hadoop-2.6.0.tar.gz</code><br>hadoop-2.6.0不应该解压到/usr/java，因为/usr/java需要root权限才能访问，最好不要用到root权限。 解压之后会在~/work目录下，看到hadoop的文档：hadoop-2.6.0</li>
+<li>配置hadoop 在hadoop-2.6.0/etc/hadoop/hadoop-env.sh中，添加JAVA安装目录<br><code>export JAVA\_HOME=//home/administrator/work/jdk1.7.0\_75</code><br>在hadoop-2.6.0/etc/hadoop下，将mapred-site.xml.templat重命名成mapred-site.xml，并添加以下内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;mapreduce.framework.name&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;yarn&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+在hadoop-2.6.0/etc/hadoop/中，修改core-site.xml<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;fs.default.name&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;hdfs:&#x2F;&#x2F;master:8020&lt;&#x2F;value&gt;</span><br><span class="line">&lt;final&gt;true&lt;&#x2F;final&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+在hadoop-2.6.0/etc/hadoop/中，修改yarn-site.xml：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.nodemanager.aux-services&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;mapreduce_shuffle&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.resourcemanager.scheduler.address&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;master:8030&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;master:8031&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.resourcemanager.address&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;master:8032&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.resourcemanager.admin.address&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;master:8033&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+注：之前从网上看到的配置文档都是mapreduce.shuffle，然后起yarn的时候yarn就一直没起起来，运行jps命令，可以看到yarn起起来，而且有进程号，但是其实已经挂了，去看log文档发现有错，具体错误忘记截图留念了 修改hdfs-site.xml<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;dfs.namenode.name.dir&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;mnt&#x2F;disk1&#x2F;yarn&#x2F;dfs&#x2F;name&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;dfs.datanode.data.dir&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;mnt&#x2F;disk1&#x2F;yarn&#x2F;dfs&#x2F;data&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;dfs.replication&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;1&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;dfs.permissions&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;false&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+在hadoop-2.6.0/etc/hadoop/slaves文件中添加你的节点ip或者host：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slave1</span><br><span class="line">slave2</span><br></pre></td></tr></table></figure>
+修改bashrc文件 vi /home/administrator/.bashrc 添加以下内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export HADOOP\_COMMON\_LIB\_NATIVE\_DIR&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;hadoop-2.6.0&#x2F;lib&#x2F;native</span><br><span class="line">export HADOOP_OPTS&#x3D;&quot;-Djava.library.path&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;hadoop-2.6.0&#x2F;lib&quot;</span><br><span class="line">export HADOOP\_ROOT\_LOGGER&#x3D;DEBUG,console</span><br><span class="line">&#x2F;&#x2F;开启debug调试</span><br></pre></td></tr></table></figure>
+<code>source /home/administrator/.bashrc</code><br>通常编译好的hadoop库是在lib中，如果你不想编译，可以用lib/native里面的预编译库，然后把native的库移动到lib文件夹中。<br><code>cp hadoop-2.6.0/lib/native/* hadoop-2.6.0/lib/</code></li>
+<li>验证hadoop是否安装成功 启动HDFS 首次启动集群时，做如下操作【主名字节点上执行】<br><code>bin/hadoop namenode -format</code><br>进入hadoop所在目录<br><code>sbin/start-dfs.sh</code><br>启动YARN<br><code>sbin/start-yarn.sh</code><br>打开浏览器，输入<a href="http://master:8088" target="_blank" rel="noopener">http://master:8088</a> 这里有一个大坑，如果运行上面的format命令时，会问要不要清空原来的文件，如果清空的话，第二次启动是datanode死活都启动不起来，因为那时候slave节点的文件id是从master节点复制过来的，要保持一致才能打开datanode节点，如果format之后，master节点的文件id就回重新生成，所以这时候要不就不清空文件；如果清空文件就要把datanode的文件也顺便手动删除一下。</li>
+<li>在YARN下尝试运行MapReduce例子程序 搭好hadoop之后，想尝试跑一下例子程序，发现遇到8020端口连接失败错误 网上各种方法都尝试了，包括更改core_site.xml里面的端口为8020，检查防火墙，网络配置都没有问题 后来一个一个log看，发现是/mnt/disk1/yarn/dfs/name 文件有问题 把hdfs格式化久可以了<br><code>bin/hadoop namenode -format</code><br>运行pi例子程序<br><code>bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar pi 20 10</code><br>命令里的20 10分别指20个map10个reduce</li>
+</ol>
+<h3 id="Spark安装"><a href="#Spark安装" class="headerlink" title="Spark安装"></a>Spark安装</h3><ol>
+<li>安装Spark 从官网下载最新版Spark 我下的是spark-1.2.1-bin-hadoop2.4.tgz 解压<code>tar xvzf spark-1.2.1-bin-hadoop2.4.tgz</code></li>
+<li>配置Spark vi conf/spark-env.sh 添加一下内容<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">export SPARK\_LOCAL\_IP&#x3D;根据实际情况填写</span><br><span class="line">export SCALA_HOME&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;scala-2.10.3</span><br><span class="line">export JAVA\_HOME&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;jdk1.7.0\_75</span><br><span class="line">export HADOOP_HOME&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;hadoop-2.6.0</span><br><span class="line">export SPARK\_LOCAL\_DIR&#x3D;&#x2F;home&#x2F;administrator&#x2F;work&#x2F;spark-1.2.1-bin-hadoop2.4</span><br><span class="line">export SPARK\_JAVA\_OPTS&#x3D;&quot;-Dspark.storage.blockManagerHeartBeatMs&#x3D;60000 -Dspark.local.dir&#x3D;$SPARK\_LOCAL\_DIR -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:$SPARK_HOME&#x2F;logs&#x2F;gc.log -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction&#x3D;60 -Xms256m -Xmx256m -XX:MaxPermSize&#x3D;128m&quot;</span><br><span class="line">export SPARK\_MASTER\_IP&#x3D;master</span><br><span class="line">export SPARK\_MASTER\_PORT&#x3D;7077</span><br><span class="line">export SPARK\_WORKER\_CORES&#x3D;1</span><br><span class="line">export SPARK\_WORKER\_MEMORY&#x3D;2g</span><br><span class="line">export SPARK\_WORKER\_PORT&#x3D;9090</span><br><span class="line">export SPARK\_WORKER\_WEBUI_PORT&#x3D;9099</span><br><span class="line">export HADOOP\_CONF\_DIR&#x3D;$HADOOP_HOME&#x2F;etc&#x2F;hadoop</span><br></pre></td></tr></table></figure>
+在slave文件下填上slave主机名：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slave1</span><br><span class="line">slave2</span><br></pre></td></tr></table></figure></li>
+<li>启动Spark<br><code>sbin/start-all.sh</code></li>
+<li>验证Spark 输入命令jps，可以看到打出的JVM程序<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">8566 SecondaryNameNode</span><br><span class="line">8955 NodeManager</span><br><span class="line">8082 NameNode</span><br><span class="line">17022 Jps</span><br><span class="line">8733 ResourceManager</span><br><span class="line">8296 DataNode</span><br></pre></td></tr></table></figure>
+进入Spark的Web管理页面：<br><code>master:8080</code><br>运行命令<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">#本地模式两线程运行</span><br><span class="line">.&#x2F;bin&#x2F;run-example SparkPi 10 --master local\[2\]</span><br><span class="line"></span><br><span class="line">\# Run application locally on 8 cores</span><br><span class="line">.&#x2F;bin&#x2F;spark-submit \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  --master local\[6\] \</span><br><span class="line">  lib&#x2F;spark-examples-1.2.1-hadoop2.4.0.jar \</span><br><span class="line">  100</span><br><span class="line"></span><br><span class="line">\# Run on a Spark Standalone cluster in client deploy mode</span><br><span class="line">.&#x2F;bin&#x2F;spark-submit \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  --master spark:&#x2F;&#x2F;master:7077 \</span><br><span class="line">  --executor-memory 8G \</span><br><span class="line">  --total-executor-cores 4 \</span><br><span class="line">  lib&#x2F;spark-examples-1.2.1-hadoop2.4.0.jar \</span><br><span class="line">  100</span><br><span class="line"></span><br><span class="line">\# Run on a Spark Standalone cluster in cluster deploy mode with supervise</span><br><span class="line">.&#x2F;bin&#x2F;spark-submit \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  --master spark:&#x2F;&#x2F;master:7077 \</span><br><span class="line">  --deploy-mode cluster \</span><br><span class="line">  --supervise \</span><br><span class="line">  --executor-memory 8G \</span><br><span class="line">  --total-executor-cores 8 \</span><br><span class="line">  lib&#x2F;spark-examples-1.2.1-hadoop2.4.0.jar \</span><br><span class="line">  100</span><br><span class="line"></span><br><span class="line">\# Run on a YARN cluster</span><br><span class="line">.&#x2F;bin&#x2F;spark-submit \</span><br><span class="line">  --class org.apache.spark.examples.SparkPi \</span><br><span class="line">  --master yarn-cluster \  # can also be \&#96;yarn-client\&#96; for client mode</span><br><span class="line">  --executor-memory 8G \</span><br><span class="line">  --num-executors 8 \</span><br><span class="line">  &#x2F;path&#x2F;to&#x2F;examples.jar \</span><br><span class="line">  100</span><br></pre></td></tr></table></figure></li>
+</ol>
 
     </div>
 
@@ -373,7 +325,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-准备环境"><span class="nav-number">1.</span> <span class="nav-text">0.准备环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-hadoop-YARN安装"><span class="nav-number">2.</span> <span class="nav-text">1.hadoop YARN安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Spark安装"><span class="nav-number">3.</span> <span class="nav-text">2.Spark安装</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备环境"><span class="nav-number">1.</span> <span class="nav-text">准备环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hadoop-YARN安装"><span class="nav-number">2.</span> <span class="nav-text">hadoop YARN安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spark安装"><span class="nav-number">3.</span> <span class="nav-text">Spark安装</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -397,7 +349,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

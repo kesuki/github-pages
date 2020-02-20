@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="在Qt的编程中，难免会碰到要用鼠标事件来处理，所以就涉及到重写鼠标事件；开始的时候，包括本人在内的许多人不理解怎么重写鼠标事件，下面简单举一个例子来说明如何使用。">
 <meta property="article:published_time" content="2011-03-12T08:10:14.000Z">
-<meta property="article:modified_time" content="2019-05-07T06:35:10.000Z">
+<meta property="article:modified_time" content="2020-02-20T09:00:52.133Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="QMouseEvent">
 <meta property="article:tag" content="Qt">
@@ -176,7 +176,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-05-07 14:35:10" itemprop="dateModified" datetime="2019-05-07T14:35:10+08:00">2019-05-07</time>
+                <time title="Modified: 2020-02-20 17:00:52" itemprop="dateModified" datetime="2020-02-20T17:00:52+08:00">2020-02-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,9 +202,10 @@
 
       
         <p>在Qt的编程中，难免会碰到要用鼠标事件来处理，所以就涉及到重写鼠标事件；开始的时候，包括本人在内的许多人不理解怎么重写鼠标事件，下面简单举一个例子来说明如何使用。</p>
-<p>void mainWindow::mousePressEvent(QMouseEvent *event) {<br>    if (event-&gt;button() == Qt::LeftButton) {<br>        f = event-&gt;x();<br>        g = event -&gt;y();<br>    }<br>}</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void mainWindow::mousePressEvent(QMouseEvent *event) &#123;</span><br><span class="line">    if (event-&gt;button() &#x3D;&#x3D; Qt::LeftButton) &#123;</span><br><span class="line">        f &#x3D; event-&gt;x();</span><br><span class="line">        g &#x3D; event -&gt;y();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面的例子，是捕获鼠标的坐标位置，但是很多人会发现这样写捕获不了其他的触摸响应。因为重写了mousePressEvent事件，并没有写上其他的响应事件，但是只要加上一句简单的继承语句，例如</p>
-<p>mainWindow::mainWindow(QWidget *parent) : QGraphicsView(parent) {<br>//表示mainWindow是继承QGraphicsView的，所以在mousePressEvent函数后面加上一句<br>QGraphicsView::mousePressEvent(event);<br>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mainWindow::mainWindow(QWidget *parent) : QGraphicsView(parent) &#123;</span><br><span class="line">&#x2F;&#x2F;表示mainWindow是继承QGraphicsView的，所以在mousePressEvent函数后面加上一句</span><br><span class="line">QGraphicsView::mousePressEvent(event);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>表示除了自己重写的操作外，还继承父类的鼠标事件，其实就是c++里面继承的问题。</p>
 
     </div>
@@ -314,7 +315,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">176</span>
+        <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

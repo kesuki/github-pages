@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="前言：有动力才会去折腾一些东西的，之前在AWS上都是直接通过ssh登陆搬迁博客，所以主题和插件都是一步到位，不需要在后台安装。但是最近在aws上挂多了一个博客，这样ftp登陆安装主题和插件就显得非常有必要了。">
 <meta property="article:published_time" content="2013-03-26T08:24:48.000Z">
-<meta property="article:modified_time" content="2020-02-20T10:54:43.773Z">
+<meta property="article:modified_time" content="2020-02-21T08:52:24.983Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="ftp">
 <meta property="article:tag" content="wordpress">
@@ -121,6 +121,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -177,7 +187,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 18:54:43" itemprop="dateModified" datetime="2020-02-20T18:54:43+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 16:52:24" itemprop="dateModified" datetime="2020-02-21T16:52:24+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -207,14 +217,14 @@
 
 <p>我的aws是Amazon Linux EC2 instance，开始进入正题：</p>
 <ol>
-<li>安装vsftpd<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install vsftpd</span><br><span class="line">&#x2F;&#x2F;如果是ubuntu系统就输入，sudo apt-get install vsftpd</span><br></pre></td></tr></table></figure></li>
-<li>修改vsftpd配置文件<br><code>vi /etc/vsftpd/vsftpd.conf</code><br>主要作以下修改：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">#禁止匿名访问</span><br><span class="line">anonymous_enable&#x3D;NO</span><br><span class="line">#写入user_list内的帐户允许访问</span><br><span class="line">userlist_enable&#x3D;YES</span><br><span class="line">userlist_deny&#x3D;NO</span><br><span class="line">userlist_file&#x3D;&#x2F;etc&#x2F;vsftpd&#x2F;user_list</span><br><span class="line">#写入chroot_list的帐户不被chroot，可以访问ftp上级文件</span><br><span class="line">chroot_local_user&#x3D;YES</span><br><span class="line">chroot_list_enable&#x3D;YES</span><br><span class="line">#chroot_list需要手动建立，如果不建立不能登陆</span><br><span class="line">chroot_list_file&#x3D;&#x2F;etc&#x2F;vsftpd&#x2F;chroot_list</span><br><span class="line">--------以下修改好像作用不大，建议还是添加上去--------</span><br><span class="line">#允许文本模式下载</span><br><span class="line">ascii_download_enable&#x3D;YES</span><br><span class="line">#允许文本模式上传</span><br><span class="line">ascii_upload_enable&#x3D;YES</span><br><span class="line">#启用被动模式</span><br><span class="line">pasv_enable&#x3D;YES</span><br><span class="line">pasv_min_port&#x3D;1024</span><br><span class="line">pasv_max_port&#x3D;1048</span><br></pre></td></tr></table></figure></li>
+<li>安装<code>vsftpd</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install vsftpd</span><br><span class="line">&#x2F;&#x2F;如果是ubuntu系统就输入，sudo apt-get install vsftpd</span><br></pre></td></tr></table></figure></li>
+<li>修改<code>vsftpd</code>配置文件<br><code>vi /etc/vsftpd/vsftpd.conf</code><br>主要作以下修改：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">#禁止匿名访问</span><br><span class="line">anonymous_enable&#x3D;NO</span><br><span class="line">#写入user_list内的帐户允许访问</span><br><span class="line">userlist_enable&#x3D;YES</span><br><span class="line">userlist_deny&#x3D;NO</span><br><span class="line">userlist_file&#x3D;&#x2F;etc&#x2F;vsftpd&#x2F;user_list</span><br><span class="line">#写入chroot_list的帐户不被chroot，可以访问ftp上级文件</span><br><span class="line">chroot_local_user&#x3D;YES</span><br><span class="line">chroot_list_enable&#x3D;YES</span><br><span class="line">#chroot_list需要手动建立，如果不建立不能登陆</span><br><span class="line">chroot_list_file&#x3D;&#x2F;etc&#x2F;vsftpd&#x2F;chroot_list</span><br><span class="line">--------以下修改好像作用不大，建议还是添加上去--------</span><br><span class="line">#允许文本模式下载</span><br><span class="line">ascii_download_enable&#x3D;YES</span><br><span class="line">#允许文本模式上传</span><br><span class="line">ascii_upload_enable&#x3D;YES</span><br><span class="line">#启用被动模式</span><br><span class="line">pasv_enable&#x3D;YES</span><br><span class="line">pasv_min_port&#x3D;1024</span><br><span class="line">pasv_max_port&#x3D;1048</span><br></pre></td></tr></table></figure></li>
 <li>为ftp创建用户<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd -s &#x2F;sbin&#x2F;nologin -d &#x2F;var&#x2F;www&#x2F;html -g ftp user</span><br><span class="line">&#x2F;&#x2F; wordpress的目录为&#x2F;var&#x2F;www&#x2F;html，user为ftp的用户名</span><br><span class="line">sudo passwd user &#x2F;&#x2F;输入密码</span><br><span class="line">sudo chmod 777 &#x2F;var&#x2F;www&#x2F;html -R &#x2F;&#x2F;修改此目录权限为777，虽然好像不太安全</span><br></pre></td></tr></table></figure></li>
 <li>编辑允许访问ftp服务器的用户列表：<br><code>vi /etc/vsftpd/user_list //在最后增加一行，输入ftpUserName</code></li>
-<li>如果你配置文件有chroot_list的选项<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo touch &#x2F;etc&#x2F;vsftpd&#x2F;chroot_list </span><br><span class="line">&#x2F;&#x2F;chroot_list用户都是不受限止的用户,即可以浏览其主目录的上级目录，默认为空就可以了，不过一定要有这个空文件。</span><br></pre></td></tr></table></figure></li>
-<li>重启vsftpd和配置开机启动<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service vsftpd restart</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure></li>
-<li>在EC2控制台中设置Security Group，增加ftp所需端口，例如20-21端口和被动模式的1024-1048端口。</li>
-<li>然后ftp可以登录，但是安装主题插件时提示“无法定位WordPress内容目录（wp-content）。”。在网上查了一下，wordpress3.5.1依然适用，只需要在wp-config.php结尾添加一下代码就可以了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;** Override default file permissions *&#x2F;</span><br><span class="line">if(is_admin()) &#123;</span><br><span class="line">add_filter(&#39;filesystem_method&#39;, create_function(&#39;$a&#39;, &#39;return &quot;direct&quot;;&#39; ));</span><br><span class="line">define( &#39;FS_CHMOD_DIR&#39;, 0751 );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li>如果你配置文件有<code>chroot_list</code>的选项<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo touch &#x2F;etc&#x2F;vsftpd&#x2F;chroot_list </span><br><span class="line">&#x2F;&#x2F;chroot_list用户都是不受限止的用户,即可以浏览其主目录的上级目录，默认为空就可以了，不过一定要有这个空文件。</span><br></pre></td></tr></table></figure></li>
+<li>重启<code>vsftpd</code>和配置开机启动<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service vsftpd restart</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure></li>
+<li>在EC2控制台中设置<code>Security Group</code>，增加ftp所需端口，例如20-21端口和被动模式的1024-1048端口。</li>
+<li>然后ftp可以登录，但是安装主题插件时提示<code>无法定位WordPress内容目录（wp-content）。</code>。在网上查了一下，wordpress3.5.1依然适用，只需要在<code>wp-config.php</code>结尾添加一下代码就可以了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;** Override default file permissions *&#x2F;</span><br><span class="line">if(is_admin()) &#123;</span><br><span class="line">add_filter(&#39;filesystem_method&#39;, create_function(&#39;$a&#39;, &#39;return &quot;direct&quot;;&#39; ));</span><br><span class="line">define( &#39;FS_CHMOD_DIR&#39;, 0751 );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -331,6 +341,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

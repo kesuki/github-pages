@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="今天闲来无事，发现Google除了一个webmaster之外，还有一个Google Analytics的网站统计服务，作为一个伪Google粉，立刻上传他得统计代码，与cnzz站长统计相比，Google果然有过人的用户体验。删除cnzz的代码统计代码时，突然想要通过HTML5的验证，因为有cnzz的统计代码是不可能通过的，所以以前就没有认真去弄过。用HTML5验证网站，竟然有过百个error，但是">
 <meta property="article:published_time" content="2011-10-14T09:41:48.000Z">
-<meta property="article:modified_time" content="2020-02-20T12:40:01.530Z">
+<meta property="article:modified_time" content="2020-02-21T09:05:50.325Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="HTML5">
 <meta property="article:tag" content="rel标签">
@@ -121,6 +121,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -177,7 +187,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 20:40:01" itemprop="dateModified" datetime="2020-02-20T20:40:01+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:05:50" itemprop="dateModified" datetime="2020-02-21T17:05:50+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,14 +212,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>今天闲来无事，发现Google除了一个webmaster之外，还有一个Google Analytics的网站统计服务，作为一个伪Google粉，立刻上传他得统计代码，与cnzz站长统计相比，Google果然有过人的用户体验。<br>删除cnzz的代码统计代码时，突然想要通过HTML5的验证，因为有cnzz的统计代码是不可能通过的，所以以前就没有认真去弄过。用HTML5验证网站，竟然有过百个error，但是不用气馁，因为很多error都是重复的，按提示修改，很快就一一修正过来。郁闷的地方时wordpress调用php the_category(‘, ‘)时，error提示乱用rel标签，要把rel=”category tag”改成rel=”tag”才可以，为了通过HTML5验证。</p>
+        <p>今天闲来无事，发现Google除了一个webmaster之外，还有一个Google Analytics的网站统计服务，作为一个伪Google粉，立刻上传他得统计代码，与cnzz站长统计相比，Google果然有过人的用户体验。<br>删除cnzz的代码统计代码时，突然想要通过HTML5的验证，因为有cnzz的统计代码是不可能通过的，所以以前就没有认真去弄过。用HTML5验证网站，竟然有过百个error，但是不用气馁，因为很多error都是重复的，按提示修改，很快就一一修正过来。郁闷的地方时wordpress调用<code>php the_category(&#39;, &#39;)</code>时，error提示乱用rel标签，要把<code>rel=&quot;category tag&quot;</code>改成<code>rel=&quot;tag&quot;</code>才可以，为了通过HTML5验证。</p>
 <a id="more"></a>
 
 <p>Google一下，参考了这篇文章：</p>
 <blockquote>
 <p><a href="http://phoetry.me/archives/let-wordpress-pass-html5-validation.html" target="_blank" rel="noopener" title="关于让Wordpress通过HTML5校验">http://phoetry.me/archives/let-wordpress-pass-html5-validation.html</a></p>
 </blockquote>
-<p>把上述文章的代码全部放进functions.php即可，折腾一下就可以通过HTML5验证，其实并不是想象中那么难。</p>
+<p>把上述文章的代码全部放进<code>functions.php</code>即可，折腾一下就可以通过HTML5验证，其实并不是想象中那么难。</p>
 
     </div>
 
@@ -319,6 +329,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

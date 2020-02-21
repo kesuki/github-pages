@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="决定敲这篇文章的原因是最近闲得蛋疼，还有就是以前深受华南理工大学的断网之害，作为一个已经毕业的过来人，希望师弟师妹们可以借鉴一下，之前敲过一篇文章校园网通过ipv6来翻墙和突破断网机制，那是年少无知，主要是为了在断网之后继续用ipv6看球。主要说一下华工的断网机制，12点过后，阻断了ipv6的DNS解析，但是ipv6的链路并没有切断，所以就稍微改一下ipv6的DNS解析，换成上交的2001:da8">
 <meta property="article:published_time" content="2012-10-07T03:55:44.000Z">
-<meta property="article:modified_time" content="2020-02-20T12:33:46.631Z">
+<meta property="article:modified_time" content="2020-02-21T09:01:57.457Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="ipv6">
 <meta property="article:tag" content="校园网">
@@ -122,6 +122,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -178,7 +188,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 20:33:46" itemprop="dateModified" datetime="2020-02-20T20:33:46+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:01:57" itemprop="dateModified" datetime="2020-02-21T17:01:57+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -203,11 +213,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>决定敲这篇文章的原因是最近闲得蛋疼，还有就是以前深受华南理工大学的断网之害，作为一个已经毕业的过来人，希望师弟师妹们可以借鉴一下，之前敲过一篇文章<a href="https://www.mak-blog.com/edu-ipv6-gfw.html" title="校园网通过ipv6来翻墙和突破断网机制">校园网通过ipv6来翻墙和突破断网机制</a>，那是年少无知，主要是为了在断网之后继续用ipv6看球。<br>主要说一下华工的断网机制，12点过后，阻断了ipv6的DNS解析，但是ipv6的链路并没有切断，所以就稍微改一下ipv6的DNS解析，换成上交的2001:da8:8000:1:202:120:2:101就可以继续上ipv6的网站。但是这有一个缺陷，就是支持ipv6的网站并不多，所以以前都是用google搜一下资料，用google的缓存页面打开。</p>
+        <p>决定敲这篇文章的原因是最近闲得蛋疼，还有就是以前深受华南理工大学的断网之害，作为一个已经毕业的过来人，希望师弟师妹们可以借鉴一下，之前敲过一篇文章<a href="https://www.mak-blog.com/edu-ipv6-gfw.html" title="校园网通过ipv6来翻墙和突破断网机制">校园网通过ipv6来翻墙和突破断网机制</a>，那是年少无知，主要是为了在断网之后继续用ipv6看球。<br>主要说一下华工的断网机制，12点过后，阻断了ipv6的DNS解析，但是ipv6的链路并没有切断，所以就稍微改一下ipv6的DNS解析，换成上交的<code>2001:da8:8000:1:202:120:2:101</code>就可以继续上ipv6的网站。但是这有一个缺陷，就是支持ipv6的网站并不多，所以以前都是用google搜一下资料，用google的缓存页面打开。</p>
 <a id="more"></a>
 
 <hr>
-<p>但是临近毕业的时候，因为一直使用goagent翻墙，无意间发现goagent如果使用google_ipv6的链路比使用google_cn或者google_hk都要快很多。然后就想断网之后goagent走ipv6的链路应该可以继续使用，通过修改goagent的代理模式，改用https就可以通过加密协议继续使用。现在挂上goagent之后，用goagent可以打开的网站基本上都可以打开，而且缓冲youku这些视频网站不是一般的快哦<br>如果goagent不会用的请自行google。<br>在已经懂得开启goagent的前提下，还要去修改local文件夹的proxy.ini文件：</p>
+<p>但是临近毕业的时候，因为一直使用goagent翻墙，无意间发现goagent如果使用<code>google_ipv6</code>的链路比使用<code>google_cn</code>或者<code>google_hk</code>都要快很多。然后就想断网之后goagent走ipv6的链路应该可以继续使用，通过修改goagent的代理模式，改用https就可以通过加密协议继续使用。现在挂上goagent之后，用goagent可以打开的网站基本上都可以打开，而且缓冲youku这些视频网站不是一般的快哦<br>如果goagent不会用的请自行google。<br>在已经懂得开启goagent的前提下，还要去修改local文件夹的<code>proxy.ini</code>文件：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[gae]</span><br><span class="line">...</span><br><span class="line">profile &#x3D; google_ipv6</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">[google_ipv6]</span><br><span class="line">mode &#x3D; https</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>我用的goagent版本是1.8.11，比较旧，但是goagent是支持ipv6和https加密的，版本不同只是修改配置文件方面不同而已。</p>
 
@@ -320,6 +330,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

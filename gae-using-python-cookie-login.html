@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="前言：因为想用python每天爬一个BT网页，再把里面的图片保存在GAE的数据库上，然后当访问appspot时就以统一的格式输出，之前一直在试图解决appspot被墙的问题，想绑定一个自己的域名，现在的google app的商业套件要收费了，所以这种方法已经失效。我目前发现可行的就是用一个没有被墙的空间在里面做一个反向代理，用.htaccess来重写域名跳转；或者用你自己另外域名的一个子域名app">
 <meta property="article:published_time" content="2012-07-15T06:29:10.000Z">
-<meta property="article:modified_time" content="2020-02-20T12:37:27.077Z">
+<meta property="article:modified_time" content="2020-02-21T09:04:39.576Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="GAE">
 <meta property="article:tag" content="cookie">
@@ -122,6 +122,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -178,7 +188,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 20:37:27" itemprop="dateModified" datetime="2020-02-20T20:37:27+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:04:39" itemprop="dateModified" datetime="2020-02-21T17:04:39+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,12 +219,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>前言：因为想用python每天爬一个BT网页，再把里面的图片保存在GAE的数据库上，然后当访问appspot时就以统一的格式输出，之前一直在试图解决appspot被墙的问题，想绑定一个自己的域名，现在的google app的商业套件要收费了，所以这种方法已经失效。我目前发现可行的就是用一个没有被墙的空间在里面做一个反向代理，用.htaccess来重写域名跳转；或者用你自己另外域名的一个子域名app.ABC.com跳转到<em>.appspot.com，然后在目的域名<code>www.AAA.com</code>的CHAME里填上<code>app.ABC.com</code>，那么你的<code>www.AAA.com</code>不用翻墙就可以访问</em>.appspot.com。</p>
+        <p>前言：因为想用python每天爬一个BT网页，再把里面的图片保存在GAE的数据库上，然后当访问appspot时就以统一的格式输出，之前一直在试图解决appspot被墙的问题，想绑定一个自己的域名，现在的google app的商业套件要收费了，所以这种方法已经失效。我目前发现可行的就是用一个没有被墙的空间在里面做一个反向代理，用<code>.htaccess</code>来重写域名跳转；或者用你自己另外域名的一个子域名<code>app.ABC.com</code>跳转到<code>*.appspot.com</code>，然后在目的域名<code>www.AAA.com</code>的CHAME里填上<code>app.ABC.com</code>，那么你的<code>www.AAA.com</code>不用翻墙就可以访问<code>*.appspot.com</code>。</p>
 <a id="more"></a>
 
-<p>python使用cookie登陆网页有很多个库可以调用，例如httplib，不过这种方法我在本地可以调试通过，但是部署在GAE上却提示307错误，这应该跟GAE的一些设定有关，个人建议使用<code>google.appengine.api</code>里面的urlfetch，有官方文档说明，绝对能用。<br>第一步，你要知道登陆网页是怎么post数据？是post到哪个网址？是post哪些数据？只要你清楚这些，你才可以去写python的代码，要不你根本不知道错误发生在哪里。建议安装firefox的httpfox来查看目标网站的header，cookie，POST Data和返回的Content。然后用一个post数据的插件，模拟post数据到目标网站，看一下Response是否已经登录，可以登录那就证明你post数据的格式没有问题。</p>
+<p>python使用<code>cookie</code>登陆网页有很多个库可以调用，例如<code>httplib</code>，不过这种方法我在本地可以调试通过，但是部署在GAE上却提示307错误，这应该跟GAE的一些设定有关，个人建议使用<code>google.appengine.api</code>里面的<code>urlfetch</code>，有官方文档说明，绝对能用。<br>第一步，你要知道登陆网页是怎么post数据？是post到哪个网址？是post哪些数据？只要你清楚这些，你才可以去写python的代码，要不你根本不知道错误发生在哪里。建议安装firefox的httpfox来查看目标网站的header，cookie，POST Data和返回的Content。然后用一个post数据的插件，模拟post数据到目标网站，看一下Response是否已经登录，可以登录那就证明你post数据的格式没有问题。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">import urllib</span><br><span class="line">import urllib2</span><br><span class="line">import webapp2</span><br><span class="line">from sgmllib import SGMLParser</span><br><span class="line">from google.appengine.ext import webapp</span><br><span class="line">from google.appengine.api import urlfetch</span><br><span class="line">from google.appengine.ext.webapp.util import run_wsgi_app</span><br><span class="line"></span><br><span class="line">class MainPage(webapp2.RequestHandler):</span><br><span class="line">    def get(self):</span><br><span class="line">        headers &#x3D; &#123;&#39;Content-Type&#39;:&#39;application&#x2F;x-www-form-urlencoded&#39;&#125;</span><br><span class="line">	params &#x3D; &#39;referer&#x3D;index.php&amp;loginfield&#x3D;username&amp;username&#x3D;******&amp;password&#x3D;******&amp;questionid&#x3D;0&amp;answer&#x3D;&amp;cookietime&#x3D;2592000&amp;loginsubmit&#x3D;%CC%E1+%26%23160%3B+%BD%BB&#39;</span><br><span class="line">	login_url &#x3D; &quot;http:&#x2F;&#x2F;www.ABC.com&#x2F;logging.php?action&#x3D;login&quot;</span><br><span class="line">	res &#x3D; urlfetch.fetch(url&#x3D;login_url, payload&#x3D;params,method&#x3D;urlfetch.POST,headers&#x3D;headers,allow_truncated&#x3D;True)   </span><br><span class="line">		</span><br><span class="line">	self.response.out.write(res.status_code)</span><br><span class="line">	self.response.out.write(res.headers)</span><br><span class="line">	self.response.out.write(res.content)</span><br><span class="line"></span><br><span class="line">app &#x3D; webapp2.WSGIApplication([(&#39;&#x2F;&#39;, MainPage)], debug&#x3D;True)</span><br></pre></td></tr></table></figure>
-<p>注意问题：我之前就不知道params里面还有一个loginsubmit的参数，之前因为没有这个参数死活也登录不上，还有我的params是直接使用RAW的application/x-www-form-urlencoded格式。我是从firefox里面的httpfox里面看到的POST Data就是这些，而且里面包含中文，所以就直接COPY过来，如果没有中文字符，你也可以使用以下这种：</p>
+<p>注意问题：我之前就不知道<code>params</code>里面还有一个<code>loginsubmit</code>的参数，之前因为没有这个参数死活也登录不上，还有我的<code>params</code>是直接使用RAW的<code>application/x-www-form-urlencoded</code>格式。我是从firefox里面的<code>httpfox</code>里面看到的POST Data就是这些，而且里面包含中文，所以就直接COPY过来，如果没有中文字符，你也可以使用以下这种：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">params &#x3D; urllib.urlencode(&#123;&#39;username&#39; : &#39;******&#39; , &#39;password&#39; : &#39;******&#39;&#125;)</span><br></pre></td></tr></table></figure>
 <p>第二步：在你的浏览器中逐个删除cookie，看一下没有哪一个cookie的时候网页不能登录，通常是包含一大串字符的就是，我登录的网站是cdb_auth这个字符对。接着的步骤就比较简单，从返回的headers里面取出你需要的cookie，然后添加到你发送的headers里面，这样才可以继续访问网站，因为GAE的fetch说明文档写着，自动跳转时不会带cookie的，如果你想带cookie跳转，是要自己手动取出，自己手动完成跳转。那我就用cookie访问以下首页就知道到底有没有成功，代码添加在MainPage里面：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">data &#x3D; urllib.urlencode(res.headers)</span><br><span class="line">cookieAuth &#x3D; re.findall(r&quot;cdb_auth%3D.*?expires&quot;,data)</span><br><span class="line">cookieAuth2 &#x3D; re.sub(&#39;cdb_auth%3D&#39;, &#39;&#39;, cookieAuth[0])</span><br><span class="line">cookieAuth3 &#x3D; re.sub(&#39;%3B\+expires&#39;, &#39;&#39;, cookieAuth2)</span><br><span class="line"></span><br><span class="line">login_index &#x3D; &quot;http:&#x2F;&#x2F;www.ABC.com&#x2F;&quot;</span><br><span class="line">headers_cookie &#x3D; &#123;&quot;Content-Type&quot;:&quot;application&#x2F;x-www-form-urlencoded&quot;, &quot;Cookie&quot;:&quot;cdb_auth&#x3D;&quot;+cookieAuth3&#125;</span><br><span class="line">response &#x3D; urlfetch.fetch(url&#x3D;login_index, method&#x3D;urlfetch.POST,headers&#x3D;headers_cookie,allow_truncated&#x3D;True)</span><br><span class="line"></span><br><span class="line">self.response.out.write(response.content)</span><br></pre></td></tr></table></figure>
@@ -329,6 +339,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

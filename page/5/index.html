@@ -116,6 +116,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -332,7 +342,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 20:31:01" itemprop="dateModified" datetime="2020-02-20T20:31:01+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:00:33" itemprop="dateModified" datetime="2020-02-21T17:00:33+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -357,7 +367,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>前言，想在WP7编辑一个twitter API的应用，在获取数据时发现时间格式为：“Fri Jul 16 16:58:46 +0000 2010”。而且获取格式为string，很难进行处理。<br>Google一下，发现DateTime.ParseExact()这个函数，可以自定来源格式。下面是debug的过程：</p>
+          <p>前言，想在WP7编辑一个twitter API的应用，在获取数据时发现时间格式为：<code>Fri Jul 16 16:58:46 +0000 2010</code>。而且获取格式为string，很难进行处理。<br>Google一下，发现<code>DateTime.ParseExact()</code>这个函数，可以自定来源格式。下面是debug的过程：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/csharp-string-to-datetime.html#more" rel="contents">
@@ -581,7 +591,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 21:21:09" itemprop="dateModified" datetime="2020-02-20T21:21:09+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:33:23" itemprop="dateModified" datetime="2020-02-21T17:33:23+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -606,7 +616,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>吐槽:因为一直都习惯retweet一些好黄好暴力的推，又不想手动同步到新浪，就折腾了一个下午，想用别人基于python实现的wet，苦于真正开发过，首先在gae那里上传，怎知道一句不支持os.makedirs就把我弄到无语了，然后再折腾sae，申请了一个内测python账号，不过又返回500错误，应该也是由于gae同样的问题。几个小时就过去了，心想自己已经基于php用sina的openapi发过微博，再弄一个php定时获取twitter内容就行了，然后就决定还是自己写好了。</p>
+          <p>吐槽:因为一直都习惯retweet一些好黄好暴力的推，又不想手动同步到新浪，就折腾了一个下午，想用别人基于python实现的wet，苦于真正开发过，首先在gae那里上传，怎知道一句不支持<code>os.makedirs</code>就把我弄到无语了，然后再折腾sae，申请了一个内测python账号，不过又返回500错误，应该也是由于gae同样的问题。几个小时就过去了，心想自己已经基于php用sina的openapi发过微博，再弄一个php定时获取twitter内容就行了，然后就决定还是自己写好了。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/php-twitter2weibo.html#more" rel="contents">
@@ -1041,6 +1051,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

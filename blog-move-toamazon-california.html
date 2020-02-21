@@ -28,7 +28,7 @@
 <meta property="og:description" content="最近又折腾回主机了，但是着导火索是什么呢，之前用的衡天主机竟然连续抽风了两天，搜索引擎收录的网页立刻减少了100多；而且主机的ping值一直在300ms左右，想起新浪云平台的ping值只有50ms左右，立马就有了折腾的动力。开始折腾时，究竟选择哪一个主机，既可以在sae上建立wordpress站点，优点是延时少，稳定；缺点是国外访问延时大，可折腾的地方少。对于亚马逊的aws，经测试在美国西海岸的机">
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/blog-move-toamazon-california.png">
 <meta property="article:published_time" content="2012-12-02T09:20:40.000Z">
-<meta property="article:modified_time" content="2020-02-20T10:59:07.676Z">
+<meta property="article:modified_time" content="2020-02-21T08:56:08.574Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="Amazon EC2">
 <meta property="article:tag" content="Amazon RDS">
@@ -123,6 +123,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -179,7 +189,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 18:59:07" itemprop="dateModified" datetime="2020-02-20T18:59:07+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 16:56:08" itemprop="dateModified" datetime="2020-02-21T16:56:08+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -215,10 +225,10 @@
 
 <ol>
 <li>建立一个Amazon Linux AMI的Instance，然后下载相应的ssh密匙，在Security Groups开启相应的80端口，然后就分配一个独立ip，绑定到Instance上，然后用ssh登陆配置。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;root</span><br><span class="line">sudo su</span><br><span class="line">&#x2F;&#x2F;install the Apache Web Server, PHP</span><br><span class="line">yum install httpd php php-mysql</span><br><span class="line">&#x2F;&#x2F;Start the Apache Web Server</span><br><span class="line">service httpd start</span><br></pre></td></tr></table></figure>
-把自己wordpress的目录放在/var/www/html里面，注意，如果你开启了伪静态，应该修改/etc/httpd/conf/httpd.conf，把主目录和/var/www/html目录两个地方的AllowOverride None改成AllowOverride All，这样.htaccess才能配置。<br>还有要留意自己的主题有没有用一些php没自带的函数，例如我用了mbstring，所以我要另外安装插件：<br><code>yum install php-mbstring php-dom</code><br>另外，为了可以配置RDS服务里的SQL，我下载了phpMyAdmin在/var/www/html中，把config.sample.inc.php重命名为config.inc.php，后面根据RDS修改相应的SQL地址，SQL用户名，密码，数据库名。</li>
-<li>在aws加州机房找到RDS，新建一个MySQL数据库，设置相应的用户名，密码，数据库名。然后在DB Security Groups中授权EC2 Security Group可以访问，接着就是用phpMyAdmin导入数据库。 本来这就大功告成的，但是由于以前有apache和SQL经常宕机的经历，现在SQL建立在RDS中，SQL可以保证稳定性，apache还是不稳定，所以就写了一个crontab的命令，在/var/www/reboot.txt写入如下语句：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;由于有时httpd的进程会锁死，不能restart，所以每天都会停止httpd的进程一次。</span><br><span class="line">&#x2F;&#x2F;格兰披治时间16点59分执行，北京时间0点59分</span><br><span class="line">59 16 * * * killall httpd</span><br><span class="line">&#x2F;&#x2F;格兰披治时间17点0分执行，北京时间1点</span><br><span class="line">0 17 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br><span class="line">&#x2F;&#x2F;格兰披治时间22点0分执行，北京时间6点</span><br><span class="line">0 22 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br><span class="line">&#x2F;&#x2F;格兰披治时间4点0分执行，北京时间12点</span><br><span class="line">0 4 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br><span class="line">&#x2F;&#x2F;格兰披治时间10点0分执行，北京时间18点</span><br><span class="line">0 10 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br></pre></td></tr></table></figure>
+把自己wordpress的目录放在<code>/var/www/html</code>里面，注意，如果你开启了伪静态，应该修改<code>/etc/httpd/conf/httpd.conf</code>，把主目录和<code>/var/www/html</code>目录两个地方的<code>AllowOverride None</code>改成<code>AllowOverride All</code>，这样<code>.htaccess</code>才能配置。<br>还有要留意自己的主题有没有用一些php没自带的函数，例如我用了<code>mbstring</code>，所以我要另外安装插件：<br><code>yum install php-mbstring php-dom</code><br>另外，为了可以配置RDS服务里的SQL，我下载了phpMyAdmin在<code>/var/www/html</code>中，把<code>config.sample.inc.php</code>重命名为<code>config.inc.php</code>，后面根据RDS修改相应的SQL地址，SQL用户名，密码，数据库名。</li>
+<li>在aws加州机房找到RDS，新建一个MySQL数据库，设置相应的用户名，密码，数据库名。然后在DB Security Groups中授权EC2 Security Group可以访问，接着就是用phpMyAdmin导入数据库。 本来这就大功告成的，但是由于以前有apache和SQL经常宕机的经历，现在SQL建立在RDS中，SQL可以保证稳定性，apache还是不稳定，所以就写了一个crontab的命令，在<code>/var/www/reboot.txt</code>写入如下语句：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;由于有时httpd的进程会锁死，不能restart，所以每天都会停止httpd的进程一次。</span><br><span class="line">&#x2F;&#x2F;格兰披治时间16点59分执行，北京时间0点59分</span><br><span class="line">59 16 * * * killall httpd</span><br><span class="line">&#x2F;&#x2F;格兰披治时间17点0分执行，北京时间1点</span><br><span class="line">0 17 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br><span class="line">&#x2F;&#x2F;格兰披治时间22点0分执行，北京时间6点</span><br><span class="line">0 22 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br><span class="line">&#x2F;&#x2F;格兰披治时间4点0分执行，北京时间12点</span><br><span class="line">0 4 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br><span class="line">&#x2F;&#x2F;格兰披治时间10点0分执行，北京时间18点</span><br><span class="line">0 10 * * * &#x2F;etc&#x2F;init.d&#x2F;httpd restart</span><br></pre></td></tr></table></figure>
 导入crontab任务<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br><span class="line">crontab &#x2F;var&#x2F;www&#x2F;reboot.txt</span><br><span class="line">&#x2F;&#x2F;查看用户的定时任务</span><br><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
-由于实在搞不懂apache为何经常宕机，所以只能用定时重启的办法先凑合着用，如果你想每周都reboot一次系统，那就在/etc/rc.local中加入命令：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service httpd start</span><br><span class="line">crontab &#x2F;var&#x2F;www&#x2F;reboot.txt</span><br></pre></td></tr></table></figure>
+由于实在搞不懂apache为何经常宕机，所以只能用定时重启的办法先凑合着用，如果你想每周都reboot一次系统，那就在<code>/etc/rc.local</code>中加入命令：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service httpd start</span><br><span class="line">crontab &#x2F;var&#x2F;www&#x2F;reboot.txt</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
@@ -334,6 +344,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

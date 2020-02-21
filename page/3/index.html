@@ -116,6 +116,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -339,7 +349,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 18:58:12" itemprop="dateModified" datetime="2020-02-20T18:58:12+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 16:54:45" itemprop="dateModified" datetime="2020-02-21T16:54:45+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -422,7 +432,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 22:26:18" itemprop="dateModified" datetime="2020-02-20T22:26:18+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 18:04:39" itemprop="dateModified" datetime="2020-02-21T18:04:39+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -450,7 +460,7 @@
           <h3 id="控制节点："><a href="#控制节点：" class="headerlink" title="控制节点："></a>控制节点：</h3><ol>
 <li><p>准备工作</p>
 <ol>
-<li>配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在192.168.1.xx网段，注意要配置网关。<br>第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用192.168.100.xx网段，内部网络不用配置网关。<br>第三个网卡是负责openstack数据层面的连接，使用192.168.200.xx网段，内部网络不用配置网关。10是controller，11是compute1，12是compute2，如此类推。注意区分eth是千兆口还是万兆口。
+<li>配置网络，网卡配置说明，第一个网卡是用来连接外网，并且对外提供API接口，地址是在<code>192.168.1.xx</code>网段，注意要配置网关。<br>第二个网卡是负责openstack内部管理连接，负责controller和compute之间管理端的数据连接，使用<code>192.168.100.xx</code>网段，内部网络不用配置网关。<br>第三个网卡是负责openstack数据层面的连接，使用<code>192.168.200.xx</code>网段，内部网络不用配置网关。10是controller，11是compute1，12是compute2，如此类推。注意区分eth是千兆口还是万兆口。
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/ubuntu-server-multi-node-havana-ovs-gre.html#more" rel="contents">
@@ -674,7 +684,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 16:54:16" itemprop="dateModified" datetime="2020-02-20T16:54:16+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:32:08" itemprop="dateModified" datetime="2020-02-21T17:32:08+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1051,6 +1061,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

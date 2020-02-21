@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Songtao Mai">
 <meta property="og:description" content="闲话少说，直奔主题。如果你的评论没有翻页的话，只需要修改wp_list_comments() callback的回调函数。通常是在functions.php名为mytheme_comment中。">
 <meta property="article:published_time" content="2011-10-24T07:44:30.000Z">
-<meta property="article:modified_time" content="2020-02-20T12:21:35.701Z">
+<meta property="article:modified_time" content="2020-02-21T08:57:07.635Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="嵌套">
 <meta property="article:tag" content="楼层">
@@ -121,6 +121,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -177,7 +187,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 20:21:35" itemprop="dateModified" datetime="2020-02-20T20:21:35+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 16:57:07" itemprop="dateModified" datetime="2020-02-21T16:57:07+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,15 +212,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>闲话少说，直奔主题。如果你的评论没有翻页的话，只需要修改wp_list_comments() callback的回调函数。通常是在functions.php名为mytheme_comment中。</p>
+        <p>闲话少说，直奔主题。如果你的评论没有翻页的话，只需要修改<code>wp_list_comments() callback</code>的回调函数。通常是在<code>functions.php</code>名为<code>mytheme_comment</code>中。</p>
 <a id="more"></a>
 
 <ol>
-<li><p>//在第一句$GLOBALS[‘comment’] = $comment;的后面加入全局变量计数：<br><code>global $commentcount;</code></p>
+<li><p>//在第一句<code>$GLOBALS[&#39;comment&#39;] = $comment;</code>的后面加入全局变量计数：<br><code>global $commentcount;</code></p>
 </li>
-<li><p>在要显示楼层的地方，加上一个判断：<br><code>if(!$parent_id = $comment-&gt;comment_parent){echo &#39;#&#39;.++$commentcount;}</code><br>应该很容易理解，就是判断是父评论才计数，如果是嵌套评论就忽略。<br>搞定，收工！<br>P.S 最近有空，又折腾了一下主题，不断模仿大神们的主题。</p>
+<li><p>在要显示楼层的地方，加上一个判断：<br><code>if(!$parent_id = $comment-&gt;comment_parent){echo &#39;#&#39;.++$commentcount;}</code><br>应该很容易理解，就是判断是父评论才计数，如果是嵌套评论就忽略。</p>
 </li>
 </ol>
+<p>搞定，收工！<br>P.S 最近有空，又折腾了一下主题，不断模仿大神们的主题。</p>
 
     </div>
 
@@ -320,6 +331,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

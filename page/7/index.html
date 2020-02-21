@@ -116,6 +116,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -325,7 +335,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 21:25:50" itemprop="dateModified" datetime="2020-02-20T21:25:50+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:35:11" itemprop="dateModified" datetime="2020-02-21T17:35:11+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -351,9 +361,9 @@
 
       
           <ol>
-<li><p>移植触摸屏驱动tslib</p>
+<li><p>移植触摸屏驱动<code>tslib</code></p>
 <ol>
-<li><p>解压tslib-1.4.tar.gz<br><code>tar -zxvf tslib-1.4.tar.gz</code></p>
+<li><p>解压<code>tslib-1.4.tar.gz</code><br><code>tar -zxvf tslib-1.4.tar.gz</code></p>
 </li>
 <li><p>进入解压过的目录<br><code>cd tslib-1.4</code></p>
 </li>
@@ -361,7 +371,7 @@
 </li>
 <li><p>执行autogen.sh脚本所生成的Makefile文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;configure --host&#x3D;arm-linux  --prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;Trolltech&#x2F;tslib-1.4 --cache-file&#x3D;$ARCH-linux.cache</span><br></pre></td></tr></table></figure>
-<p>注意prefix路径与编译qt的一致</p>
+<p>注意<code>prefix</code>路径与编译<code>qt</code>的一致</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/qt.html#more" rel="contents">
@@ -1024,6 +1034,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

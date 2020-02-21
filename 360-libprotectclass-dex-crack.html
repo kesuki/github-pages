@@ -28,7 +28,7 @@
 <meta property="og:description" content="首先这篇文章是具体参考【原创】**应用加固的脱壳分析和修复，上文作者在今年2月12号发了一篇文章详细分析了整个过程，由于腾讯加固的技术也不断演进，所以我在上文的基础，分析现在7月份腾讯加固采用的新方法。与上文重复的部分就不再过多说明，所以阅读本文之前，要首先看懂上文的大致思路。">
 <meta property="og:image" content="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg">
 <meta property="article:published_time" content="2015-10-13T08:41:12.000Z">
-<meta property="article:modified_time" content="2020-02-20T14:11:24.236Z">
+<meta property="article:modified_time" content="2020-02-21T09:40:25.016Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="360">
 <meta property="article:tag" content="DEX">
@@ -124,6 +124,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -180,7 +190,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 22:11:24" itemprop="dateModified" datetime="2020-02-20T22:11:24+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:40:25" itemprop="dateModified" datetime="2020-02-21T17:40:25+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -208,13 +218,13 @@
         <p>首先这篇文章是具体参考<a href="http://bbs.pediy.com/showthread.php?p=1353353" target="_blank" rel="noopener" title="【原创】**应用加固的脱壳分析和修复">【原创】**应用加固的脱壳分析和修复</a>，上文作者在今年2月12号发了一篇文章详细分析了整个过程，由于腾讯加固的技术也不断演进，所以我在上文的基础，分析现在7月份腾讯加固采用的新方法。与上文重复的部分就不再过多说明，所以阅读本文之前，要首先看懂上文的大致思路。</p>
 <a id="more"></a>
 
-<h3 id="查看加固的DEX"><a href="#查看加固的DEX" class="headerlink" title="查看加固的DEX"></a>查看加固的DEX</h3><p>首先，用010 Editor来分析一下该加固后的DEX文件，在文件的尾部明显看到injected_data，injected_data的偏移地址为0x415C，大小为0x1310BF，选中这一部分数据，可以看到明显的qihoo文件头，黑色下划线的部分：0x71, 0x68, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00。在libprotectClass.so加固的版本中，最初的版本文件头的后四位均为0，后面的升级版本后四位可能为数据大小。<br><a href="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg"><img src="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg" alt="DEX文件"></a> </p>
-<h3 id="关键部分数据分析"><a href="#关键部分数据分析" class="headerlink" title="关键部分数据分析"></a>关键部分数据分析</h3><p>在injected_data数据部分，偏移0x10c开始的数据，长度为0x10，图中的红色下划线部分，为标准RC4加密的KEY，16字节，128bit的KEY。<br>然后紧随其后偏移量为0x11c的5个比特，白色下划线的部分为lzma的压缩级别：0x5D, 0x00, 0x00, 0x00, 0x01。<br>接着偏移量为0x121的4个比特，灰色下划线的部分为解压缩后的DEX文件大小：0xBC, 0x4B, 0x4D, 0x00。<br>最后偏移量为0x125的4个比特，绿色下划线部分为加密的DEX文件大小：0x96, 0x0F, 0x13, 0x00。<br>加密的数据部分就是从偏移量0x129开始，长度为0x130F96的部分。</p>
+<h3 id="查看加固的DEX"><a href="#查看加固的DEX" class="headerlink" title="查看加固的DEX"></a>查看加固的DEX</h3><p>首先，用010 Editor来分析一下该加固后的DEX文件，在文件的尾部明显看到<code>injected_data</code>，<code>injected_data</code>的偏移地址为<code>0x415C</code>，大小为<code>0x1310BF</code>，选中这一部分数据，可以看到明显的qihoo文件头，黑色下划线的部分：<code>0x71, 0x68, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00</code>。在<code>libprotectClass.so</code>加固的版本中，最初的版本文件头的后四位均为0，后面的升级版本后四位可能为数据大小。<br><a href="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg"><img src="https://www.mak-blog.com/album/2015/10/360-libprotectclass-dex-crack1.jpg" alt="DEX文件"></a> </p>
+<h3 id="关键部分数据分析"><a href="#关键部分数据分析" class="headerlink" title="关键部分数据分析"></a>关键部分数据分析</h3><p>在<code>injected_data</code>数据部分，偏移<code>0x10c</code>开始的数据，长度为<code>0x10</code>，图中的红色下划线部分，为标准RC4加密的KEY，16字节，128bit的KEY。<br>然后紧随其后偏移量为0x11c的5个比特，白色下划线的部分为<code>lzma</code>的压缩级别：<code>0x5D, 0x00, 0x00, 0x00, 0x01</code>。<br>接着偏移量为<code>0x121</code>的4个比特，灰色下划线的部分为解压缩后的DEX文件大小：<code>0xBC, 0x4B, 0x4D, 0x00</code>。<br>最后偏移量为<code>0x125</code>的4个比特，绿色下划线部分为加密的DEX文件大小：<code>0x96, 0x0F, 0x13, 0x00</code>。<br>加密的数据部分就是从偏移量<code>0x129</code>开始，长度为<code>0x130F96</code>的部分。</p>
 <h3 id="代码的思路"><a href="#代码的思路" class="headerlink" title="代码的思路"></a>代码的思路</h3><p>具体的代码可以参考<a href="https://github.com/yangwenbo/fxxk360" target="_blank" rel="noopener" title="Recover origin DEX from protected one">Recover origin DEX from protected one</a></p>
 <ol>
-<li>首先定位到injected_data，用KEY来对加密的数据进行RC4解密</li>
-<li>解密后数据进行标准的lzma解压缩，就可以得到DEX文件</li>
-<li>对DEX文件的header进行恢复，用8bit的数，对DEX Header，即头部大小0x70的数据进行异或处理，这样就得到原始的DEX Header，而这个8bit的数，就是偏移0x108那个8bit的数：0x9a。</li>
+<li>首先定位到<code>injected_data</code>，用KEY来对加密的数据进行RC4解密</li>
+<li>解密后数据进行标准的<code>lzma</code>解压缩，就可以得到DEX文件</li>
+<li>对DEX文件的header进行恢复，用8bit的数，对DEX Header，即头部大小<code>0x70</code>的数据进行异或处理，这样就得到原始的DEX Header，而这个8bit的数，就是偏移<code>0x108</code>那个8bit的数：0x9a。</li>
 </ol>
 
     </div>
@@ -327,6 +337,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>

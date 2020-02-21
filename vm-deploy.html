@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg">
 <meta property="og:image" content="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg">
 <meta property="article:published_time" content="2014-11-04T17:11:28.000Z">
-<meta property="article:modified_time" content="2020-02-20T14:07:09.721Z">
+<meta property="article:modified_time" content="2020-02-21T09:49:52.496Z">
 <meta property="article:author" content="Songtao Mai">
 <meta property="article:tag" content="虚拟机">
 <meta property="article:tag" content="部署">
@@ -125,6 +125,16 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
   </ul>
 
 </nav>
@@ -181,7 +191,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-20 22:07:09" itemprop="dateModified" datetime="2020-02-20T22:07:09+08:00">2020-02-20</time>
+                <time title="Modified: 2020-02-21 17:49:52" itemprop="dateModified" datetime="2020-02-21T17:49:52+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,12 +222,12 @@
 <h3 id="查看现有镜像"><a href="#查看现有镜像" class="headerlink" title="查看现有镜像"></a>查看现有镜像</h3><p>在Controller节点运行命令查看现有的镜像</p>
 <p><code>glance image-list</code></p>
 <p><a href="https://www.mak-blog.com/album/large/blog/vm-deploy1.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy1.jpg" alt="image0"></a></p>
-<h3 id="存储目录"><a href="#存储目录" class="headerlink" title="存储目录"></a>存储目录</h3><p>在Controller节点上，这些镜像都被存储在/var/lib/glance/images目录下，进入目录</p>
+<h3 id="存储目录"><a href="#存储目录" class="headerlink" title="存储目录"></a>存储目录</h3><p>在Controller节点上，这些镜像都被存储在<code>/var/lib/glance/images</code>目录下，进入目录</p>
 <p><code>cd /var/lib/glance/images</code></p>
 <p>查看镜像详细信息</p>
 <p><code>ll -alh</code></p>
-<p><a href="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg" alt="image1"></a><br>看到win7镜像是7.7G<br>运行：qemu-img info 镜像id<br>可以看到镜像的格式是qcow2</p>
-<h3 id="导入镜像"><a href="#导入镜像" class="headerlink" title="导入镜像"></a>导入镜像</h3><p>启动win7虚拟机后，在计算节点上，进入/var/lib/nova/instances/_base目录，可以看到一个.part结尾的文件。<br>这时win7的镜像正在从Controller节点拷贝到运行该win7镜像的计算节点上，存储在该目录下，.part文件是还没有拷贝完的文件<br>运行 ll -alh可以看到.part文件的大小在不断增大<br>镜像文件传输结束后，在目录下会看到有两个文件名相同后缀分别是.part和.converted存在<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg" alt="image2"></a><br>此时是以原始镜像为基础进行了一次格式转化，把qcow2格式7.7G的镜像转化成了raw格式的30G的镜像<br>看到.part文件的大小是7.7G，.converted文件大小是30G和m1.medium类型的硬盘大小相同<br>很快.part文件就不见了，只剩下30G的.converted文件<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg" alt="image3"></a><br>Tips：在镜像从控制节点拷贝到计算节点的过程中，走的是管理网络<br>后续补上对qcow2、raw两种格式的理解</p>
+<p><a href="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy2.jpg" alt="image1"></a><br>看到win7镜像是7.7G<br>运行：<code>qemu-img info 镜像id</code><br>可以看到镜像的格式是qcow2</p>
+<h3 id="导入镜像"><a href="#导入镜像" class="headerlink" title="导入镜像"></a>导入镜像</h3><p>启动win7虚拟机后，在计算节点上，进入<code>/var/lib/nova/instances/_base</code>目录，可以看到一个<code>.part</code>结尾的文件。<br>这时win7的镜像正在从Controller节点拷贝到运行该win7镜像的计算节点上，存储在该目录下，<code>.part</code>文件是还没有拷贝完的文件<br>运行<code>ll -alh</code>可以看到<code>.part</code>文件的大小在不断增大<br>镜像文件传输结束后，在目录下会看到有两个文件名相同后缀分别是<code>.part</code>和<code>.converted</code>存在<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy3.jpg" alt="image2"></a><br>此时是以原始镜像为基础进行了一次格式转化，把<code>qcow2</code>格式7.7G的镜像转化成了<code>raw</code>格式的30G的镜像<br>看到<code>.part</code>文件的大小是7.7G，<code>.converted</code>文件大小是30G和<code>m1.medium</code>类型的硬盘大小相同<br>很快<code>.part</code>文件就不见了，只剩下30G的<code>.converted</code>文件<br><a href="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg"><img src="https://www.mak-blog.com/album/large/blog/vm-deploy4.jpg" alt="image3"></a><br>Tips：在镜像从控制节点拷贝到计算节点的过程中，走的是管理网络<br>后续补上对<code>qcow2</code>、<code>raw</code>两种格式的理解</p>
 
     </div>
 
@@ -327,6 +337,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">173</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
